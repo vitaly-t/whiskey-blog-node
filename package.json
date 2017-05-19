@@ -1,0 +1,26 @@
+{
+  "name": "whiskey-blog-node",
+  "version": "0.0.1",
+  "description": "I'm going to try to make a specialized blog app with Node now",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjgavlick/whiskey-blog-node.git"
+  },
+  "author": "Tim Gavlick",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tjgavlick/whiskey-blog-node/issues"
+  },
+  "homepage": "https://github.com/tjgavlick/whiskey-blog-node#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.4.0"
+  },
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
