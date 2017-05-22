@@ -2,7 +2,7 @@
 
 ## It Should:
 
-### store content
+### Store content
 
 - (postgres, again?)
 - post/article
@@ -69,7 +69,7 @@
     - ? detail image (image)
     - route
 
-### display content
+### Display content
 
 - view single post
     - title
@@ -162,6 +162,8 @@
         - distiller
         - bottler
         - drink type
+
+### Include tests
 
 
 ## Reference
