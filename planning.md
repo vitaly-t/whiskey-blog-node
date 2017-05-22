@@ -1,8 +1,8 @@
-#whiskey-blog-node
+# whiskey-blog-node
 
-##It Should:
+## It Should:
 
-###store content
+### store content
 
 - (postgres, again?)
 - post/article
@@ -14,6 +14,7 @@
     - body (html)
     - ? list image (image) - viz tbd
     - ? detail image (image) - viz tbd
+    - ? feature image (image) - viz tbd
     - related posts (posts)
     - related reviews (reviews)
 - review
@@ -25,6 +26,7 @@
     - body (html)
     - ? list image (image) - viz tbd
     - ? detail image (image) - viz tbd
+    - ? feature image (image) - viz tbd
     - distiller (distillery)
     - bottler (distillery)
     - type (drink type)
@@ -67,7 +69,7 @@
     - ? detail image (image)
     - route
 
-###display content
+### display content
 
 - view single post
     - title
@@ -117,7 +119,7 @@
 - list posts and reviews together
     - sort by publish date
 
-###Offer an admin area
+### Offer an admin area
 
 - authenticate allowed users
 - manage content: posts, reviews, distilleries, drink types, pages
@@ -132,20 +134,21 @@
     - pick from authoring screen?
 - manage users if auth level is high enough
 
-###Offer an authoring interface
+### Offer an authoring interface
 
 - write markdown content with preview
 - preview page
 - image picker
+    - ~~add as content type?~~ nah, just read files on disk for now
 - related posts/reviews picker
 - save as draft
 - publish
 
-###Be pretty
+### Be pretty
 
 - visual design tbd
 
-###Be searchable
+### Be searchable
 
 - keyword search
     - posts
@@ -161,6 +164,6 @@
         - drink type
 
 
-##Reference
+## Reference
 
 - https://www.terlici.com/2014/08/25/best-practices-express-structure.html
