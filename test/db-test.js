@@ -5,9 +5,9 @@ describe('Database connection', () => {
 
   before(done => {
     const cmd = `CREATE TABLE IF NOT EXISTS test_table(
-                 id SERIAL,
-                 text_col TEXT,
-                 bool_col BOOL
+                   id SERIAL,
+                   text_col TEXT,
+                   bool_col BOOL
                  )`;
     db.none(cmd)
       .then(() => {
