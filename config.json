@@ -1,0 +1,14 @@
+{
+  "development": {
+    "db": {
+      "host": "localhost",
+      "number": 5432,
+      "database": "nodeblog",
+      "user": "node_user",
+      "password": "node_password"
+    }
+  },
+  "production": {
+    "db": {}
+  }
+}

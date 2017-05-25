@@ -21,6 +21,7 @@
     "mocha": "^3.4.0"
   },
   "dependencies": {
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "pg-promise": "^5.7.1"
   }
 }
