@@ -1,30 +1,26 @@
 const expect = require('chai').expect,
       db = require('../models/_db').db;
 
-describe('Database connection', () => {
+describe('Database connection', function () {
 
-  before(done => {
+  before(function (done) {
     const cmd = `CREATE TABLE IF NOT EXISTS test_table(
                    id SERIAL,
                    text_col TEXT,
                    bool_col BOOL
                  )`;
     db.none(cmd)
-      .then(() => {
-        done();
-      })
+      .then(() => done())
       .catch(e => console.error(e));
   });
 
-  after(done => {
+  after(function (done) {
     db.none('DROP TABLE test_table')
-      .then(() => {
-        done()
-      })
+      .then(() => done())
       .catch(e => console.error(e));
   });
 
-  it('Inserts a record', done => {
+  it('Inserts a record', function (done) {
     db.one('INSERT INTO test_table(text_col, bool_col) VALUES($1, $2) RETURNING id', ['test', true])
       .then(data => {
         expect(data.id).to.be.a.number;
@@ -37,7 +33,7 @@ describe('Database connection', () => {
       });
   });
 
-  it('Retrieves a record', done => {
+  it('Retrieves a record', function (done) {
     db.one('SELECT * FROM test_table')
       .then(data => {
         expect(data.id).to.be.a.number;
@@ -51,7 +47,7 @@ describe('Database connection', () => {
       });
   });
 
-  it('Retrieves multiple records', done => {
+  it('Retrieves multiple records', function (done) {
     const values = ['foo', false, 'bar', true, 'baz', true, 'foobar', false];
     db.none('INSERT INTO test_table(text_col, bool_col) VALUES ($1, $2), ($3, $4), ($5, $6), ($7, $8)', values)
       .then(() => {
@@ -71,7 +67,7 @@ describe('Database connection', () => {
       .catch(e => {throw e});
   });
 
-  it('Retrieves multiple records with a WHERE clause', done => {
+  it('Retrieves multiple records with a WHERE clause', function (done) {
     db.many('SELECT * FROM test_table WHERE bool_col = TRUE')
       .then(data => {
         expect(data).to.not.be.null;
