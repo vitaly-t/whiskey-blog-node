@@ -3,7 +3,7 @@ const db = require('../models/_db').db;
 // create a new user
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
-    if (!data.name || !data.username || !data.password_hash || typeof data.accessLevel != 'number' || data.accessLevel < 0) {
+    if (!data.name || !data.username || !data.password_hash || typeof data.access_level != 'number' || data.access_level < 0) {
       reject('Invalid data when attempting create user');
     }
 
@@ -13,10 +13,13 @@ exports.create = function (data) {
                    password_hash,
                    access_level
                  ) VALUES (
-                   $1, $2, $3, $4
+                   $(name),
+                   $(username),
+                   $(password_hash),
+                   $(access_level)
                  ) RETURNING id`;
 
-    db.one(cmd, [data.name, data.username, data.password_hash, data.accessLevel])
+    db.one(cmd, data)
       .then(data => resolve(data))
       .catch(e => reject(e));
   });
@@ -31,10 +34,30 @@ exports.get = function (id) {
   });
 };
 
+// get user by id from Promise data
+exports.getFromData = function (data) {
+  return exports.get(data.id);
+};
+
 // change a user's info
-exports.alter = function (id, data) {
-  let user = exports.get(id);
-  console.log(user);
+exports.alter = function (id, newData) {
+  return new Promise((resolve, reject) => {
+    exports.get(id)
+      .then(existingData => {
+        const data = Object.assign(existingData, newData),
+              cmd = `UPDATE users SET
+                      name = $(name),
+                      username = $(username),
+                      password_hash = $(password_hash),
+                      access_level = $(access_level)
+                    WHERE id = $(id)
+                    RETURNING id`;
+        db.one(cmd, data)
+          .then(data => resolve(data))
+          .catch(e => reject(e));
+      })
+      .catch(e => reject(e));
+  });
 };
 
 // hash a password

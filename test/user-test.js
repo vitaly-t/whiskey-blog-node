@@ -11,43 +11,34 @@ describe('User model', function () {
       .catch(e => console.error(e));
   });
 
-  it('Stores a user', function (done) {
-    User.create({
+  it('Stores a user', function () {
+    return User.create({
       name: 'Test User',
       username: 'testuser',
       password_hash: 'abcd',
-      accessLevel: 1
+      access_level: 1
     }).then(data => {
       expect(data.id).to.not.be.undefined;
       expect(data.id).to.be.a.number;
       ids.push(data.id);
-      done();
-    }).catch(e => {
-      assert.fail(e);
-      done();
     });
   });
 
-  it('Retrieves a user by id', function (done) {
-    User.get(ids[0])
+  it('Retrieves a user by id', function () {
+    return User.get(ids[0])
       .then(data => {
         expect(data).to.be.an.object;
         expect(data.id).to.equal(ids[0]);
         expect(data.name).to.be.a.string;
         expect(data.username).to.be.a.string;
         expect(data.password_hash).to.be.a.string;
-        done();
-      })
-      .catch(e => {
-        assert.fail(e);
-        done();
       });
   });
 
   it('Handles an insert with empty fields', function (done) {
     User.create({})
       .then(data => {
-        assert.fail('Should have rejected here');
+        throw new Error('Should have rejected here');
         done();
       })
       .catch(e => {
@@ -61,9 +52,9 @@ describe('User model', function () {
       name: 'Test User 2',
       username: 'testuser',
       password_hash: 'abcd',
-      accessLevel: 0
+      access_level: 0
     }).then(data => {
-      assert.fail('Should have rejected here');
+      throw new Error('Should have rejected here');
       done();
     }).catch(e => {
       expect(e).to.exist;
@@ -71,7 +62,29 @@ describe('User model', function () {
     });
   });
 
-  it('Alters a user');
+  it('Alters a user', function () {
+    function alterUser(data) {
+      ids.push(data.id);
+      return new Promise((resolve, reject) => {
+        User.alter(data.id, { name: 'New Name' })
+          .then(data => resolve(data))
+          .catch(e => reject(e));
+      });
+    }
+
+    return User.create({
+        name: 'Another User',
+        username: 'anotheruser',
+        password_hash: 'abcd',
+        access_level: 0
+      })
+      .then(alterUser)
+      .then(User.getFromData)
+      .then(data => {
+        expect(data.name).to.equal('New Name');
+      });
+  });
+
   it('Deletes a user');
   it('Handles bad data');
 });
