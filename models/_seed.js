@@ -12,7 +12,7 @@ const db = require('../models/_db').db;
 const users = `CREATE TABLE IF NOT EXISTS users(
                 id SERIAL PRIMARY KEY,
                 name varchar(256) NOT NULL,
-                username varchar(256) NOT NULL,
+                username varchar(256) UNIQUE NOT NULL,
                 password_hash varchar(60) NOT NULL,
                 access_level integer NOT NULL
               )`;

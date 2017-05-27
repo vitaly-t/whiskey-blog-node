@@ -31,14 +31,10 @@ exports.get = function (id) {
   });
 };
 
-// find users by any criteria
-exports.find = function () {
-
-};
-
 // change a user's info
-exports.alter = function () {
-
+exports.alter = function (id, data) {
+  let user = exports.get(id);
+  console.log(user);
 };
 
 // hash a password

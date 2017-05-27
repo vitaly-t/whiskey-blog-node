@@ -23,7 +23,7 @@ describe('User model', function () {
       ids.push(data.id);
       done();
     }).catch(e => {
-      expect(true).to.be.false;
+      assert.fail(e);
       done();
     });
   });
@@ -39,11 +39,38 @@ describe('User model', function () {
         done();
       })
       .catch(e => {
-        expect(true).to.be.false;
+        assert.fail(e);
         done();
       });
   });
-  it('Handles empty required fields');
+
+  it('Handles an insert with empty fields', function (done) {
+    User.create({})
+      .then(data => {
+        assert.fail('Should have rejected here');
+        done();
+      })
+      .catch(e => {
+        expect(e).to.exist;
+        done();
+      });
+  });
+
+  it('Handles an insert with non-unique username', function (done) {
+    User.create({
+      name: 'Test User 2',
+      username: 'testuser',
+      password_hash: 'abcd',
+      accessLevel: 0
+    }).then(data => {
+      assert.fail('Should have rejected here');
+      done();
+    }).catch(e => {
+      expect(e).to.exist;
+      done();
+    });
+  });
+
   it('Alters a user');
   it('Deletes a user');
   it('Handles bad data');
