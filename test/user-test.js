@@ -85,6 +85,38 @@ describe('User model', function () {
       });
   });
 
-  it('Deletes a user');
-  it('Handles bad data');
+  it('Deletes a user', function (done) {
+    let tmpId;
+    function handleError(e) {
+      throw new Error(e);
+      done();
+    }
+    User.create({
+        name: 'Another User',
+        username: 'yetanotheruser',
+        password_hash: 'abcd',
+        access_level: 0
+      })
+      .then(data => {
+        expect(data.id).to.be.a.number;
+        tmpId = data.id;
+        User.delete(data.id)
+          .then(() => {
+            User.get(tmpId)
+              .then(() => {
+                throw new Error('Should not have been able to get removed user');
+                done();
+              })
+              .catch(e => {
+                expect(e).to.exist;
+                done();
+              });
+          })
+          .catch(handleError);
+      })
+      .catch(handleError);
+  });
+
+  it('hashes a password');
+  it('checks a password');
 });
