@@ -39,21 +39,18 @@ exports.getFromData = function (data) {
   return exports.get(data.id);
 };
 
+// get user by arbitrary column(s)
 exports.find = function (data) {
   return new Promise((resolve, reject) => {
     let facets = [];
     if (Object.keys(data).length === 0) {
       reject('No data passed to User.find');
     }
+    // compile a WHERE clause based on named parameters
     for (const key of Object.keys(data)) {
-      if (typeof data[key] === 'number' ||
-          typeof data[key] === 'boolean') {
-        facets.push(key + ' = ' + data[key]);
-      } else {
-        facets.push(key + " = '" + data[key] + "'");
-      }
+      facets.push(key + ' = $(' + key +')');
     }
-    db.any('SELECT * FROM users WHERE ' + facets.join(' AND '))
+    db.any('SELECT * FROM users WHERE ' + facets.join(' AND '), data)
       .then(data => resolve(data))
       .catch(e => reject(e));
   });

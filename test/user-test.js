@@ -121,8 +121,12 @@ describe('User model', function () {
     return User.find({ username: 'testuser' })
       .then(data => {
         expect(data.length).to.equal(1);
+        // can't pass an object to deep.equals due to changing ids
         expect(data[0].id).to.be.a.number;
         expect(data[0].name).to.equal('Test User');
+        expect(data[0].username).to.equal('testuser');
+        expect(data[0].password_hash).to.equal('abcd');
+        expect(data[0].access_level).to.equal(1);
       });
   });
 
@@ -132,6 +136,9 @@ describe('User model', function () {
         expect(data.length).to.equal(1);
         expect(data[0].id).to.be.a.number;
         expect(data[0].name).to.equal('Test User');
+        expect(data[0].username).to.equal('testuser');
+        expect(data[0].password_hash).to.equal('abcd');
+        expect(data[0].access_level).to.equal(1);
       });
   });
 
