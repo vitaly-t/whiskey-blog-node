@@ -117,6 +117,31 @@ describe('User model', function () {
       .catch(handleError);
   });
 
+  it('Gets a user by an alternate criterion', function () {
+    return User.find({ username: 'testuser' })
+      .then(data => {
+        expect(data.length).to.equal(1);
+        expect(data[0].id).to.be.a.number;
+        expect(data[0].name).to.equal('Test User');
+      });
+  });
+
+  it('Gets a user by multiple criteria', function () {
+    return User.find({ username: 'testuser', name: 'Test User' })
+      .then(data => {
+        expect(data.length).to.equal(1);
+        expect(data[0].id).to.be.a.number;
+        expect(data[0].name).to.equal('Test User');
+      });
+  });
+
+  it('Gets no users when criteria do not match', function () {
+    return User.find({ username: 'testuser', name: 'Bob' })
+      .then(data => {
+        expect(data.length).to.equal(0);
+      });
+  });
+
   it('hashes a password');
   it('checks a password');
 });

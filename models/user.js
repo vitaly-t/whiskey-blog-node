@@ -39,6 +39,26 @@ exports.getFromData = function (data) {
   return exports.get(data.id);
 };
 
+exports.find = function (data) {
+  return new Promise((resolve, reject) => {
+    let facets = [];
+    if (Object.keys(data).length === 0) {
+      reject('No data passed to User.find');
+    }
+    for (const key of Object.keys(data)) {
+      if (typeof data[key] === 'number' ||
+          typeof data[key] === 'boolean') {
+        facets.push(key + ' = ' + data[key]);
+      } else {
+        facets.push(key + " = '" + data[key] + "'");
+      }
+    }
+    db.any('SELECT * FROM users WHERE ' + facets.join(' AND '))
+      .then(data => resolve(data))
+      .catch(e => reject(e));
+  });
+};
+
 // change a user's info
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
