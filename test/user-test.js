@@ -16,12 +16,16 @@ describe('User model', function () {
     return User.create({
       name: 'Test User',
       username: 'testuser',
-      password_hash: 'abcd',
+      password: 'abcd',
       access_level: 1
     }).then(data => {
       expect(data.id).to.not.be.undefined;
       expect(data.id).to.be.a.number;
       ids.push(data.id);
+      expect(data.name).to.equal('Test User');
+      expect(data.username).to.equal('testuser');
+      expect(data.password_hash.length).to.equal(60);
+      expect(data.access_level).to.equal(1);
     });
   });
 
@@ -52,7 +56,7 @@ describe('User model', function () {
     User.create({
       name: 'Test User 2',
       username: 'testuser',
-      password_hash: 'abcd',
+      password: 'abcd',
       access_level: 0
     }).then(data => {
       assert.fail(0, 1, 'Should have rejected here');
@@ -76,13 +80,39 @@ describe('User model', function () {
     return User.create({
         name: 'Another User',
         username: 'anotheruser',
-        password_hash: 'abcd',
+        password: 'abcd',
         access_level: 0
       })
       .then(alterUser)
-      .then(User.getFromData)
       .then(data => {
         expect(data.name).to.equal('New Name');
+      });
+  });
+
+  it('Changes a user\'s password', function () {
+    let tmpHash;
+
+    function changePassword(data) {
+      ids.push(data.id);
+      tmpHash = data.password_hash;
+      expect(tmpHash.length).to.equal(60);
+      return new Promise((resolve, reject) => {
+        User.alter(data.id, { password: 'updatedpassword' })
+          .then(data => resolve(data))
+          .catch(e => reject(e));
+      });
+    }
+
+    return User.create({
+        name: 'Another User',
+        username: 'discontent_with_pw',
+        password: 'originalpassword',
+        access_level: 0
+      })
+      .then(changePassword)
+      .then(data => {
+        expect(data.password_hash.length).to.equal(60);
+        expect(data.password_hash).to.not.equal(tmpHash);
       });
   });
 
@@ -95,7 +125,7 @@ describe('User model', function () {
     User.create({
         name: 'Another User',
         username: 'yetanotheruser',
-        password_hash: 'abcd',
+        password: 'abcd',
         access_level: 0
       })
       .then(data => {
@@ -126,7 +156,8 @@ describe('User model', function () {
         expect(data[0].id).to.be.a.number;
         expect(data[0].name).to.equal('Test User');
         expect(data[0].username).to.equal('testuser');
-        expect(data[0].password_hash).to.equal('abcd');
+        expect(data[0].password_hash).to.be.a.string;
+        expect(data[0].password_hash.length).to.equal(60);
         expect(data[0].access_level).to.equal(1);
       });
   });
@@ -138,7 +169,8 @@ describe('User model', function () {
         expect(data[0].id).to.be.a.number;
         expect(data[0].name).to.equal('Test User');
         expect(data[0].username).to.equal('testuser');
-        expect(data[0].password_hash).to.equal('abcd');
+        expect(data[0].password_hash).to.be.a.string;
+        expect(data[0].password_hash.length).to.equal(60);
         expect(data[0].access_level).to.equal(1);
       });
   });
