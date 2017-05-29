@@ -1,11 +1,54 @@
 const db = require('../models/_db').db,
       bcrypt = require('bcrypt');
 
+exports.validate = function (data, requiredFields) {
+  if (requiredFields) {
+    for (const field of requiredFields) {
+      if (!data.hasOwnProperty(field))
+        return { result: false, message: `Missing required field '${field}'`};
+    }
+  }
+
+  if (data.hasOwnProperty('name')) {
+    if (typeof data.name !== 'string')
+      return { result: false, message: 'Name should be a string'};
+    if (data.name.length < 1)
+      return { result: false, message: 'Name should be at least 1 character'};
+    if (data.name.length > 256)
+      return { result: false, message: 'Name can\'t be more than 256 characters'};
+  }
+  if (data.hasOwnProperty('username')) {
+    if (typeof data.username !== 'string')
+      return { result: false, message: 'Username should be a string'};
+    if (data.username.length < 6)
+      return { result: false, message: 'Username should be at least 6 characters'};
+    if (data.username.length > 256)
+      return { result: false, message: 'Username can\'t be more than 256 characters'};
+  }
+
+  if (data.hasOwnProperty('password')) {
+    if (typeof data.password !== 'string')
+      return { result: false, message: 'Password should be a string'};
+    if (data.password.length < 6)
+      return { result: false, message: 'Password should be at least 6 characters'};
+  }
+
+  if (data.hasOwnProperty('access_level')) {
+    if (typeof data.access_level !== 'number')
+      return { result: false, message: 'Access level should be a number'};
+    if (data.access_level < 0)
+      return { result: false, message: 'Lowest available access level is 0'};
+  }
+
+  return { result: true };
+}
+
 // create a new user
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
-    if (!data.name || !data.username || !data.password || typeof data.access_level != 'number' || data.access_level < 0) {
-      reject('Invalid data when attempting create user');
+    const validation = exports.validate(data, ['name', 'username', 'password', 'access_level']);
+    if (validation.result === false) {
+      reject(`Failed to create user: ${validation.message}`);
     }
 
     const cmd = `INSERT INTO users(
@@ -86,6 +129,11 @@ exports.alter = function (id, newData) {
             .catch(e => reject(e));
         })
         .catch(e => reject(e));
+    }
+
+    const validation = exports.validate(newData);
+    if (validation.result === false) {
+      reject(`Failed to alter user: ${validation.message}`);
     }
 
     if (newData.password) {

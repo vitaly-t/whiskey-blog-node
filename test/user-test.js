@@ -12,11 +12,42 @@ describe('User model', function () {
       .catch(e => console.error(e));
   });
 
+  it('Validates user information', function () {
+    expect(User.validate({ name: 'Tim' }).result).to.be.true;
+    expect(User.validate({ name: '' }).result).to.be.false;
+    expect(User.validate({ name: 4 }).result).to.be.false;
+    expect(User.validate({ username: 'Tim' }).result).to.be.false;
+    expect(User.validate({ username: 'username' }).result).to.be.true;
+    expect(User.validate({ username: 'üñîçø∂é' }).result).to.be.true;
+    expect(User.validate({ password: 'abcd' }).result).to.be.false;
+    expect(User.validate({ password: 'abcdef' }).result).to.be.true;
+    expect(User.validate({ access_level: 0 }).result).to.be.true;
+    expect(User.validate({ access_level: -1 }).result).to.be.false;
+    expect(User.validate({ access_level: 'a' }).result).to.be.false;
+  });
+
+  it('Correctly handles required fields', function () {
+    const goodData = {
+            name: 'Test User',
+            username: 'testuser',
+            password: 'abcdef',
+            access_level: 1
+          },
+          badData = {
+            name: 'Test User',
+            password: 'abcdef',
+            access_level: 1
+          },
+          requiredFields = ['name', 'username', 'password', 'access_level'];
+    expect(User.validate(goodData, requiredFields).result).to.be.true;
+    expect(User.validate(badData, requiredFields).result).to.be.false;
+  });
+
   it('Stores a user', function () {
     return User.create({
       name: 'Test User',
       username: 'testuser',
-      password: 'abcd',
+      password: 'abcdef',
       access_level: 1
     }).then(data => {
       expect(data.id).to.not.be.undefined;
@@ -56,7 +87,7 @@ describe('User model', function () {
     User.create({
       name: 'Test User 2',
       username: 'testuser',
-      password: 'abcd',
+      password: 'abcdef',
       access_level: 0
     }).then(data => {
       assert.fail(0, 1, 'Should have rejected here');
@@ -80,7 +111,7 @@ describe('User model', function () {
     return User.create({
         name: 'Another User',
         username: 'anotheruser',
-        password: 'abcd',
+        password: 'abcdef',
         access_level: 0
       })
       .then(alterUser)
@@ -125,7 +156,7 @@ describe('User model', function () {
     User.create({
         name: 'Another User',
         username: 'yetanotheruser',
-        password: 'abcd',
+        password: 'abcdef',
         access_level: 0
       })
       .then(data => {
