@@ -1,4 +1,5 @@
-const db = require('../models/_db').db;
+const db = require('../models/_db').db,
+      bcrypt = require('bcrypt');
 
 // create a new user
 exports.create = function (data) {
@@ -78,13 +79,27 @@ exports.alter = function (id, newData) {
 };
 
 // hash a password
-exports.createHash = function () {
-
+exports.createHash = function (cleartext) {
+  return new Promise((resolve, reject) => {
+    bcrypt.hash(cleartext, 13, (err, hash) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(hash);
+    });
+  });
 };
 
 // check a password
-exports.checkPassword = function () {
-
+exports.checkPassword = function (cleartext, hash) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(cleartext, hash, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
 };
 
 // remove a user

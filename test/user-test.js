@@ -1,4 +1,5 @@
 const expect = require('chai').expect,
+      assert = require('chai').assert,
       User = require('../models/user');
 
 describe('User model', function () {
@@ -38,7 +39,7 @@ describe('User model', function () {
   it('Handles an insert with empty fields', function (done) {
     User.create({})
       .then(data => {
-        throw new Error('Should have rejected here');
+        assert.fail(0, 1, 'Should have rejected here');
         done();
       })
       .catch(e => {
@@ -54,7 +55,7 @@ describe('User model', function () {
       password_hash: 'abcd',
       access_level: 0
     }).then(data => {
-      throw new Error('Should have rejected here');
+      assert.fail(0, 1, 'Should have rejected here');
       done();
     }).catch(e => {
       expect(e).to.exist;
@@ -88,7 +89,7 @@ describe('User model', function () {
   it('Deletes a user', function (done) {
     let tmpId;
     function handleError(e) {
-      throw new Error(e);
+      assert.fail(0, 1, e);
       done();
     }
     User.create({
@@ -104,7 +105,7 @@ describe('User model', function () {
           .then(() => {
             User.get(tmpId)
               .then(() => {
-                throw new Error('Should not have been able to get removed user');
+                assert.fail(0, 1, 'Should not have been able to get removed user');
                 done();
               })
               .catch(e => {
@@ -149,6 +150,49 @@ describe('User model', function () {
       });
   });
 
-  it('hashes a password');
-  it('checks a password');
+  it('Hashes a password', function () {
+    return User.createHash('something')
+      .then(hash => {
+        expect(hash).to.be.a.string;
+        expect(hash.length).to.equal(60);
+      });
+  });
+
+  it('Checks a correct password', function (done) {
+    User.createHash('password')
+      .then(hash => {
+        User.checkPassword('password', hash)
+          .then(result => {
+            expect(result).to.be.true;
+            done();
+          })
+          .catch(e => {
+            assert.fail(0, 1, e);
+            done();
+          });
+      })
+      .catch(e => {
+        assert.fail(0, 1, e);
+        done();
+      });
+  });
+
+  it('Checks an incorrect password', function (done) {
+    User.createHash('password')
+      .then(hash => {
+        User.checkPassword('passw0rd', hash)
+          .then(result => {
+            expect(result).to.be.false;
+            done();
+          })
+          .catch(e => {
+            assert.fail(0, 1, e);
+            done();
+          });
+      })
+      .catch(e => {
+        assert.fail(0, 1, e);
+        done();
+      });
+  });
 });
