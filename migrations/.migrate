@@ -1,0 +1,1 @@
+{"migrations":[{"title":"1496094592325-add-drink-types.js"},{"title":"1496095305314-add-rarities.js"},{"title":"1496095312750-add-distilleries.js"},{"title":"1496095326319-add-users.js"},{"title":"1496095330833-add-posts.js"}],"path":"migrations/.migrate","pos":5,"_events":{},"_eventsCount":1}
