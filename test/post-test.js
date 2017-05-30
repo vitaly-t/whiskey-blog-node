@@ -1,6 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect,
+      assert = require('chai').assert,
       Post = require('../models/post'),
       User = require('../models/user');
 
@@ -35,7 +36,24 @@ describe('Post model', () => {
       .catch(e => console.error(e));
   });
 
-  it('Validates post information');
+  it('Validates post information', function () {
+    expect(Post.validate({ title: 'Title' }).result).to.be.true;
+    expect(Post.validate({ title: 'Tî†lé' }).result).to.be.true;
+    expect(Post.validate({ title: '' }).result).to.be.false;
+    expect(Post.validate({ title: 4 }).result).to.be.false;
+    expect(Post.validate({ title: ['Title'] }).result).to.be.false;
+    expect(Post.validate({ published_at: new Date() }).result).to.be.true;
+    expect(Post.validate({ published_at: 1496186149957 }).result).to.be.false;
+    expect(Post.validate({ published_at: '2017-05-30T00:00:00Z' }).result).to.be.false;
+    expect(Post.validate({ author: 4 }).result).to.be.true;
+    expect(Post.validate({ author: 'Tim' }).result).to.be.false;
+    expect(Post.validate({ author: -1 }).result).to.be.false;
+    expect(Post.validate({ author: 5.45 }).result).to.be.false;
+    expect(Post.validate({ summary: 'Summary!' }).result).to.be.true;
+    expect(Post.validate({ summary: '' }).result).to.be.false;
+    expect(Post.validate({ body: 'Body!' }).result).to.be.true;
+    expect(Post.validate({ body: '' }).result).to.be.false;
+  });
 
   it('Stores a complete post', function () {
     return Post.create({
@@ -67,7 +85,22 @@ describe('Post model', () => {
       });
   });
 
-  it('Handles empty required fields');
+  it('Handles empty required fields', function (done) {
+    Post.create({
+        title: 'Title!',
+        published_at: new Date(),
+        body: 'Body!'
+      })
+    .then(data => {
+      assert.fail(0, 1, 'Should have required an author');
+      done();
+    })
+    .catch(e => {
+      expect(e).to.exist;
+      done();
+    });
+  });
+
   it('Alters a post');
   it('Deletes a post');
   it('Retrieves many posts');
