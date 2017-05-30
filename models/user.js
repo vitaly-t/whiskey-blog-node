@@ -1,3 +1,5 @@
+'use strict';
+
 const db = require('../models/_db').db,
       bcrypt = require('bcrypt');
 

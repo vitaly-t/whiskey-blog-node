@@ -1,3 +1,5 @@
+'use strict';
+
 const expect = require('chai').expect,
       assert = require('chai').assert,
       User = require('../models/user');
