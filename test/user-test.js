@@ -162,10 +162,6 @@ describe('User model', function () {
 
   it('Deletes a user', function (done) {
     let tmpId;
-    function handleError(e) {
-      assert.fail(0, 1, e);
-      done();
-    }
     User.create({
         name: 'Another User',
         username: 'yetanotheruser',
@@ -177,9 +173,7 @@ describe('User model', function () {
         tmpId = data.id;
         return User.delete(data.id);
       })
-      .then(() => {
-        return User.get(tmpId);
-      })
+      .then(() => User.get(tmpId))
       .then(() => {
         assert.fail(0, 1, 'Should not have been able to get removed user');
         done();

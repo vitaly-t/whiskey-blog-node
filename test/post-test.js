@@ -152,7 +152,29 @@ describe('Post model', () => {
       });
   });
 
-  it('Deletes a post');
+  it('Deletes a post', function (done) {
+    let tmpId;
+    Post.create({
+        title: 'Another Post',
+        author: userIds[0],
+        body: 'Another body'
+      })
+      .then(data => {
+        expect(data.id).to.be.a.number;
+        tmpId = data.id;
+        return Post.delete(data.id);
+      })
+      .then(() => Post.get(tmpId))
+      .then(() => {
+        assert.fail(0, 1, 'Should not have been able to get removed post');
+        done();
+      })
+      .catch(e => {
+        expect(e).to.exist;
+        done();
+      });
+  });
+
   it('Retrieves many posts');
   it('Gets posts based on criteria');
   it('Gets posts with specified ordering: title');
