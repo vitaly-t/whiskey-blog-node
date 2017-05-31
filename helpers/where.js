@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  * constructs a WHERE query of variable length, to be passed into pg-promise
  *

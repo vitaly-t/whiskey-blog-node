@@ -1,3 +1,5 @@
+'use strict';
+
 exports.validate = function (data, schema, required) {
   let result = { result: false, message: '' };
 
