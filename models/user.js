@@ -58,7 +58,7 @@ exports.create = function (data) {
     exports.createHash(data.password)
       .then(hash => {
         data.password_hash = hash;
-        db.one(cmd, data)
+        return db.one(cmd, data)
           .then(data => resolve(data))
           .catch(e => reject(e));
       })
@@ -68,11 +68,7 @@ exports.create = function (data) {
 
 // get a user by id
 exports.get = function (id) {
-  return new Promise((resolve, reject) => {
-    db.one('SELECT * FROM users WHERE id = $1', id)
-      .then(data => resolve(data))
-      .catch(e => reject(e));
-  });
+  return db.one('SELECT * FROM users WHERE id = $1', id);
 };
 
 // get user by arbitrary column(s)
@@ -162,9 +158,5 @@ exports.checkPassword = function (cleartext, hash) {
 
 // remove a user
 exports.delete = function (id) {
-  return new Promise((resolve, reject) => {
-    db.none('DELETE FROM users WHERE users.id = $1', id)
-      .then(() => resolve())
-      .catch(e => reject(e));
-  });
+  return db.none('DELETE FROM users WHERE users.id = $1', id);
 };

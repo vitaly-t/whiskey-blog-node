@@ -36,7 +36,7 @@ exports.create = function (data) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(data, ['title', 'author', 'body']);
     if (validation.result === false) {
-      reject(`Failed to create user: ${validation.message}`);
+      reject(`Failed to create post: ${validation.message}`);
     }
 
     const cmd = `INSERT INTO posts(
@@ -72,11 +72,7 @@ exports.create = function (data) {
 
 // get a post by id
 exports.get = function (id) {
-  return new Promise((resolve, reject) => {
-    db.one('SELECT * FROM posts WHERE id = $1', id)
-      .then(data => resolve(data))
-      .catch(e => reject(e));
-  });
+  return db.one('SELECT * FROM posts WHERE id = $1', id);
 };
 
 // get post by arbitrary column(s)
@@ -110,20 +106,14 @@ exports.alter = function (id, newData) {
                       author,
                       summary,
                       body`;
-        db.one(cmd, data)
-          .then(data => resolve(data))
-          .catch(e => reject(e));
+        return db.one(cmd, data);
       })
+      .then(data => resolve(data))
       .catch(e => reject(e));
-
   });
 };
 
 // remove a post
 exports.delete = function (id) {
-  return new Promise((resolve, reject) => {
-    db.none('DELETE FROM posts WHERE posts.id = $1', id)
-      .then(() => resolve())
-      .catch(e => reject(e));
-  });
+  return db.none('DELETE FROM posts WHERE posts.id = $1', id);
 };

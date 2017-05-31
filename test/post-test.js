@@ -29,13 +29,8 @@ describe('Post model', () => {
 
   after(function (done) {
     Promise.all(ids.map(id => Post.delete(id)))
-      .then(() => {
-        Promise.all(userIds.map(id => User.delete(id)))
-          .then(() => {
-            done();
-          })
-          .catch(e => console.error(e));
-      })
+      .then(() => Promise.all(userIds.map(id => User.delete(id))))
+      .then(() => done())
       .catch(e => console.error(e));
   });
 
@@ -131,14 +126,14 @@ describe('Post model', () => {
         published_at: new Date(),
         body: 'Body!'
       })
-    .then(data => {
-      assert.fail(0, 1, 'Should have required an author');
-      done();
-    })
-    .catch(e => {
-      expect(e).to.exist;
-      done();
-    });
+      .then(data => {
+        assert.fail(0, 1, 'Should have required an author');
+        done();
+      })
+      .catch(e => {
+        expect(e).to.exist;
+        done();
+      });
   });
 
   it('Alters a post', function () {
