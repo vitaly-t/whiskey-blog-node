@@ -86,7 +86,37 @@ exports.list = function (filters, orderBy) {
 
 // change a post
 exports.alter = function (id, newData) {
-  // tbd
+  return new Promise((resolve, reject) => {
+    const validation = exports.validate(newData);
+    if (validation.result === false) {
+      reject(`Failed to alter post: ${validation.message}`);
+    }
+
+    exports.get(id)
+      .then(existingData => {
+        const data = Object.assign(existingData, newData),
+              cmd = `UPDATE posts SET
+                      title = $(title),
+                      published_at = $(published_at),
+                      author = $(author),
+                      summary = $(summary),
+                      body = $(body)
+                    WHERE id = $(id)
+                    RETURNING
+                      id,
+                      title,
+                      created_at,
+                      published_at,
+                      author,
+                      summary,
+                      body`;
+        db.one(cmd, data)
+          .then(data => resolve(data))
+          .catch(e => reject(e));
+      })
+      .catch(e => reject(e));
+
+  });
 };
 
 // remove a post

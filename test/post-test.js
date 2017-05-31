@@ -141,7 +141,22 @@ describe('Post model', () => {
     });
   });
 
-  it('Alters a post');
+  it('Alters a post', function () {
+    return Post.create({
+        title: 'Another Post',
+        author: userIds[0],
+        summary: 'Another summary',
+        body: 'Another body'
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Post.alter(data.id, { title: 'New Title' });
+      })
+      .then(data => {
+        expect(data.title).to.equal('New Title');
+      });
+  });
+
   it('Deletes a post');
   it('Retrieves many posts');
   it('Gets posts based on criteria');

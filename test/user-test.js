@@ -129,11 +129,7 @@ describe('User model', function () {
       })
       .then(data => {
         ids.push(data.id);
-        return new Promise((resolve, reject) => {
-          User.alter(data.id, { name: 'New Name' })
-            .then(data => resolve(data))
-            .catch(e => reject(e));
-        });
+        return User.alter(data.id, { name: 'New Name' });
       })
       .then(data => {
         expect(data.name).to.equal('New Name');
