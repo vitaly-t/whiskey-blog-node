@@ -21,7 +21,10 @@ describe('Post model', () => {
       userIds.push(data.id);
       done();
     })
-    .catch(e => console.error(e));
+    .catch(e => {
+      console.error(e)
+      done();
+    });
   });
 
   after(function (done) {
@@ -53,6 +56,22 @@ describe('Post model', () => {
     expect(Post.validate({ summary: '' }).result).to.be.false;
     expect(Post.validate({ body: 'Body!' }).result).to.be.true;
     expect(Post.validate({ body: '' }).result).to.be.false;
+  });
+
+  it('Correctly handles required fields', function () {
+    const goodData = {
+            title: 'Title!',
+            author: 28,
+            summary: 'Summary!',
+            body: 'Body!'
+          },
+          badData = {
+            title: 'Title!',
+            body: 'Body!'
+          },
+          requiredFields = ['title', 'author', 'body'];
+    expect(Post.validate(goodData, requiredFields).result).to.be.true;
+    expect(Post.validate(badData, requiredFields).result).to.be.false;
   });
 
   it('Stores a complete post', function () {

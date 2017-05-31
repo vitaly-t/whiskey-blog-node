@@ -1,48 +1,33 @@
 'use strict';
 
 const db = require('../models/_db').db,
+      validation = require('../helpers/validation'),
       bcrypt = require('bcrypt');
 
-exports.validate = function (data, requiredFields) {
-  if (requiredFields) {
-    for (const field of requiredFields) {
-      if (!data.hasOwnProperty(field))
-        return { result: false, message: `Missing required field '${field}'`};
+exports.validate = function (data, required) {
+  const schema = {
+    name: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 256
+    },
+    username: {
+      types: ['string'],
+      minLength: 6,
+      maxLength: 256
+    },
+    password: {
+      types: ['string'],
+      minLength: 6
+    },
+    access_level: {
+      types: ['number'],
+      min: 0,
+      step: 1
     }
-  }
+  };
 
-  if (data.hasOwnProperty('name')) {
-    if (typeof data.name !== 'string')
-      return { result: false, message: 'Name should be a string'};
-    if (data.name.length < 1)
-      return { result: false, message: 'Name should be at least 1 character'};
-    if (data.name.length > 256)
-      return { result: false, message: 'Name can\'t be more than 256 characters'};
-  }
-  if (data.hasOwnProperty('username')) {
-    if (typeof data.username !== 'string')
-      return { result: false, message: 'Username should be a string'};
-    if (data.username.length < 6)
-      return { result: false, message: 'Username should be at least 6 characters'};
-    if (data.username.length > 256)
-      return { result: false, message: 'Username can\'t be more than 256 characters'};
-  }
-
-  if (data.hasOwnProperty('password')) {
-    if (typeof data.password !== 'string')
-      return { result: false, message: 'Password should be a string'};
-    if (data.password.length < 6)
-      return { result: false, message: 'Password should be at least 6 characters'};
-  }
-
-  if (data.hasOwnProperty('access_level')) {
-    if (typeof data.access_level !== 'number')
-      return { result: false, message: 'Access level should be a number'};
-    if (data.access_level < 0)
-      return { result: false, message: 'Lowest available access level is 0'};
-  }
-
-  return { result: true };
+  return validation.validate(data, schema, required);
 }
 
 // create a new user

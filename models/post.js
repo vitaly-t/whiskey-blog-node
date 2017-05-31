@@ -1,53 +1,40 @@
 'use strict';
 
-const db = require('../models/_db').db;
+const db = require('../models/_db').db,
+      validation = require('../helpers/validation');
 
-exports.validate = function (data, requiredFields) {
-  if (requiredFields) {
-    for (const field of requiredFields) {
-      if (!data.hasOwnProperty(field))
-        return { result: false, message: `Missing required field '${field}'`};
+exports.validate = function (data, required) {
+  const schema = {
+    title: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    published_at: {
+      types: ['date']
+    },
+    author: {
+      types: ['number'],
+      min: 0,
+      step: 1
+    },
+    summary: {
+      types: ['string'],
+      minLength: 1
+    },
+    body: {
+      types: ['string'],
+      minLength: 1
     }
-  }
+  };
 
-  if (data.hasOwnProperty('title')) {
-    if (typeof data.title !== 'string')
-      return { result: false, message: 'Title should be a string'};
-    if (data.title.length < 1)
-      return { result: false, message: 'Title needs to have at least 1 character'};
-    if (data.title.length > 512)
-      return { result: false, message: 'Title can\'t be more than 512 characters'};
-  }
-  if (data.hasOwnProperty('published_at')) {
-    if (typeof data.published_at.getMonth !== 'function')
-      return { result: false, message: 'Publish date should be a Date object'};
-  }
-  if (data.hasOwnProperty('author')) {
-    if (typeof data.author !== 'number' || data.author % 1 !== 0)
-      return { result: false, message: 'Author id must be an integer'};
-    if (data.author < 0)
-      return { result: false, message: 'Author id must be a positive integer'};
-  }
-  if (data.hasOwnProperty('summary')) {
-    if (typeof data.summary !== 'string')
-      return { result: false, message: 'Summary should be a string'};
-    if (data.summary.length < 1)
-      return { result: false, message: 'Summary will not accept an empty string'};
-  }
-  if (data.hasOwnProperty('body')) {
-    if (typeof data.body !== 'string')
-      return { result: false, message: 'Body should be a string'};
-    if (data.body.length < 1)
-      return { result: false, message: 'Body will not accept an empty string'};
-  }
-
-  return { result: true };
+  return validation.validate(data, schema, required);
 }
 
 // create a new post
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
-    const validation = exports.validate(data, ['title', 'author']);
+    const validation = exports.validate(data, ['title', 'author', 'body']);
     if (validation.result === false) {
       reject(`Failed to create user: ${validation.message}`);
     }

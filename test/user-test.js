@@ -11,7 +11,10 @@ describe('User model', function () {
   after(function (done) {
     Promise.all(ids.map(id => User.delete(id)))
       .then(() => done())
-      .catch(e => console.error(e));
+      .catch(e => {
+        console.error(e);
+        done();
+      });
   });
 
   it('Validates user information', function () {
