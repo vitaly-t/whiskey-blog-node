@@ -185,7 +185,13 @@ describe('User model', function () {
   });
 
   it('Gets a user by an alternate criterion', function () {
-    return User.find({ username: 'testuser' })
+    const filters = [
+      {
+        field: 'username',
+        value: 'testuser'
+      }
+    ];
+    return User.list({ filters: filters })
       .then(data => {
         expect(data.length).to.equal(1);
         // can't pass an object to deep.equals due to changing ids
@@ -199,7 +205,17 @@ describe('User model', function () {
   });
 
   it('Gets a user by multiple criteria', function () {
-    return User.find({ username: 'testuser', name: 'Test User' })
+    const filters = [
+      {
+        field: 'username',
+        value: 'testuser'
+      },
+      {
+        field: 'name',
+        value: 'Test User'
+      }
+    ];
+    return User.list({ filters: filters })
       .then(data => {
         expect(data.length).to.equal(1);
         expect(data[0].id).to.be.a.number;
@@ -212,7 +228,17 @@ describe('User model', function () {
   });
 
   it('Gets no users when criteria do not match', function () {
-    return User.find({ username: 'testuser', name: 'Bob' })
+    const filters = [
+      {
+        field: 'username',
+        value: 'testuser'
+      },
+      {
+        field: 'name',
+        value: 'Bob'
+      }
+    ];
+    return User.list({ filters: filters })
       .then(data => {
         expect(data.length).to.equal(0);
       });

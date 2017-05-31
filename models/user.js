@@ -2,6 +2,7 @@
 
 const db = require('../models/_db').db,
       validation = require('../helpers/validation'),
+      where = require('../helpers/where').where,
       bcrypt = require('bcrypt');
 
 exports.validate = function (data, required) {
@@ -71,21 +72,29 @@ exports.get = function (id) {
   return db.one('SELECT * FROM users WHERE id = $1', id);
 };
 
-// get user by arbitrary column(s)
-exports.find = function (data) {
-  return new Promise((resolve, reject) => {
-    let facets = [];
-    if (Object.keys(data).length === 0) {
-      reject('No data passed to User.find');
-    }
-    // compile a WHERE clause based on named parameters
-    for (const key of Object.keys(data)) {
-      facets.push(key + ' = $(' + key +')');
-    }
-    db.any('SELECT * FROM users WHERE ' + facets.join(' AND '), data)
-      .then(data => resolve(data))
-      .catch(e => reject(e));
-  });
+// list users, with options to page, order, and filter
+exports.list = function (options={}) {
+  const defaults = {
+    page: 1,
+    limit: 100,
+    orderBy: 'id',
+    order: 'ASC',
+    offset: function () {
+      return (this.page - 1) * this.limit;
+    },
+    filters: []
+  };
+
+  let params = Object.assign(defaults, options),
+      cmd = 'SELECT * FROM users';
+
+  if (params.filters.length > 0) {
+    cmd += where(params, 'filters');
+  }
+
+  cmd += ' ORDER BY $(orderBy~) $(order^) LIMIT $(limit) OFFSET $(offset)';
+
+  return db.any(cmd, params);
 };
 
 // change a user's info
@@ -135,7 +144,7 @@ exports.alter = function (id, newData) {
 // hash a password
 exports.createHash = function (cleartext) {
   return new Promise((resolve, reject) => {
-    bcrypt.hash(cleartext, 12, (err, hash) => {
+    bcrypt.hash(cleartext, 2, (err, hash) => {
       if (err) {
         reject(err);
       }
