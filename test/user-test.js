@@ -121,22 +121,20 @@ describe('User model', function () {
   });
 
   it('Alters a user', function () {
-    function alterUser(data) {
-      ids.push(data.id);
-      return new Promise((resolve, reject) => {
-        User.alter(data.id, { name: 'New Name' })
-          .then(data => resolve(data))
-          .catch(e => reject(e));
-      });
-    }
-
     return User.create({
         name: 'Another User',
         username: 'anotheruser',
         password: 'abcdef',
         access_level: 0
       })
-      .then(alterUser)
+      .then(data => {
+        ids.push(data.id);
+        return new Promise((resolve, reject) => {
+          User.alter(data.id, { name: 'New Name' })
+            .then(data => resolve(data))
+            .catch(e => reject(e));
+        });
+      })
       .then(data => {
         expect(data.name).to.equal('New Name');
       });
