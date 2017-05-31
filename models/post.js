@@ -1,7 +1,8 @@
 'use strict';
 
 const db = require('../models/_db').db,
-      validation = require('../helpers/validation');
+      validation = require('../helpers/validation'),
+      where = require('../helpers/where').where;
 
 exports.validate = function (data, required) {
   const schema = {
@@ -75,9 +76,29 @@ exports.get = function (id) {
   return db.one('SELECT * FROM posts WHERE id = $1', id);
 };
 
-// get post by arbitrary column(s)
-exports.list = function (filters, orderBy) {
-  // tbd
+// list posts, with options to page, order, and filter
+exports.list = function (options={}) {
+  const defaults = {
+    page: 1,
+    limit: 100,
+    orderBy: 'published_at',
+    order: 'DESC',
+    offset: function () {
+      return (this.page - 1) * this.limit;
+    },
+    filters: []
+  };
+
+  let params = Object.assign(defaults, options),
+      cmd = 'SELECT * FROM posts';
+
+  if (params.filters.length > 0) {
+    cmd += where(params, 'filters');
+  }
+
+  cmd += ' ORDER BY $(orderBy~) $(order^) LIMIT $(limit) OFFSET $(offset)';
+
+  return db.any(cmd, params);
 };
 
 // change a post

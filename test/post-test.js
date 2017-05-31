@@ -160,7 +160,7 @@ describe('Post model', () => {
         body: 'Another body'
       })
       .then(data => {
-        expect(data.id).to.be.a.number;
+        expect(data.id).to.be.a('number');
         tmpId = data.id;
         return Post.delete(data.id);
       })
@@ -175,9 +175,139 @@ describe('Post model', () => {
       });
   });
 
-  it('Retrieves many posts');
-  it('Gets posts based on criteria');
-  it('Gets posts with specified ordering: title');
-  it('Gets posts with specified ordering: publish date');
+  it('Retrieves many posts', function () {
+    return Post.create({
+        title: 'A Second Post',
+        author: userIds[0],
+        summary: 'Second post summary',
+        body: 'Second post body'
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Post.create({
+          title: 'A Third Post',
+          author: userIds[0],
+          summary: 'Third post summary',
+          body: 'Third post body',
+          published_at: new Date('2000-01-01')
+        });
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Post.list();
+      })
+      .then(data => {
+        expect(data).to.be.an('array');
+        expect(data.length).to.be.at.least(3);
+        for (let item of data) {
+          expect(item.id).to.be.a('number');
+          expect(item.title).to.be.a('string');
+          expect(item.created_at).to.be.a('date');
+          expect(item.published_at).to.be.a('date');
+          expect(item.published_at).to.be.a('date');
+          expect(item.author).to.be.a('number');
+        }
+      });
+  });
+
+  it('Gets posts with specified ordering: title', function () {
+    function getLetter(data, index) {
+      return data[index].title.toUpperCase().charCodeAt(0);
+    }
+    return Post.list({ orderBy: 'title', order: 'ASC' })
+      .then(data => {
+        expect(getLetter(data, 0)).to.be.at.most(getLetter(data, 1));
+        expect(getLetter(data, 1)).to.be.at.most(getLetter(data, 2));
+      })
+      .then(() => Post.list({ orderBy: 'title', order: 'DESC' }))
+      .then(data => {
+        expect(getLetter(data, 0)).to.be.at.least(getLetter(data, 1));
+        expect(getLetter(data, 1)).to.be.at.least(getLetter(data, 2));
+      });
+  });
+
+  it('Gets posts with specified ordering: publish date', function () {
+    function getPublished(data, index) {
+      return data[index].published_at.getTime();
+    }
+    return Post.list({ orderBy: 'published_at', order: 'DESC' })
+      .then(data => {
+        expect(getPublished(data, 0)).to.be.at.least(getPublished(data, 1));
+        expect(getPublished(data, 1)).to.be.at.least(getPublished(data, 2));
+      })
+      .then(() => Post.list({ orderBy: 'published_at', order: 'ASC' }))
+      .then(data => {
+        expect(getPublished(data, 0)).to.be.at.most(getPublished(data, 1));
+        expect(getPublished(data, 1)).to.be.at.most(getPublished(data, 2));
+      });
+  });
+
+  it('Gets posts based on value', function () {
+    const filters = [
+      {
+        field: 'title',
+        value: 'A Second Post'
+      }
+    ];
+    return Post.list({ filters: filters })
+      .then(data => {
+        expect(data.length).to.equal(1);
+      });
+  });
+
+  it('Gets posts based on relative value', function () {
+    const filters = [
+      {
+        field: 'published_at',
+        comparison: 'lt',
+        value: new Date('2015-01-01')
+      }
+    ];
+    return Post.list({ filters: filters })
+      .then(data => {
+        expect(data.length).to.equal(1);
+        expect(data[0].published_at.getTime()).to.be.below(filters[0].value.getTime());
+      });
+  });
+
+  it('Gets posts based on multiple criteria', function () {
+    const filters = [
+      {
+        field: 'title',
+        value: 'Filter Me'
+      },
+      {
+        field: 'published_at',
+        comparison: 'gt',
+        value: new Date('2010-01-01')
+      }
+    ];
+
+    return Post.create({
+        title: 'Filter Me',
+        author: userIds[0],
+        summary: 'First filter post summary',
+        body: 'First filter post body',
+        published_at: new Date('2012-01-01')
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Post.create({
+          title: 'Filter Me',
+          author: userIds[0],
+          summary: 'First filter post summary',
+          body: 'First filter post body',
+          published_at: new Date('2008-01-01')
+        });
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Post.list({ filters: filters });
+      })
+      .then(data => {
+        expect(data.length).to.equal(1);
+      });
+  });
+
   it('Handles a particular post not existing');
 });
