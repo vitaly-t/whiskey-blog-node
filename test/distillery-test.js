@@ -141,4 +141,34 @@ describe('Distillery model', () => {
         done();
       })
   });
+
+  it('Retrieves many Distilleries', function () {
+    return Distillery.create({
+        name: 'Test Distillery',
+        city: 'Lawrenceburg',
+        state: 'Kentucky'
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Distillery.create({
+          name: 'Another Test Distillery',
+          city: 'Lawrenceburg',
+          state: 'Kentucky'
+        });
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Distillery.list();
+      })
+      .then(data => {
+        expect(data).to.be.an('array');
+        expect(data.length).to.be.at.least(3);
+        for (let item of data) {
+          expect(item.id).to.be.a('number');
+          expect(item.name).to.be.a('string');
+          expect(item.city).to.be.a('string');
+          expect(item.state).to.be.a('string');
+        }
+      });
+  });
 });

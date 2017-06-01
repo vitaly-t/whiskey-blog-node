@@ -50,6 +50,31 @@ exports.get = function (id) {
   return db.one('SELECT * FROM drink_types WHERE id = $1', id);
 };
 
+// list drink types, with options to page, order, and filter
+exports.list = function (options={}) {
+  const defaults = {
+    page: 1,
+    limit: 100,
+    orderBy: 'singular',
+    order: 'ASC',
+    offset: function () {
+      return (this.page - 1) * this.limit;
+    },
+    filters: []
+  };
+
+  let params = Object.assign(defaults, options),
+      cmd = 'SELECT * FROM drink_types';
+
+  if (params.filters.length > 0) {
+    cmd += where(params, 'filters');
+  }
+
+  cmd += ' ORDER BY $(orderBy~) $(order^) LIMIT $(limit) OFFSET $(offset)';
+
+  return db.any(cmd, params);
+};
+
 // change a drink type
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {

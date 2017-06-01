@@ -141,4 +141,34 @@ describe('Rarity model', () => {
         done();
       })
   });
+
+  it('Retrieves many rarities', function () {
+    return Rarity.create({
+        name: 'Rare',
+        filter_name: 'hard-to-find',
+        sort_order: 30
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Rarity.create({
+          name: 'Ultra-rare',
+          filter_name: 'unobtanium',
+          sort_order: 40
+        });
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Rarity.list();
+      })
+      .then(data => {
+        expect(data).to.be.an('array');
+        expect(data.length).to.be.at.least(3);
+        for (let item of data) {
+          expect(item.id).to.be.a('number');
+          expect(item.name).to.be.a('string');
+          expect(item.filter_name).to.be.a('string');
+          expect(item.sort_order).to.be.a('number');
+        }
+      });
+  });
 });

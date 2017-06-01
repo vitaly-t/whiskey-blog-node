@@ -126,4 +126,31 @@ describe('DrinkType model', () => {
         done();
       })
   });
+
+  it('Retrieves many drink types', function () {
+    return DrinkType.create({
+        singular: 'American single-malt',
+        plural: 'American single-malts'
+      })
+      .then(data => {
+        ids.push(data.id);
+        return DrinkType.create({
+          singular: 'Scotch: Blended',
+          plural: 'blended Scotches'
+        });
+      })
+      .then(data => {
+        ids.push(data.id);
+        return DrinkType.list();
+      })
+      .then(data => {
+        expect(data).to.be.an('array');
+        expect(data.length).to.be.at.least(3);
+        for (let item of data) {
+          expect(item.id).to.be.a('number');
+          expect(item.singular).to.be.a('string');
+          expect(item.plural).to.be.a('string');
+        }
+      });
+  });
 });

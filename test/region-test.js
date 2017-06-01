@@ -142,4 +142,34 @@ describe('Region model', () => {
         done();
       })
   });
+
+  it('Retrieves many Regions', function () {
+    return Region.create({
+        name: 'Scotland: Highlands',
+        filter_name: 'the Highlands of Scotland',
+        sort_order: 30
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Region.create({
+          name: 'Scotland: Lowlands',
+          filter_name: 'the Lowlands of Scotland',
+          sort_order: 40
+        });
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Region.list();
+      })
+      .then(data => {
+        expect(data).to.be.an('array');
+        expect(data.length).to.be.at.least(3);
+        for (let item of data) {
+          expect(item.id).to.be.a('number');
+          expect(item.name).to.be.a('string');
+          expect(item.filter_name).to.be.a('string');
+          expect(item.sort_order).to.be.a('number');
+        }
+      });
+  });
 });

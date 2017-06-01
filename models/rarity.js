@@ -57,6 +57,31 @@ exports.get = function (id) {
   return db.one('SELECT * FROM rarities WHERE id = $1', id);
 };
 
+// list rarities, with options to page, order, and filter
+exports.list = function (options={}) {
+  const defaults = {
+    page: 1,
+    limit: 100,
+    orderBy: 'sort_order',
+    order: 'ASC',
+    offset: function () {
+      return (this.page - 1) * this.limit;
+    },
+    filters: []
+  };
+
+  let params = Object.assign(defaults, options),
+      cmd = 'SELECT * FROM rarities';
+
+  if (params.filters.length > 0) {
+    cmd += where(params, 'filters');
+  }
+
+  cmd += ' ORDER BY $(orderBy~) $(order^) LIMIT $(limit) OFFSET $(offset)';
+
+  return db.any(cmd, params);
+};
+
 // change a rarity
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
