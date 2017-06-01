@@ -309,5 +309,15 @@ describe('Post model', () => {
       });
   });
 
-  it('Handles a particular post not existing');
+  it('Handles a particular post not existing', function (done) {
+    Post.get(1234567)
+      .then(data => {
+        assert.fail(0, 1, 'Should have rejected on failed get')
+        done();
+      })
+      .catch(e => {
+        expect(e).to.exist;
+        done();
+      })
+  });
 });
