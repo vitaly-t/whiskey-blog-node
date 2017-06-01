@@ -144,7 +144,7 @@ exports.alter = function (id, newData) {
 // hash a password
 exports.createHash = function (cleartext) {
   return new Promise((resolve, reject) => {
-    bcrypt.hash(cleartext, 2, (err, hash) => {
+    bcrypt.hash(cleartext, 12, (err, hash) => {
       if (err) {
         reject(err);
       }
