@@ -29,6 +29,7 @@
     - ? feature image (image) - viz tbd
     - distiller (distillery)
     - bottler (distillery)
+    - region (region)
     - type (drink type)
     - proof (float)
     - retail price (float/currency)
@@ -46,12 +47,15 @@
     - display name (string)
     - filter name (string)
     - sort order (integer)
+- region
+    - display name (string)
+    - filter name (string)
+    - sort order (integer)
 - distillery
     - name (string)
     - type (choice: distiller/bottler/ndp) (store as int?)
     - state (string)
     - city (string)
-    - region (string)
     - location (latlong)
 - user
     - name (string)
