@@ -101,7 +101,7 @@ describe('Post model', () => {
         expect(data.id).to.be.a.number;
         ids.push(data.id);
         expect(data.title).to.equal('My Post Title');
-        expect(data.author).to.be.a.number;
+        expect(data.author.id).to.be.a.number;
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic post.');
       });
@@ -112,7 +112,7 @@ describe('Post model', () => {
       .then(data => {
         expect(data.id).to.equal(ids[0]);
         expect(data.title).to.equal('My Post Title');
-        expect(data.author).to.be.a.number;
+        expect(data.author.id).to.be.a.number;
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic post.');
         expect(data.created_at.getMonth).to.be.a.function;

@@ -150,13 +150,8 @@ describe('Review model', () => {
         expect(data.title).to.equal('Elijah Craig');
         expect(data.subtitle).to.equal('Small Batch Bourbon');
         expect(data.published_at).to.be.a('date');
-        expect(data.author).to.equal(userIds[0]);
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic review.');
-        expect(data.distillery).to.equal(distilleryIds[0]);
-        expect(data.region).to.equal(regionIds[0]);
-        expect(data.drink_type).to.equal(drinkTypeIds[0]);
-        expect(data.rarity).to.equal(rarityIds[0]);
         expect(data.proof).to.equal(94);
         expect(data.manufacturer_price).to.equal(30);
         expect(data.mashbill_description).to.equal('Bourbon');
@@ -171,13 +166,8 @@ describe('Review model', () => {
         expect(data.title).to.equal('Elijah Craig');
         expect(data.subtitle).to.equal('Small Batch Bourbon');
         expect(data.published_at).to.be.a('date');
-        expect(data.author).to.equal(userIds[0]);
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic review.');
-        expect(data.distillery).to.equal(distilleryIds[0]);
-        expect(data.region).to.equal(regionIds[0]);
-        expect(data.drink_type).to.equal(drinkTypeIds[0]);
-        expect(data.rarity).to.equal(rarityIds[0]);
         expect(data.proof).to.equal(94);
         expect(data.manufacturer_price).to.equal(30);
         expect(data.mashbill_description).to.equal('Bourbon');
@@ -272,7 +262,6 @@ describe('Review model', () => {
           expect(item.created_at).to.be.a('date');
           expect(item.published_at).to.be.a('date');
           expect(item.published_at).to.be.a('date');
-          expect(item.author).to.be.a('number');
         }
       });
   });
@@ -337,6 +326,20 @@ describe('Review model', () => {
       });
   });
 
+  it('Gets Reviews based on id value', function () {
+    // we don't want to have a nested list so that ids are quickly queryable
+    const filters = [
+      {
+        field: 'rarity',
+        value: rarityIds[0]
+      }
+    ];
+    return Review.list({ filters: filters })
+      .then(data => {
+        expect(data.length).to.equal(1);
+      });
+  });
+
   it('Gets Reviews based on multiple criteria', function () {
     const filters = [
       {
@@ -386,5 +389,12 @@ describe('Review model', () => {
         expect(e).to.exist;
         done();
       })
+  });
+
+  it('Gets the data of associated types', function () {
+    return Review.get(ids[0])
+      .then(data => {
+        expect(data.distillery.name).to.equal('Test Distillery');
+      });
   });
 });

@@ -71,12 +71,26 @@ exports.create = function (data) {
   });
 };
 
-// get a post by id
+// get a deeply-nested post by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM posts WHERE id = $1', id);
+  return db.task(t => {
+    let result;
+
+    // pg-promise doesn't automatically map joins to nested objects, so we're
+    // doing this thing manually when getting a single object
+    return t.one('SELECT * FROM posts WHERE posts.id = $1', id)
+      .then(post => {
+        result = post;
+        return t.one('SELECT * FROM users WHERE users.id = $1', result.author)
+      })
+      .then(user => {
+        result.author = user;
+        return result;
+      });
+  });
 };
 
-// list posts, with options to page, order, and filter
+// shallow list posts, with options to page, order, and filter
 exports.list = function (options={}) {
   const defaults = {
     page: 1,
@@ -111,8 +125,7 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const data = Object.assign(existingData, newData),
-              cmd = `UPDATE posts SET
+        const cmd = `UPDATE posts SET
                       title = $(title),
                       published_at = $(published_at),
                       author = $(author),
@@ -127,7 +140,17 @@ exports.alter = function (id, newData) {
                       author,
                       summary,
                       body`;
-        return db.one(cmd, data);
+
+        // returned related authors have been expanded, and we can't reassign them in that state
+        if (existingData.author && typeof existingData.author === 'object') {
+          existingData.author = existingData.author.id;
+        } else if (typeof existingData.author === 'undefined') {
+          existingData.author = null;
+        }
+
+        newData = Object.assign(existingData, newData);
+
+        return db.one(cmd, newData);
       })
       .then(data => resolve(data))
       .catch(e => reject(e));

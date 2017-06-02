@@ -184,12 +184,42 @@ exports.create = function (data) {
   });
 };
 
-// get a review by id
+// get a deeply-nested review by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM reviews WHERE id = $1', id);
+  return db.task(t => {
+    let result;
+
+    // pg-promise doesn't automatically map joins to nested objects, so we're
+    // doing this thing manually when getting a single object
+    return t.one('SELECT * FROM reviews WHERE reviews.id = $1', id)
+      .then(review => {
+        result = review;
+        return t.one('SELECT * FROM users WHERE users.id = $1', result.author)
+      })
+      .then(user => {
+        result.author = user;
+        return t.oneOrNone('SELECT * FROM distilleries WHERE distilleries.id = $1', result.distillery);
+      })
+      .then(distillery => {
+        result.distillery = distillery;
+        return t.oneOrNone('SELECT * FROM regions WHERE regions.id = $1', result.region);
+      })
+      .then(region => {
+        result.region = region;
+        return t.oneOrNone('SELECT * FROM drink_types WHERE drink_types.id = $1', result.drink_type);
+      })
+      .then(drink_type => {
+        result.drink_type = drink_type;
+        return t.oneOrNone('SELECT * FROM rarities WHERE rarities.id = $1', result.rarity);
+      })
+      .then(rarity => {
+        result.rarity = rarity;
+        return result;
+      });
+  });
 };
 
-// list reviews, with options to page, order, and filter
+// shallow list reviews, with options to page, order, and filter
 exports.list = function (options={}) {
   const defaults = {
     page: 1,
@@ -224,8 +254,7 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const data = Object.assign(existingData, newData),
-              cmd = `UPDATE reviews SET
+        const cmd = `UPDATE reviews SET
                       title = $(title),
                       subtitle = $(subtitle),
                       published_at = $(published_at),
@@ -264,7 +293,18 @@ exports.alter = function (id, newData) {
                       mashbill_description,
                       mashbill_recipe,
                       rating`;
-        return db.one(cmd, data);
+
+        // returned related objects have been expanded, and we can't reassign them in that state
+        for (let relation of ['author', 'distillery', 'region', 'drink_type', 'rarity']) {
+          if (existingData[relation] && typeof existingData[relation] === 'object') {
+            existingData[relation] = existingData[relation].id;
+          } else if (typeof existingData[relation] === 'undefined') {
+            existingData[relation] = null;
+          }
+        }
+
+        newData = Object.assign(existingData, newData);
+        return db.one(cmd, newData);
       })
       .then(data => resolve(data))
       .catch(e => reject(e));
