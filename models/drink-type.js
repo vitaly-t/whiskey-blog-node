@@ -47,7 +47,7 @@ exports.create = function (data) {
 
 // get a drink type by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM drink_types WHERE id = $1', id);
+  return db.oneOrNone('SELECT * FROM drink_types WHERE id = $1', id);
 };
 
 // list drink types, with options to page, order, and filter

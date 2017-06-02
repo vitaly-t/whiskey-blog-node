@@ -2,7 +2,12 @@
 
 const db = require('../models/_db').db,
       validation = require('../helpers/validation'),
-      where = require('../helpers/where').where;
+      where = require('../helpers/where').where,
+      User = require('./user'),
+      Distillery = require('./distillery'),
+      Region = require('./region'),
+      DrinkType = require('./drink-type'),
+      Rarity = require('./rarity');
 
 exports.validate = function (data, required) {
   const schema = {
@@ -186,37 +191,35 @@ exports.create = function (data) {
 
 // get a deeply-nested review by id
 exports.get = function (id) {
-  return db.task(t => {
-    let result;
+  let result;
 
-    // pg-promise doesn't automatically map joins to nested objects, so we're
-    // doing this thing manually when getting a single object
-    return t.one('SELECT * FROM reviews WHERE reviews.id = $1', id)
-      .then(review => {
-        result = review;
-        return t.one('SELECT * FROM users WHERE users.id = $1', result.author)
-      })
-      .then(user => {
-        result.author = user;
-        return t.oneOrNone('SELECT * FROM distilleries WHERE distilleries.id = $1', result.distillery);
-      })
-      .then(distillery => {
-        result.distillery = distillery;
-        return t.oneOrNone('SELECT * FROM regions WHERE regions.id = $1', result.region);
-      })
-      .then(region => {
-        result.region = region;
-        return t.oneOrNone('SELECT * FROM drink_types WHERE drink_types.id = $1', result.drink_type);
-      })
-      .then(drink_type => {
-        result.drink_type = drink_type;
-        return t.oneOrNone('SELECT * FROM rarities WHERE rarities.id = $1', result.rarity);
-      })
-      .then(rarity => {
-        result.rarity = rarity;
-        return result;
-      });
-  });
+  // pg-promise doesn't automatically map joins to nested objects, so we're
+  // doing this thing manually when getting a single object
+  return db.oneOrNone('SELECT * FROM reviews WHERE reviews.id = $1', id)
+    .then(review => {
+      result = review;
+      return User.get(result.author);
+    })
+    .then(user => {
+      result.author = user;
+      return Distillery.get(result.distillery);
+    })
+    .then(distillery => {
+      result.distillery = distillery;
+      return Region.get(result.region);
+    })
+    .then(region => {
+      result.region = region;
+      return DrinkType.get(result.drink_type);
+    })
+    .then(drink_type => {
+      result.drink_type = drink_type;
+      return Rarity.get(result.rarity);
+    })
+    .then(rarity => {
+      result.rarity = rarity;
+      return result;
+    });
 };
 
 // shallow list reviews, with options to page, order, and filter

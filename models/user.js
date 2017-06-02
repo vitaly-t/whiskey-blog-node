@@ -53,7 +53,6 @@ exports.create = function (data) {
                    id,
                    name,
                    username,
-                   password_hash,
                    access_level`;
 
     exports.createHash(data.password)
@@ -69,7 +68,16 @@ exports.create = function (data) {
 
 // get a user by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM users WHERE id = $1', id);
+  return db.oneOrNone('SELECT id, name, username, access_level FROM users WHERE id = $1', id);
+};
+
+// get a user's password hash
+let getHash = function (id) {
+  return new Promise((resolve, reject) => {
+    db.one('SELECT password_hash FROM users WHERE id = $1', id)
+      .then(data => resolve(data.password_hash))
+      .catch(e => reject(e));
+  });
 };
 
 // list users, with options to page, order, and filter
@@ -86,7 +94,7 @@ exports.list = function (options={}) {
   };
 
   let params = Object.assign(defaults, options),
-      cmd = 'SELECT * FROM users';
+      cmd = 'SELECT id, name, username, access_level FROM users';
 
   if (params.filters.length > 0) {
     cmd += where(params, 'filters');
@@ -100,11 +108,18 @@ exports.list = function (options={}) {
 // change a user's info
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
+
     function updateUser() {
+      let oldData;
       exports.get(id)
-        .then(existingData => {
-          const data = Object.assign(existingData, newData),
-                cmd = `UPDATE users SET
+        .then(data => {
+          oldData = data;
+          return getHash(id);
+        })
+        .then(hash => {
+          oldData.password_hash = hash;
+          let data = Object.assign(oldData, newData);
+          const cmd = `UPDATE users SET
                         name = $(name),
                         username = $(username),
                         password_hash = $(password_hash),
@@ -114,10 +129,9 @@ exports.alter = function (id, newData) {
                         id,
                         name,
                         username,
-                        password_hash,
                         access_level`;
           db.one(cmd, data)
-            .then(data => resolve(data))
+            .then(result => resolve(result))
             .catch(e => reject(e));
         })
         .catch(e => reject(e));
@@ -154,13 +168,15 @@ exports.createHash = function (cleartext) {
 };
 
 // check a password
-exports.checkPassword = function (cleartext, hash) {
+exports.checkPassword = function (id, cleartext) {
   return new Promise((resolve, reject) => {
-    bcrypt.compare(cleartext, hash, (err, result) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(result);
+    getHash(id).then(hash => {
+      bcrypt.compare(cleartext, hash, (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
     });
   });
 };

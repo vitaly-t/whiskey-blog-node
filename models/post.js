@@ -2,7 +2,8 @@
 
 const db = require('../models/_db').db,
       validation = require('../helpers/validation'),
-      where = require('../helpers/where').where;
+      where = require('../helpers/where').where,
+      User = require('./user');
 
 exports.validate = function (data, required) {
   const schema = {
@@ -73,21 +74,19 @@ exports.create = function (data) {
 
 // get a deeply-nested post by id
 exports.get = function (id) {
-  return db.task(t => {
-    let result;
+  let result;
 
-    // pg-promise doesn't automatically map joins to nested objects, so we're
-    // doing this thing manually when getting a single object
-    return t.one('SELECT * FROM posts WHERE posts.id = $1', id)
-      .then(post => {
-        result = post;
-        return t.one('SELECT * FROM users WHERE users.id = $1', result.author)
-      })
-      .then(user => {
-        result.author = user;
-        return result;
-      });
-  });
+  // pg-promise doesn't automatically map joins to nested objects, so we're
+  // doing this thing manually when getting a single object
+  return db.oneOrNone('SELECT * FROM posts WHERE posts.id = $1', id)
+    .then(post => {
+      result = post;
+      return User.get(result.author)
+    })
+    .then(user => {
+      result.author = user;
+      return result;
+    });
 };
 
 // shallow list posts, with options to page, order, and filter

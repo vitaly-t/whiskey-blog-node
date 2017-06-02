@@ -54,7 +54,7 @@ exports.create = function (data) {
 
 // get a region by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM regions WHERE id = $1', id);
+  return db.oneOrNone('SELECT * FROM regions WHERE id = $1', id);
 };
 
 // list regions, with options to page, order, and filter

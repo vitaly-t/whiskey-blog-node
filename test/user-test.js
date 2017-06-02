@@ -78,7 +78,6 @@ describe('User model', function () {
         ids.push(data.id);
         expect(data.name).to.equal('Test User');
         expect(data.username).to.equal('testuser');
-        expect(data.password_hash.length).to.equal(60);
         expect(data.access_level).to.equal(1);
       });
   });
@@ -90,7 +89,6 @@ describe('User model', function () {
         expect(data.id).to.equal(ids[0]);
         expect(data.name).to.be.a.string;
         expect(data.username).to.be.a.string;
-        expect(data.password_hash).to.be.a.string;
       });
   });
 
@@ -140,8 +138,6 @@ describe('User model', function () {
   });
 
   it('Changes a user\'s password', function () {
-    let tmpHash;
-
     return User.create({
         name: 'Another User',
         username: 'discontent_with_pw',
@@ -150,13 +146,17 @@ describe('User model', function () {
       })
       .then(data => {
         ids.push(data.id);
-        tmpHash = data.password_hash;
-        expect(tmpHash.length).to.equal(60);
-        return User.alter(data.id, { password: 'updatedpassword' });
+        return User.checkPassword(data.id, 'originalpassword');
+      })
+      .then(result => {
+        expect(result).to.be.true;
+        return User.alter(ids[ids.length - 1], { password: 'updatedpassword' });
       })
       .then(data => {
-        expect(data.password_hash.length).to.equal(60);
-        expect(data.password_hash).to.not.equal(tmpHash);
+        return User.checkPassword(data.id, 'updatedpassword');
+      })
+      .then(result => {
+        expect(result).to.be.true;
       });
   });
 
@@ -198,8 +198,6 @@ describe('User model', function () {
         expect(data[0].id).to.be.a.number;
         expect(data[0].name).to.equal('Test User');
         expect(data[0].username).to.equal('testuser');
-        expect(data[0].password_hash).to.be.a.string;
-        expect(data[0].password_hash.length).to.equal(60);
         expect(data[0].access_level).to.equal(1);
       });
   });
@@ -221,8 +219,6 @@ describe('User model', function () {
         expect(data[0].id).to.be.a.number;
         expect(data[0].name).to.equal('Test User');
         expect(data[0].username).to.equal('testuser');
-        expect(data[0].password_hash).to.be.a.string;
-        expect(data[0].password_hash.length).to.equal(60);
         expect(data[0].access_level).to.equal(1);
       });
   });
@@ -253,16 +249,32 @@ describe('User model', function () {
   });
 
   it('Checks a correct password', function () {
-    return User.createHash('password')
-      .then(hash => User.checkPassword('password', hash))
+    return User.create({
+        name: 'Password User',
+        username: 'passworduser',
+        password: 'great+password',
+        access_level: 0
+      })
+      .then(data => {
+        ids.push(data.id);
+        return User.checkPassword(data.id, 'great+password');
+      })
       .then(result => {
         expect(result).to.be.true;
       });
   });
 
   it('Checks an incorrect password', function () {
-    return User.createHash('password')
-      .then(hash => User.checkPassword('passw0rd', hash))
+    return User.create({
+        name: 'Password User 2',
+        username: 'passworduser2',
+        password: 'great+password2',
+        access_level: 0
+      })
+      .then(data => {
+        ids.push(data.id);
+        return User.checkPassword(data.id, 'abc1234');
+      })
       .then(result => {
         expect(result).to.be.false;
       });

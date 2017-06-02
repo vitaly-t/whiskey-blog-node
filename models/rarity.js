@@ -54,7 +54,7 @@ exports.create = function (data) {
 
 // get a rarity by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM rarities WHERE id = $1', id);
+  return db.oneOrNone('SELECT * FROM rarities WHERE id = $1', id);
 };
 
 // list rarities, with options to page, order, and filter

@@ -55,7 +55,7 @@ exports.create = function (data) {
 
 // get a distillery by id
 exports.get = function (id) {
-  return db.one('SELECT * FROM distilleries WHERE id = $1', id);
+  return db.oneOrNone('SELECT * FROM distilleries WHERE id = $1', id);
 };
 
 // list distilleries, with options to page, order, and filter
