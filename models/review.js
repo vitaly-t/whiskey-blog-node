@@ -1,0 +1,258 @@
+'use strict';
+
+const db = require('../models/_db').db,
+      validation = require('../helpers/validation'),
+      where = require('../helpers/where').where;
+
+exports.validate = function (data, required) {
+  const schema = {
+    title: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    subtitle: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    published_at: {
+      types: ['date']
+    },
+    author: {
+      types: ['number'],
+      min: 0,
+      step: 1
+    },
+    summary: {
+      types: ['string'],
+      minLength: 1
+    },
+    body: {
+      types: ['string'],
+      minLength: 1
+    },
+    distillery: {
+      types: ['number'],
+      min: 0,
+      step: 1
+    },
+    region: {
+      types: ['number'],
+      min: 0,
+      step: 1
+    },
+    drink_type: {
+      types: ['number'],
+      min: 0,
+      step: 1
+    },
+    rarity: {
+      types: ['number'],
+      min: 0,
+      step: 1
+    },
+    proof: {
+      types: ['number'],
+      min: 0,
+      max: 200
+    },
+    age: {
+      types: ['number'],
+      min: 0,
+      max: 100
+    },
+    manufacturer_price: {
+      types: ['number'],
+      min: 0,
+      max: 999999.99
+    },
+    realistic_price: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 256
+    },
+    mashbill_description: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    mashbill_recipe: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    rating: {
+      types: ['number']
+    }
+  };
+
+  return validation.validate(data, schema, required);
+}
+
+// create a new review
+exports.create = function (data) {
+  return new Promise((resolve, reject) => {
+    const validation = exports.validate(data, ['title', 'author', 'body']);
+    if (validation.result === false) {
+      reject(`Failed to create review: ${validation.message}`);
+    }
+
+    const cmd = `INSERT INTO reviews(
+                   title,
+                   subtitle,
+                   published_at,
+                   author,
+                   summary,
+                   body,
+                   distillery,
+                   region,
+                   drink_type,
+                   rarity,
+                   proof,
+                   age,
+                   manufacturer_price,
+                   realistic_price,
+                   mashbill_description,
+                   mashbill_recipe,
+                   rating
+                 ) VALUES (
+                   $(title),
+                   $(subtitle),
+                   $(published_at),
+                   $(author),
+                   $(summary),
+                   $(body),
+                   $(distillery),
+                   $(region),
+                   $(drink_type),
+                   $(rarity),
+                   $(proof),
+                   $(age),
+                   $(manufacturer_price),
+                   $(realistic_price),
+                   $(mashbill_description),
+                   $(mashbill_recipe),
+                   $(rating)
+                 ) RETURNING
+                   id,
+                   title,
+                   subtitle,
+                   created_at,
+                   published_at,
+                   author,
+                   summary,
+                   body,
+                   distillery,
+                   region,
+                   drink_type,
+                   rarity,
+                   proof,
+                   age,
+                   manufacturer_price,
+                   realistic_price,
+                   mashbill_description,
+                   mashbill_recipe,
+                   rating`;
+
+    if (!data.published_at) {
+      data.published_at = new Date();
+    }
+
+    db.one(cmd, data)
+      .then(data => resolve(data))
+      .catch(e => reject(e));
+  });
+};
+
+// get a review by id
+exports.get = function (id) {
+  return db.one('SELECT * FROM reviews WHERE id = $1', id);
+};
+
+// list reviews, with options to page, order, and filter
+exports.list = function (options={}) {
+  const defaults = {
+    page: 1,
+    limit: 100,
+    orderBy: 'published_at',
+    order: 'DESC',
+    offset: function () {
+      return (this.page - 1) * this.limit;
+    },
+    filters: []
+  };
+
+  let params = Object.assign(defaults, options),
+      cmd = 'SELECT * FROM reviews';
+
+  if (params.filters.length > 0) {
+    cmd += where(params, 'filters');
+  }
+
+  cmd += ' ORDER BY $(orderBy~) $(order^) LIMIT $(limit) OFFSET $(offset)';
+
+  return db.any(cmd, params);
+};
+
+// change a review
+exports.alter = function (id, newData) {
+  return new Promise((resolve, reject) => {
+    const validation = exports.validate(newData);
+    if (validation.result === false) {
+      reject(`Failed to alter review: ${validation.message}`);
+    }
+
+    exports.get(id)
+      .then(existingData => {
+        const data = Object.assign(existingData, newData),
+              cmd = `UPDATE reviews SET
+                      title = $(title),
+                      subtitle = $(subtitle),
+                      published_at = $(published_at),
+                      author = $(author),
+                      summary = $(summary),
+                      body = $(body),
+                      distillery = $(distillery),
+                      region = $(region),
+                      drink_type = $(drink_type),
+                      rarity = $(rarity),
+                      proof = $(proof),
+                      age = $(age),
+                      manufacturer_price = $(manufacturer_price),
+                      realistic_price = $(realistic_price),
+                      mashbill_description = $(mashbill_description),
+                      mashbill_recipe = $(mashbill_recipe),
+                      rating = $(rating)
+                    WHERE id = $(id)
+                    RETURNING
+                      id,
+                      title,
+                      subtitle,
+                      created_at,
+                      published_at,
+                      author,
+                      summary,
+                      body,
+                      distillery,
+                      region,
+                      drink_type,
+                      rarity,
+                      proof,
+                      age,
+                      manufacturer_price,
+                      realistic_price,
+                      mashbill_description,
+                      mashbill_recipe,
+                      rating`;
+        return db.one(cmd, data);
+      })
+      .then(data => resolve(data))
+      .catch(e => reject(e));
+  });
+};
+
+// remove a review
+exports.delete = function (id) {
+  return db.none('DELETE FROM reviews WHERE reviews.id = $1', id);
+};
