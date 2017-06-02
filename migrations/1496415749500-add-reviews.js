@@ -19,7 +19,7 @@ exports.up = function(next) {
       rarity integer REFERENCES rarities(id),
       proof real,
       age real,
-      manufacturer_price numeric(8, 2),
+      manufacturer_price real,
       realistic_price varchar(256),
       mashbill_description varchar(512),
       mashbill_recipe varchar(512),

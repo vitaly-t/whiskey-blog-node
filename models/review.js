@@ -155,9 +155,28 @@ exports.create = function (data) {
                    mashbill_recipe,
                    rating`;
 
-    if (!data.published_at) {
-      data.published_at = new Date();
+
+    const defaultData = {
+      title: null,
+      subtitle: null,
+      published_at: new Date(),
+      author: null,
+      summary: null,
+      body: null,
+      distillery: null,
+      region: null,
+      drink_type: null,
+      rarity: null,
+      proof: null,
+      age: null,
+      manufacturer_price: null,
+      realistic_price: null,
+      mashbill_description: null,
+      mashbill_recipe: null,
+      rating: null
     }
+
+    data = Object.assign(defaultData, data);
 
     db.one(cmd, data)
       .then(data => resolve(data))
