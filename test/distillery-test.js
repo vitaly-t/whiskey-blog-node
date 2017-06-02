@@ -15,7 +15,7 @@ describe('Distillery model', () => {
   });
 
   it('Validates names', function () {
-    expect(Distillery.validate({ name: 'Buffalo Trace' }).result).to.be.true;
+    expect(Distillery.validate({ name: 'Maker\'s Mark' }).result).to.be.true;
     expect(Distillery.validate({ name: 'Allt a\' Bhainne' }).result).to.be.true;
     expect(Distillery.validate({ name: '' }).result).to.be.false;
     expect(Distillery.validate({ name: 29 }).result).to.be.false;
@@ -40,12 +40,12 @@ describe('Distillery model', () => {
 
   it('Correctly handles required fields', function () {
     const goodData = {
-            name: 'Heaven Hill',
+            name: 'A Test Distillery',
             city: 'Bardstown',
             state: 'Kentucky'
           },
           badData = {
-            name: 'Heaven Hill'
+            name: 'A Test Distillery'
           },
           requiredFields = ['name', 'city', 'state'];
     expect(Distillery.validate(goodData, requiredFields).result).to.be.true;
@@ -54,14 +54,14 @@ describe('Distillery model', () => {
 
   it('Stores a Distillery', function () {
     return Distillery.create({
-        name: 'Buffalo Trace',
+        name: 'Maker\'s Mark',
         city: 'Frankfort',
         state: 'Kentucky'
       })
       .then(data => {
         expect(data.id).to.be.a.number;
         ids.push(data.id);
-        expect(data.name).to.equal('Buffalo Trace');
+        expect(data.name).to.equal('Maker\'s Mark');
         expect(data.city).to.equal('Frankfort');
         expect(data.state).to.equal('Kentucky');
       });
@@ -71,7 +71,7 @@ describe('Distillery model', () => {
     return Distillery.get(ids[0])
       .then(data => {
         expect(data.id).to.equal(ids[0]);
-        expect(data.name).to.equal('Buffalo Trace');
+        expect(data.name).to.equal('Maker\'s Mark');
         expect(data.city).to.equal('Frankfort');
         expect(data.state).to.equal('Kentucky');
       });
