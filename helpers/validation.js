@@ -49,6 +49,14 @@ exports.validate = function (data, schema, required) {
       }
     }
 
+    // string regex
+    if (schema[key].hasOwnProperty('regex')) {
+      if (!schema[key].regex.test(field)) {
+        result.message = `Field ${field} should conform to ${schema[key].regex.toString()}`;
+        return result;
+      }
+    }
+
     // number min, max, and step constraints
     if (typeof field === 'number' && schema[key].hasOwnProperty('min')) {
       if (field < schema[key].min) {

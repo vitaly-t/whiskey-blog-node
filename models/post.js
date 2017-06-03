@@ -3,6 +3,7 @@
 const db = require('../models/_db').db,
       validation = require('../helpers/validation'),
       where = require('../helpers/where').where,
+      slugFromString = require('../helpers/slug').fromString,
       User = require('./user');
 
 exports.validate = function (data, required) {
@@ -11,6 +12,12 @@ exports.validate = function (data, required) {
       types: ['string'],
       minLength: 1,
       maxLength: 512
+    },
+    slug: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 128,
+      regex: /^[a-zA-Z][a-zA-Z0-9\-]*$/
     },
     published_at: {
       types: ['date']
@@ -43,12 +50,14 @@ exports.create = function (data) {
 
     const cmd = `INSERT INTO posts(
                    title,
+                   slug,
                    published_at,
                    author,
                    summary,
                    body
                  ) VALUES (
                    $(title),
+                   $(slug),
                    $(published_at),
                    $(author),
                    $(summary),
@@ -56,15 +65,25 @@ exports.create = function (data) {
                  ) RETURNING
                    id,
                    title,
+                   slug,
                    created_at,
                    published_at,
                    author,
                    summary,
                    body`;
 
-    if (!data.published_at) {
-      data.published_at = new Date();
+    const defaultData = {
+      title: null,
+      slug: function () {
+        return slugFromString(this.title);
+      },
+      published_at: new Date(),
+      author: null,
+      summary: null,
+      body: null,
     }
+
+    data = Object.assign(defaultData, data);
 
     db.one(cmd, data)
       .then(data => resolve(data))
@@ -79,6 +98,23 @@ exports.get = function (id) {
   // pg-promise doesn't automatically map joins to nested objects, so we're
   // doing this thing manually when getting a single object
   return db.oneOrNone('SELECT * FROM posts WHERE posts.id = $1', id)
+    .then(post => {
+      result = post;
+      return User.get(result.author)
+    })
+    .then(user => {
+      result.author = user;
+      return result;
+    });
+};
+
+// get a deeply-nested post by url slug
+exports.getBySlug = function (slug) {
+  let result;
+
+  // pg-promise doesn't automatically map joins to nested objects, so we're
+  // doing this thing manually when getting a single object
+  return db.oneOrNone('SELECT * FROM posts WHERE posts.slug = $1', slug)
     .then(post => {
       result = post;
       return User.get(result.author)
@@ -126,6 +162,7 @@ exports.alter = function (id, newData) {
       .then(existingData => {
         const cmd = `UPDATE posts SET
                       title = $(title),
+                      slug = $(slug),
                       published_at = $(published_at),
                       author = $(author),
                       summary = $(summary),
@@ -134,6 +171,7 @@ exports.alter = function (id, newData) {
                     RETURNING
                       id,
                       title,
+                      slug,
                       created_at,
                       published_at,
                       author,

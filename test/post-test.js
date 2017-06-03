@@ -42,6 +42,17 @@ describe('Post model', () => {
     expect(Post.validate({ title: ['Title'] }).result).to.be.false;
   });
 
+  it('Validates Post slugs', function () {
+    expect(Post.validate({ slug: 'title' }).result).to.be.true;
+    expect(Post.validate({ slug: 'dash-delimited-title' }).result).to.be.true;
+    expect(Post.validate({ slug: 'space delimited title' }).result).to.be.false;
+    expect(Post.validate({ slug: '0-leading-number' }).result).to.be.false;
+    expect(Post.validate({ slug: 'nøƒancyünicode' }).result).to.be.false;
+    expect(Post.validate({ slug: '' }).result).to.be.false;
+    expect(Post.validate({ slug: 4 }).result).to.be.false;
+    expect(Post.validate({ slug: ['title'] }).result).to.be.false;
+  });
+
   it('Validates post publish dates', function () {
     expect(Post.validate({ published_at: new Date() }).result).to.be.true;
     expect(Post.validate({ published_at: 1496186149957 }).result).to.be.false;
@@ -93,6 +104,7 @@ describe('Post model', () => {
   it('Stores a complete post', function () {
     return Post.create({
         title: 'My Post Title',
+        slug: 'my-post-title',
         author: userIds[0],
         summary: 'A great summary',
         body: 'This is a fantastic post.'
@@ -101,6 +113,7 @@ describe('Post model', () => {
         expect(data.id).to.be.a.number;
         ids.push(data.id);
         expect(data.title).to.equal('My Post Title');
+        expect(data.slug).to.equal('my-post-title');
         expect(data.author.id).to.be.a.number;
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic post.');
@@ -112,11 +125,53 @@ describe('Post model', () => {
       .then(data => {
         expect(data.id).to.equal(ids[0]);
         expect(data.title).to.equal('My Post Title');
+        expect(data.slug).to.equal('my-post-title');
         expect(data.author.id).to.be.a.number;
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic post.');
         expect(data.created_at.getMonth).to.be.a.function;
         expect(data.published_at.getMonth).to.be.a.function;
+      });
+  });
+
+  it('Creates missing slugs automatically', function () {
+    return Post.create({
+        title: 'Something You Should Know',
+        author: userIds[0],
+        summary: 'A great summary',
+        body: 'This is a fantastic post.'
+      })
+      .then(data => {
+        expect(data.id).to.be.a('number');
+        ids.push(data.id);
+        expect(data.slug).to.equal('something-you-should-know');
+      });
+  });
+
+  it('Requires slugs be unique', function (done) {
+    Post.create({
+        title: 'My Post-Title',
+        slug: 'my-post-title',
+        author: userIds[0],
+        summary: 'A great summary',
+        body: 'This is a fantastic post.'
+      })
+      .then(data => {
+        assert.fail(0, 1, 'Should have rejected non-unique slug');
+        done();
+      })
+      .catch(e => {
+        expect(e).to.exist;
+        done();
+      });
+  });
+
+  it('Retrieves a Post by url slug', function () {
+    return Post.getBySlug('my-post-title')
+      .then(data => {
+        expect(data.id).to.be.a('number');
+        expect(data.title).to.equal('My Post Title');
+        expect(data.slug).to.equal('my-post-title');
       });
   });
 
@@ -156,6 +211,7 @@ describe('Post model', () => {
     let tmpId;
     Post.create({
         title: 'Another Post',
+        slug: 'another-post-2',
         author: userIds[0],
         body: 'Another body'
       })
@@ -294,6 +350,7 @@ describe('Post model', () => {
         ids.push(data.id);
         return Post.create({
           title: 'Filter Me',
+          slug: 'filter-me-2',
           author: userIds[0],
           summary: 'First filter post summary',
           body: 'First filter post body',

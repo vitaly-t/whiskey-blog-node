@@ -65,6 +65,17 @@ describe('Review model', () => {
     expect(Review.validate({ title: ['Title'] }).result).to.be.false;
   });
 
+  it('Validates Review slugs', function () {
+    expect(Review.validate({ slug: 'title' }).result).to.be.true;
+    expect(Review.validate({ slug: 'dash-delimited-title' }).result).to.be.true;
+    expect(Review.validate({ slug: 'space delimited title' }).result).to.be.false;
+    expect(Review.validate({ slug: '0-leading-number' }).result).to.be.false;
+    expect(Review.validate({ slug: 'Sübtitle' }).result).to.be.false;
+    expect(Review.validate({ slug: '' }).result).to.be.false;
+    expect(Review.validate({ slug: 4 }).result).to.be.false;
+    expect(Review.validate({ slug: ['title'] }).result).to.be.false;
+  });
+
   it('Validates Review publish dates', function () {
     expect(Review.validate({ published_at: new Date() }).result).to.be.true;
     expect(Review.validate({ published_at: 1496186149957 }).result).to.be.false;
@@ -130,6 +141,7 @@ describe('Review model', () => {
     return Review.create({
         title: 'Elijah Craig',
         subtitle: 'Small Batch Bourbon',
+        slug: 'elijah-craig-small-batch',
         published_at: new Date('2014-01-01'),
         author: userIds[0],
         summary: 'A great summary',
@@ -149,6 +161,7 @@ describe('Review model', () => {
         ids.push(data.id);
         expect(data.title).to.equal('Elijah Craig');
         expect(data.subtitle).to.equal('Small Batch Bourbon');
+        expect(data.slug).to.equal('elijah-craig-small-batch');
         expect(data.published_at).to.be.a('date');
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic review.');
@@ -165,6 +178,7 @@ describe('Review model', () => {
       .then(data => {
         expect(data.title).to.equal('Elijah Craig');
         expect(data.subtitle).to.equal('Small Batch Bourbon');
+        expect(data.slug).to.equal('elijah-craig-small-batch');
         expect(data.published_at).to.be.a('date');
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic review.');
@@ -174,6 +188,49 @@ describe('Review model', () => {
         expect(data.mashbill_recipe).to.equal('75% corn, 13% rye, 12% barley');
         expect(data.rating).to.equal(72);
         expect(data.id).to.equal(ids[0]);
+      });
+  });
+
+  it('Creates missing slugs automatically', function () {
+    return Review.create({
+        title: 'Elijah Craig',
+        subtitle: 'Barrel Proof Bourbon',
+        author: userIds[0],
+        summary: 'A great summary',
+        body: 'This is a fantastic review.'
+      })
+      .then(data => {
+        expect(data.id).to.be.a('number');
+        ids.push(data.id);
+        expect(data.slug).to.equal('elijah-craig-barrel-proof-bourbon');
+      });
+  });
+
+  it('Requires slugs be unique', function (done) {
+    Review.create({
+        title: 'Elijah Craig',
+        slug: 'elijah-craig-small-batch',
+        author: userIds[0],
+        summary: 'A great summary',
+        body: 'This is a fantastic review.'
+      })
+      .then(data => {
+        assert.fail(0, 1, 'Should have rejected non-unique slug');
+        done();
+      })
+      .catch(e => {
+        expect(e).to.exist;
+        done();
+      });
+  });
+
+  it('Retrieves a Review by url slug', function () {
+    return Review.getBySlug('elijah-craig-small-batch')
+      .then(data => {
+        expect(data.id).to.be.a('number');
+        expect(data.title).to.equal('Elijah Craig');
+        expect(data.subtitle).to.equal('Small Batch Bourbon');
+        expect(data.slug).to.equal('elijah-craig-small-batch');
       });
   });
 
@@ -213,6 +270,7 @@ describe('Review model', () => {
     let tmpId;
     Review.create({
         title: 'Another Review',
+        slug: 'another-review-2',
         author: userIds[0],
         body: 'Another body'
       })
@@ -364,6 +422,7 @@ describe('Review model', () => {
         ids.push(data.id);
         return Review.create({
           title: 'Filter Me',
+          slug: 'filter-me-2',
           author: userIds[0],
           summary: 'First filter Review summary',
           body: 'First filter Review body',

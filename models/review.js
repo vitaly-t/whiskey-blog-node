@@ -3,6 +3,7 @@
 const db = require('../models/_db').db,
       validation = require('../helpers/validation'),
       where = require('../helpers/where').where,
+      slugFromString = require('../helpers/slug').fromString,
       User = require('./user'),
       Distillery = require('./distillery'),
       Region = require('./region'),
@@ -20,6 +21,12 @@ exports.validate = function (data, required) {
       types: ['string'],
       minLength: 1,
       maxLength: 512
+    },
+    slug: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 128,
+      regex: /^[a-zA-Z][a-zA-Z0-9\-]*$/
     },
     published_at: {
       types: ['date']
@@ -106,6 +113,7 @@ exports.create = function (data) {
     const cmd = `INSERT INTO reviews(
                    title,
                    subtitle,
+                   slug,
                    published_at,
                    author,
                    summary,
@@ -124,6 +132,7 @@ exports.create = function (data) {
                  ) VALUES (
                    $(title),
                    $(subtitle),
+                   $(slug),
                    $(published_at),
                    $(author),
                    $(summary),
@@ -143,6 +152,7 @@ exports.create = function (data) {
                    id,
                    title,
                    subtitle,
+                   slug,
                    created_at,
                    published_at,
                    author,
@@ -164,6 +174,9 @@ exports.create = function (data) {
     const defaultData = {
       title: null,
       subtitle: null,
+      slug: function () {
+        return slugFromString(this.title + ' ' + (this.subtitle || ''));
+      },
       published_at: new Date(),
       author: null,
       summary: null,
@@ -196,6 +209,39 @@ exports.get = function (id) {
   // pg-promise doesn't automatically map joins to nested objects, so we're
   // doing this thing manually when getting a single object
   return db.oneOrNone('SELECT * FROM reviews WHERE reviews.id = $1', id)
+    .then(review => {
+      result = review;
+      return User.get(result.author);
+    })
+    .then(user => {
+      result.author = user;
+      return Distillery.get(result.distillery);
+    })
+    .then(distillery => {
+      result.distillery = distillery;
+      return Region.get(result.region);
+    })
+    .then(region => {
+      result.region = region;
+      return DrinkType.get(result.drink_type);
+    })
+    .then(drink_type => {
+      result.drink_type = drink_type;
+      return Rarity.get(result.rarity);
+    })
+    .then(rarity => {
+      result.rarity = rarity;
+      return result;
+    });
+};
+
+// get a deeply-nested review by url slug
+exports.getBySlug = function (slug) {
+  let result;
+
+  // pg-promise doesn't automatically map joins to nested objects, so we're
+  // doing this thing manually when getting a single object
+  return db.oneOrNone('SELECT * FROM reviews WHERE reviews.slug = $1', slug)
     .then(review => {
       result = review;
       return User.get(result.author);
@@ -260,6 +306,7 @@ exports.alter = function (id, newData) {
         const cmd = `UPDATE reviews SET
                       title = $(title),
                       subtitle = $(subtitle),
+                      slug = $(slug),
                       published_at = $(published_at),
                       author = $(author),
                       summary = $(summary),
@@ -280,6 +327,7 @@ exports.alter = function (id, newData) {
                       id,
                       title,
                       subtitle,
+                      slug,
                       created_at,
                       published_at,
                       author,
