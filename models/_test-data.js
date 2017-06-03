@@ -175,7 +175,7 @@ Distillery.create({ name: 'Buffalo Trace', city: 'Frankfort', state: 'Kentucky' 
       drink_type: content.drinkTypes[0].id,
       rarity: content.rarities[1].id,
       proof_min: 128.7,
-      proof_min: 138,
+      proof_max: 138,
       manufacturer_price: 55,
       realistic_price: "$60+",
       mashbill_description: 'BT mashbill #1',
