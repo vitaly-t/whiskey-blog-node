@@ -101,15 +101,6 @@ describe('Review model', () => {
   });
 
   it('Validates Review numerical fields', function () {
-    expect(Review.validate({ proof: 80 }).result).to.be.true;
-    expect(Review.validate({ proof: 138.2 }).result).to.be.true;
-    expect(Review.validate({ proof: 201 }).result).to.be.false;
-    expect(Review.validate({ proof: -4 }).result).to.be.false;
-    expect(Review.validate({ proof: '96' }).result).to.be.false;
-    expect(Review.validate({ age: 25 }).result).to.be.true;
-    expect(Review.validate({ age: 0.5 }).result).to.be.true;
-    expect(Review.validate({ age: -4 }).result).to.be.false;
-    expect(Review.validate({ age: 'really old' }).result).to.be.false;
     expect(Review.validate({ manufacturer_price: 40 }).result).to.be.true;
     expect(Review.validate({ manufacturer_price: 29.95 }).result).to.be.true;
     expect(Review.validate({ manufacturer_price: -5 }).result).to.be.false;
@@ -118,6 +109,17 @@ describe('Review model', () => {
     expect(Review.validate({ rating: 100.4 }).result).to.be.true;
     expect(Review.validate({ rating: -20 }).result).to.be.true;
     expect(Review.validate({ rating: "50" }).result).to.be.false;
+  });
+
+  it('Validates Review numerical range fields', function () {
+    expect(Review.validate({ proof_min: 80 }).result).to.be.true;
+    expect(Review.validate({ proof_max: 138.2 }).result).to.be.true;
+    expect(Review.validate({ proof_min: 90, proof_max: 94 }).result).to.be.true;
+    expect(Review.validate({ proof_min: 120, proof_max: 90 }).result).to.be.false;
+    expect(Review.validate({ age_min: 25 }).result).to.be.true;
+    expect(Review.validate({ age_max: 0.5 }).result).to.be.true;
+    expect(Review.validate({ age_min: 1, age_max: 2 }).result).to.be.true;
+    expect(Review.validate({ age_min: 10, age_max: 8 }).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -150,7 +152,8 @@ describe('Review model', () => {
         region: regionIds[0],
         drink_type: drinkTypeIds[0],
         rarity: rarityIds[0],
-        proof: 94,
+        proof_min: 94,
+        proof_max: 94,
         manufacturer_price: 30,
         mashbill_description: 'Bourbon',
         mashbill_recipe: '75% corn, 13% rye, 12% barley',
@@ -165,7 +168,8 @@ describe('Review model', () => {
         expect(data.published_at).to.be.a('date');
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic review.');
-        expect(data.proof).to.equal(94);
+        expect(data.proof_min).to.equal(94);
+        expect(data.proof_max).to.equal(94);
         expect(data.manufacturer_price).to.equal(30);
         expect(data.mashbill_description).to.equal('Bourbon');
         expect(data.mashbill_recipe).to.equal('75% corn, 13% rye, 12% barley');
@@ -182,7 +186,8 @@ describe('Review model', () => {
         expect(data.published_at).to.be.a('date');
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic review.');
-        expect(data.proof).to.equal(94);
+        expect(data.proof_min).to.equal(94);
+        expect(data.proof_max).to.equal(94);
         expect(data.manufacturer_price).to.equal(30);
         expect(data.mashbill_description).to.equal('Bourbon');
         expect(data.mashbill_recipe).to.equal('75% corn, 13% rye, 12% barley');
