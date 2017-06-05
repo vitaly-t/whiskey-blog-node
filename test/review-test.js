@@ -3,6 +3,7 @@
 const expect = require('chai').expect,
       assert = require('chai').assert,
       Review = require('../models/review'),
+      Post = require('../models/post'),
       User = require('../models/user'),
       Distillery = require('../models/distillery'),
       Region = require('../models/region'),
@@ -12,6 +13,7 @@ const expect = require('chai').expect,
 describe('Review model', () => {
 
   var ids = [],
+      postIds = [],
       userIds = [],
       distilleryIds = [],
       regionIds = [],
@@ -22,6 +24,10 @@ describe('Review model', () => {
     User.create({ name: 'Test User', username: 'testuser', password: 'abcdef', access_level: 1 })
     .then(data => {
       userIds.push(data.id);
+      return Post.create({ title: 'Test Post', author: userIds[0], body: 'Body!' });
+    })
+    .then(data => {
+      postIds.push(data.id);
       return Distillery.create({ name: 'Test Distillery', city: 'Bardstown', state: 'Kentucky' });
     })
     .then(data => {
@@ -48,6 +54,7 @@ describe('Review model', () => {
 
   after(function (done) {
     Promise.all(ids.map(id => Review.delete(id)))
+      .then(() => Promise.all(postIds.map(id => Post.delete(id))))
       .then(() => Promise.all(userIds.map(id => User.delete(id))))
       .then(() => Promise.all(distilleryIds.map(id => Distillery.delete(id))))
       .then(() => Promise.all(regionIds.map(id => Region.delete(id))))
@@ -459,6 +466,30 @@ describe('Review model', () => {
     return Review.get(ids[0])
       .then(data => {
         expect(data.distillery.name).to.equal('Test Distillery');
+      });
+  });
+
+  it('Stores related data', function () {
+    return Review.create({
+        title: 'Rittenhouse',
+        subtitle: 'Bottled-in-Bond Rye',
+        author: userIds[0],
+        summary: 'A great summary',
+        body: 'This is a fantastic review.',
+        related_reviews: [ids[0], ids[1]],
+        related_posts: [postIds[0]]
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Review.get(data.id);
+      })
+      .then(data => {
+        expect(data.related_reviews).to.be.an('array');
+        expect(data.related_posts).to.be.an('array');
+        expect(data.related_reviews.length).to.equal(2);
+        expect(data.related_posts.length).to.equal(1);
+        expect(data.related_reviews[0].title).to.be.a('string');
+        expect(data.related_posts[0].title).to.be.a('string');
       });
   });
 });

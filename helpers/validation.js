@@ -1,5 +1,19 @@
 'use strict';
 
+function validateTypes(candidate, expectedTypes) {
+  let result = false;
+  for (const type of expectedTypes) {
+    if (type === 'date' && typeof candidate.getMonth === 'function') {
+      result = true;
+    } else if (type === 'array' && candidate.constructor === Array) {
+      result = true;
+    } else if (typeof candidate === type) {
+      result = true;
+    }
+  }
+  return result;
+}
+
 exports.validate = function (data, schema, required) {
   let result = { result: false, message: '' };
 
@@ -22,17 +36,19 @@ exports.validate = function (data, schema, required) {
     }
 
     // types
-    let typesValidated = false;
-    for (const type of schema[key].types) {
-      if (type === 'date' && typeof field.getMonth === 'function') {
-        typesValidated = true;
-      } else if (typeof field === type) {
-        typesValidated = true;
-      }
-    }
-    if (!typesValidated) {
+    if (!validateTypes(field, schema[key].types)) {
       result.message = `Expected field '${key}' to be a ${schema[key].types.join(' or ')}`;
       return result;
+    }
+
+    // element types
+    if (schema[key].hasOwnProperty('elementTypes')) {
+      for (const element of field) {
+        if (!validateTypes(element, schema[key].elementTypes)) {
+          result.message = `Iterable '${key}'s elements should be ${schema[key].types.join(' or ')}s`;
+          return result;
+        }
+      }
     }
 
     // string or collection length constraints

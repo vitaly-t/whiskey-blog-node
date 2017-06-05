@@ -377,4 +377,25 @@ describe('Post model', () => {
         done();
       })
   });
+
+
+  it('Stores related Posts', function () {
+    return Post.create({
+        title: 'Some Other Article',
+        author: userIds[0],
+        summary: 'A great summary',
+        body: 'This is a fantastic article.',
+        related_posts: [ids[0], ids[1]]
+      })
+      .then(data => {
+        ids.push(data.id);
+        return Post.get(data.id);
+      })
+      .then(data => {
+        expect(data.related_posts).to.be.an('array');
+        expect(data.related_posts.length).to.equal(2);
+        expect(data.related_posts[0].title).to.be.a('string');
+        expect(data.related_posts[1].title).to.be.a('string');
+      });
+  });
 });

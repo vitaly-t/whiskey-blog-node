@@ -110,6 +110,14 @@ exports.validate = function (data, required) {
     },
     rating: {
       types: ['number']
+    },
+    related_reviews: {
+      types: ['array'],
+      elementTypes: ['number']
+    },
+    related_posts: {
+      types: ['array'],
+      elementTypes: ['number']
     }
   };
 
@@ -123,6 +131,8 @@ exports.create = function (data) {
     if (validation.result === false) {
       reject(`Failed to create review: ${validation.message}`);
     }
+
+    let stored;
 
     const cmd = `INSERT INTO reviews(
                    title,
@@ -219,7 +229,11 @@ exports.create = function (data) {
     data = Object.assign(defaultData, data);
 
     db.one(cmd, data)
-      .then(data => resolve(data))
+      .then(returned => {
+        stored = returned;
+        return exports.createRelated(stored.id, data.related_reviews, data.related_posts);
+      })
+      .then(() => resolve(stored))
       .catch(e => reject(e));
   });
 };
@@ -229,7 +243,8 @@ exports.get = function (id) {
   let result;
 
   // pg-promise doesn't automatically map joins to nested objects, so we're
-  // doing this thing manually when getting a single object
+  // doing this thing manually when getting a single object. refactor to do
+  // in a single tx if ever porting this to Review.list()
   return db.oneOrNone('SELECT * FROM reviews WHERE reviews.id = $1', id)
     .then(review => {
       result = review;
@@ -253,6 +268,14 @@ exports.get = function (id) {
     })
     .then(rarity => {
       result.rarity = rarity;
+      return exports.getRelatedReviews(result.id);
+    })
+    .then(relatedReviews => {
+      result.related_reviews = relatedReviews;
+      return exports.getRelatedPosts(result.id);
+    })
+    .then(relatedPosts => {
+      result.related_posts = relatedPosts;
       return result;
     });
 };
@@ -286,6 +309,14 @@ exports.getBySlug = function (slug) {
     })
     .then(rarity => {
       result.rarity = rarity;
+      return exports.getRelatedReviews(result.id);
+    })
+    .then(relatedReviews => {
+      result.related_reviews = relatedReviews;
+      return exports.getRelatedPosts(result.id);
+    })
+    .then(relatedPosts => {
+      result.related_posts = relatedPosts;
       return result;
     });
 };
@@ -322,6 +353,8 @@ exports.alter = function (id, newData) {
     if (validation.result === false) {
       reject(`Failed to alter review: ${validation.message}`);
     }
+
+    let stored;
 
     exports.get(id)
       .then(existingData => {
@@ -372,7 +405,7 @@ exports.alter = function (id, newData) {
                       rating`;
 
         // returned related objects have been expanded, and we can't reassign them in that state
-        for (let relation of ['author', 'distillery', 'region', 'drink_type', 'rarity']) {
+        for (let relation of ['author', 'distillery', 'region', 'drink_type', 'rarity', 'related_reviews', 'related_posts']) {
           if (existingData[relation] && typeof existingData[relation] === 'object') {
             existingData[relation] = existingData[relation].id;
           } else if (typeof existingData[relation] === 'undefined') {
@@ -381,9 +414,14 @@ exports.alter = function (id, newData) {
         }
 
         newData = Object.assign(existingData, newData);
+
         return db.one(cmd, newData);
       })
-      .then(data => resolve(data))
+      .then(returned => {
+        stored = returned;
+        return exports.createRelated(stored.id, newData.related_reviews, newData.related_posts);
+      })
+      .then(() => resolve(stored))
       .catch(e => reject(e));
   });
 };
@@ -391,4 +429,65 @@ exports.alter = function (id, newData) {
 // remove a review
 exports.delete = function (id) {
   return db.none('DELETE FROM reviews WHERE reviews.id = $1', id);
+};
+
+// add related data to their respective tables
+exports.createRelated = function (origin, reviews, posts) {
+
+  // first, wipe out existing (avoiding update checks for now)
+  return db.none(`DELETE FROM reviews_related_reviews WHERE origin = $1`, origin)
+    .then(() => db.none(`DELETE FROM reviews_related_posts WHERE origin = $1`, origin))
+    .then(() => {
+      let ops = [];
+      if (reviews) {
+        ops.concat(reviews.map(review => db.none(`
+          INSERT INTO reviews_related_reviews(
+            origin,
+            related
+          ) VALUES (
+            $1,
+            $2
+          )
+        `, [origin, review])));
+      }
+      if (posts) {
+        ops.concat(posts.map(post => db.none(`
+          INSERT INTO reviews_related_posts(
+            origin,
+            related
+          ) VALUES (
+            $1,
+            $2
+          )
+        `, [origin, post])));
+      }
+      return Promise.all(ops);
+    });
+};
+
+// fetch related reviews
+exports.getRelatedReviews = function (id) {
+  return db.any(`SELECT
+                  reviews.id,
+                  reviews.title,
+                  reviews.subtitle,
+                  reviews.slug,
+                  reviews.summary
+                FROM reviews_related_reviews
+                INNER JOIN reviews
+                  ON reviews_related_reviews.origin = $1
+                  AND reviews_related_reviews.related = reviews.id`, id);
+};
+
+// fetch related posts
+exports.getRelatedPosts = function (id) {
+  return db.any(`SELECT
+                  posts.id,
+                  posts.title,
+                  posts.slug,
+                  posts.summary
+                FROM reviews_related_posts
+                INNER JOIN posts
+                  ON reviews_related_posts.origin = $1
+                  AND reviews_related_posts.related = posts.id`, id);
 };

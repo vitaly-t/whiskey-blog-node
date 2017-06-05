@@ -125,7 +125,8 @@ Distillery.create({ name: 'Buffalo Trace', city: 'Frankfort', state: 'Kentucky' 
       manufacturer_price: 30,
       mashbill_description: 'Bourbon',
       mashbill_recipe: '75% corn, 13% rye, 12% barley',
-      rating: 72
+      rating: 72,
+      related_posts: [post.id]
     });
   })
   .then(review => {
@@ -152,7 +153,8 @@ Distillery.create({ name: 'Buffalo Trace', city: 'Frankfort', state: 'Kentucky' 
       manufacturer_price: 30,
       mashbill_description: 'Barely-legal rye',
       mashbill_recipe: '51% rye, 37% corn, 12% barley',
-      rating: 68
+      rating: 68,
+      related_reviews: [review.id]
     });
   })
   .then(review => {
