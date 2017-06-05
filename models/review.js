@@ -238,87 +238,94 @@ exports.create = function (data) {
   });
 };
 
+// handles the query for all single-item `get` functions
+function getBy(columnName, value) {
+  // collect all these joins into a single query to avoid multiple chained
+  // operations
+  const cmd = `
+    SELECT json_build_object(
+      'id', reviews.id,
+      'title', reviews.title,
+      'subtitle', reviews.subtitle,
+      'slug', reviews.slug,
+      'created_at', reviews.created_at,
+      'published_at', reviews.published_at,
+      'summary', reviews.summary,
+      'body', reviews.body,
+      'proof_min', reviews.proof_min,
+      'proof_max', reviews.proof_max,
+      'age_min', reviews.age_min,
+      'age_max', reviews.age_max,
+      'manufacturer_price', reviews.manufacturer_price,
+      'realistic_price', reviews.realistic_price,
+      'mashbill_description', reviews.mashbill_description,
+      'mashbill_recipe', reviews.mashbill_recipe,
+      'rating', reviews.rating,
+      'author', (SELECT json_build_object(
+          'id', users.id,
+          'name', users.name,
+          'username', users.username,
+          'access_level', users.access_level
+        ) FROM users WHERE users.id = reviews.author),
+      'distillery', (SELECT json_build_object(
+          'id', distilleries.id,
+          'name', distilleries.name
+        ) FROM distilleries WHERE distilleries.id = reviews.distillery),
+      'region', (SELECT json_build_object(
+          'id', regions.id,
+          'name', regions.name,
+          'filter_name', regions.filter_name
+        ) FROM regions WHERE regions.id = reviews.region),
+      'drink_type', (SELECT json_build_object(
+          'id', drink_types.id,
+          'singular', drink_types.singular,
+          'plural', drink_types.plural
+        ) FROM drink_types WHERE drink_types.id = reviews.drink_type),
+      'rarity', (SELECT json_build_object(
+          'id', rarities.id,
+          'name', rarities.name,
+          'filter_name', rarities.filter_name
+        ) FROM rarities WHERE rarities.id = reviews.rarity),
+      'related_reviews', (SELECT json_agg(json_build_object(
+          'id', rel_r.id,
+          'title', rel_r.title,
+          'subtitle', rel_r.subtitle,
+          'slug', rel_r.slug,
+          'summary', rel_r.summary
+        )) FROM reviews rel_r INNER JOIN reviews_related_reviews
+          ON reviews_related_reviews.origin = reviews.id
+          AND reviews_related_reviews.related = rel_r.id),
+      'related_posts', (SELECT json_agg(json_build_object(
+          'id', rel_p.id,
+          'title', rel_p.title,
+          'slug', rel_p.slug,
+          'summary', rel_p.summary
+        )) FROM posts rel_p INNER JOIN reviews_related_posts
+          ON reviews_related_posts.origin = reviews.id
+          AND reviews_related_posts.related = rel_p.id)
+    )
+    FROM reviews WHERE $1~ = $2
+  `;
+
+  return db.oneOrNone(cmd, [columnName, value]).then(data => {
+    let result = data.json_build_object;
+
+    // pg-promise doesn't seem to recognize dates returned in json,
+    // therefore parse these explicitly
+    result.created_at = new Date(result.created_at);
+    result.published_at = new Date(result.published_at);
+    return result;
+  });
+}
+
 // get a deeply-nested review by id
 exports.get = function (id) {
-  let result;
-
-  // pg-promise doesn't automatically map joins to nested objects, so we're
-  // doing this thing manually when getting a single object. refactor to do
-  // in a single tx if ever porting this to Review.list()
-  return db.oneOrNone('SELECT * FROM reviews WHERE reviews.id = $1', id)
-    .then(review => {
-      result = review;
-      return User.get(result.author);
-    })
-    .then(user => {
-      result.author = user;
-      return Distillery.get(result.distillery);
-    })
-    .then(distillery => {
-      result.distillery = distillery;
-      return Region.get(result.region);
-    })
-    .then(region => {
-      result.region = region;
-      return DrinkType.get(result.drink_type);
-    })
-    .then(drink_type => {
-      result.drink_type = drink_type;
-      return Rarity.get(result.rarity);
-    })
-    .then(rarity => {
-      result.rarity = rarity;
-      return exports.getRelatedReviews(result.id);
-    })
-    .then(relatedReviews => {
-      result.related_reviews = relatedReviews;
-      return exports.getRelatedPosts(result.id);
-    })
-    .then(relatedPosts => {
-      result.related_posts = relatedPosts;
-      return result;
-    });
+  return getBy('id', id);
 };
 
 // get a deeply-nested review by url slug
 exports.getBySlug = function (slug) {
-  let result;
-
-  // pg-promise doesn't automatically map joins to nested objects, so we're
-  // doing this thing manually when getting a single object
-  return db.oneOrNone('SELECT * FROM reviews WHERE reviews.slug = $1', slug)
-    .then(review => {
-      result = review;
-      return User.get(result.author);
-    })
-    .then(user => {
-      result.author = user;
-      return Distillery.get(result.distillery);
-    })
-    .then(distillery => {
-      result.distillery = distillery;
-      return Region.get(result.region);
-    })
-    .then(region => {
-      result.region = region;
-      return DrinkType.get(result.drink_type);
-    })
-    .then(drink_type => {
-      result.drink_type = drink_type;
-      return Rarity.get(result.rarity);
-    })
-    .then(rarity => {
-      result.rarity = rarity;
-      return exports.getRelatedReviews(result.id);
-    })
-    .then(relatedReviews => {
-      result.related_reviews = relatedReviews;
-      return exports.getRelatedPosts(result.id);
-    })
-    .then(relatedPosts => {
-      result.related_posts = relatedPosts;
-      return result;
-    });
+  return getBy('slug', slug);
 };
 
 // shallow list reviews, with options to page, order, and filter
@@ -463,31 +470,4 @@ exports.createRelated = function (origin, reviews, posts) {
       }
       return Promise.all(ops);
     });
-};
-
-// fetch related reviews
-exports.getRelatedReviews = function (id) {
-  return db.any(`SELECT
-                  reviews.id,
-                  reviews.title,
-                  reviews.subtitle,
-                  reviews.slug,
-                  reviews.summary
-                FROM reviews_related_reviews
-                INNER JOIN reviews
-                  ON reviews_related_reviews.origin = $1
-                  AND reviews_related_reviews.related = reviews.id`, id);
-};
-
-// fetch related posts
-exports.getRelatedPosts = function (id) {
-  return db.any(`SELECT
-                  posts.id,
-                  posts.title,
-                  posts.slug,
-                  posts.summary
-                FROM reviews_related_posts
-                INNER JOIN posts
-                  ON reviews_related_posts.origin = $1
-                  AND reviews_related_posts.related = posts.id`, id);
 };

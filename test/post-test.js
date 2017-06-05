@@ -126,11 +126,10 @@ describe('Post model', () => {
         expect(data.id).to.equal(ids[0]);
         expect(data.title).to.equal('My Post Title');
         expect(data.slug).to.equal('my-post-title');
+        expect(data.published_at).to.be.a('date');
         expect(data.author.id).to.be.a.number;
         expect(data.summary).to.equal('A great summary');
         expect(data.body).to.equal('This is a fantastic post.');
-        expect(data.created_at.getMonth).to.be.a.function;
-        expect(data.published_at.getMonth).to.be.a.function;
       });
   });
 

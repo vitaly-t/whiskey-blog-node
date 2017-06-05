@@ -105,55 +105,65 @@ exports.create = function (data) {
   });
 };
 
+// handles the query for all single-item `get` functions
+function getBy(columnName, value) {
+  // collect all these joins into a single query to avoid multiple chained
+  // operations
+  const cmd = `
+    SELECT json_build_object(
+      'id', posts.id,
+      'title', posts.title,
+      'slug', posts.slug,
+      'created_at', posts.created_at,
+      'published_at', posts.published_at,
+      'summary', posts.summary,
+      'body', posts.body,
+      'author', (SELECT json_build_object(
+          'id', users.id,
+          'name', users.name,
+          'username', users.username,
+          'access_level', users.access_level
+        ) FROM users WHERE users.id = posts.author),
+      'related_reviews', (SELECT json_agg(json_build_object(
+          'id', rel_r.id,
+          'title', rel_r.title,
+          'subtitle', rel_r.subtitle,
+          'slug', rel_r.slug,
+          'summary', rel_r.summary
+        )) FROM reviews rel_r INNER JOIN posts_related_reviews
+          ON posts_related_reviews.origin = posts.id
+          AND posts_related_reviews.related = rel_r.id),
+      'related_posts', (SELECT json_agg(json_build_object(
+          'id', rel_p.id,
+          'title', rel_p.title,
+          'slug', rel_p.slug,
+          'summary', rel_p.summary
+        )) FROM posts rel_p INNER JOIN posts_related_posts
+          ON posts_related_posts.origin = posts.id
+          AND posts_related_posts.related = rel_p.id)
+    )
+    FROM posts WHERE $1~ = $2
+  `;
+
+  return db.oneOrNone(cmd, [columnName, value]).then(data => {
+    let result = data.json_build_object;
+
+    // pg-promise doesn't seem to recognize dates returned in json,
+    // therefore parse these explicitly
+    result.created_at = new Date(result.created_at);
+    result.published_at = new Date(result.published_at);
+    return result;
+  });
+}
+
 // get a deeply-nested post by id
 exports.get = function (id) {
-  let result;
-
-  // pg-promise doesn't automatically map joins to nested objects, so we're
-  // doing this thing manually when getting a single object. refactor to do
-  // in a single tx if ever porting this to Review.list()
-  return db.oneOrNone('SELECT * FROM posts WHERE posts.id = $1', id)
-    .then(post => {
-      result = post;
-      return User.get(result.author)
-    })
-    .then(user => {
-      result.author = user;
-      return exports.getRelatedReviews(id);
-    })
-    .then(relatedReviews => {
-      result.related_reviews = relatedReviews;
-      return exports.getRelatedPosts(id);
-    })
-    .then(relatedPosts => {
-      result.related_posts = relatedPosts;
-      return result;
-    });
+  return getBy('id', id);
 };
 
 // get a deeply-nested post by url slug
 exports.getBySlug = function (slug) {
-  let result;
-
-  // pg-promise doesn't automatically map joins to nested objects, so we're
-  // doing this thing manually when getting a single object
-  return db.oneOrNone('SELECT * FROM posts WHERE posts.slug = $1', slug)
-    .then(post => {
-      result = post;
-      return User.get(result.author)
-    })
-    .then(user => {
-      result.author = user;
-      return exports.getRelatedReviews(result.id);
-    })
-    .then(relatedReviews => {
-      result.related_reviews = relatedReviews;
-      return exports.getRelatedPosts(result.id);
-    })
-    .then(relatedPosts => {
-      result.related_posts = relatedPosts;
-      return result;
-    });
+  return getBy('slug', slug);
 };
 
 // shallow list posts, with options to page, order, and filter
@@ -271,31 +281,3 @@ exports.createRelated = function (origin, reviews, posts) {
       return Promise.all(ops);
     });
 };
-
-// fetch related reviews
-exports.getRelatedReviews = function (id) {
-  return db.any(`SELECT
-                  reviews.id,
-                  reviews.title,
-                  reviews.subtitle,
-                  reviews.slug,
-                  reviews.summary
-                FROM posts_related_reviews
-                LEFT JOIN reviews
-                  ON posts_related_reviews.origin = $1
-                  AND posts_related_reviews.related = reviews.id`, id);
-};
-
-// fetch related posts
-exports.getRelatedPosts = function (id) {
-  return db.any(`SELECT
-                  posts.id,
-                  posts.title,
-                  posts.slug,
-                  posts.summary
-                FROM posts_related_posts
-                LEFT OUTER JOIN posts
-                  ON posts_related_posts.origin = $1
-                  AND posts_related_posts.related = posts.id`, id);
-};
-
