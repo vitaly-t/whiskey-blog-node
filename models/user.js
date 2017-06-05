@@ -39,21 +39,22 @@ exports.create = function (data) {
       reject(`Failed to create user: ${validation.message}`);
     }
 
-    const cmd = `INSERT INTO users(
-                   name,
-                   username,
-                   password_hash,
-                   access_level
-                 ) VALUES (
-                   $(name),
-                   $(username),
-                   $(password_hash),
-                   $(access_level)
-                 ) RETURNING
-                   id,
-                   name,
-                   username,
-                   access_level`;
+    const cmd = `
+      INSERT INTO users(
+        name,
+        username,
+        password_hash,
+        access_level
+      ) VALUES (
+        $(name),
+        $(username),
+        $(password_hash),
+        $(access_level)
+      ) RETURNING
+        id,
+        name,
+        username,
+        access_level`;
 
     exports.createHash(data.password)
       .then(hash => {
@@ -119,17 +120,18 @@ exports.alter = function (id, newData) {
         .then(hash => {
           oldData.password_hash = hash;
           let data = Object.assign(oldData, newData);
-          const cmd = `UPDATE users SET
-                        name = $(name),
-                        username = $(username),
-                        password_hash = $(password_hash),
-                        access_level = $(access_level)
-                      WHERE id = $(id)
-                      RETURNING
-                        id,
-                        name,
-                        username,
-                        access_level`;
+          const cmd = `
+            UPDATE users SET
+              name = $(name),
+              username = $(username),
+              password_hash = $(password_hash),
+              access_level = $(access_level)
+            WHERE id = $(id)
+            RETURNING
+              id,
+              name,
+              username,
+              access_level`;
           db.one(cmd, data)
             .then(result => resolve(result))
             .catch(e => reject(e));

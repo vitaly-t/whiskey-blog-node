@@ -58,29 +58,30 @@ exports.create = function (data) {
 
     let stored;
 
-    const cmd = `INSERT INTO posts(
-                   title,
-                   slug,
-                   published_at,
-                   author,
-                   summary,
-                   body
-                 ) VALUES (
-                   $(title),
-                   $(slug),
-                   $(published_at),
-                   $(author),
-                   $(summary),
-                   $(body)
-                 ) RETURNING
-                   id,
-                   title,
-                   slug,
-                   created_at,
-                   published_at,
-                   author,
-                   summary,
-                   body`;
+    const cmd = `
+      INSERT INTO posts(
+        title,
+        slug,
+        published_at,
+        author,
+        summary,
+        body
+      ) VALUES (
+        $(title),
+        $(slug),
+        $(published_at),
+        $(author),
+        $(summary),
+        $(body)
+      ) RETURNING
+        id,
+        title,
+        slug,
+        created_at,
+        published_at,
+        author,
+        summary,
+       body`;
 
     const defaultData = {
       title: null,
@@ -203,23 +204,24 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const cmd = `UPDATE posts SET
-                      title = $(title),
-                      slug = $(slug),
-                      published_at = $(published_at),
-                      author = $(author),
-                      summary = $(summary),
-                      body = $(body)
-                    WHERE id = $(id)
-                    RETURNING
-                      id,
-                      title,
-                      slug,
-                      created_at,
-                      published_at,
-                      author,
-                      summary,
-                      body`;
+        const cmd = `
+          UPDATE posts SET
+            title = $(title),
+            slug = $(slug),
+            published_at = $(published_at),
+            author = $(author),
+            summary = $(summary),
+            body = $(body)
+          WHERE id = $(id)
+          RETURNING
+            id,
+            title,
+            slug,
+            created_at,
+            published_at,
+            author,
+            summary,
+            body`;
 
         // returned related objects have been expanded, and we can't reassign them in that state
         for (let relation of ['author', 'related_reviews', 'related_posts']) {

@@ -32,19 +32,20 @@ exports.create = function (data) {
       reject(`Failed to create rarity: ${validation.message}`);
     }
 
-    const cmd = `INSERT INTO rarities(
-                   name,
-                   filter_name,
-                   sort_order
-                 ) VALUES (
-                   $(name),
-                   $(filter_name),
-                   $(sort_order)
-                 ) RETURNING
-                   id,
-                   name,
-                   filter_name,
-                   sort_order`;
+    const cmd = `
+      INSERT INTO rarities(
+        name,
+        filter_name,
+        sort_order
+      ) VALUES (
+        $(name),
+        $(filter_name),
+        $(sort_order)
+      ) RETURNING
+        id,
+        name,
+        filter_name,
+        sort_order`;
 
     db.one(cmd, data)
       .then(data => resolve(data))
@@ -92,17 +93,18 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const data = Object.assign(existingData, newData),
-              cmd = `UPDATE rarities SET
-                      name = $(name),
-                      filter_name = $(filter_name),
-                      sort_order = $(sort_order)
-                    WHERE id = $(id)
-                    RETURNING
-                      id,
-                      name,
-                      filter_name,
-                      sort_order`;
+        const cmd = `
+          UPDATE rarities SET
+            name = $(name),
+            filter_name = $(filter_name),
+            sort_order = $(sort_order)
+          WHERE id = $(id)
+          RETURNING
+            id,
+            name,
+            filter_name,
+            sort_order`,
+          data = Object.assign(existingData, newData);
         return db.one(cmd, data);
       })
       .then(data => resolve(data))

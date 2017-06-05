@@ -33,19 +33,20 @@ exports.create = function (data) {
       reject(`Failed to create distillery: ${validation.message}`);
     }
 
-    const cmd = `INSERT INTO distilleries(
-                   name,
-                   state,
-                   city
-                 ) VALUES (
-                   $(name),
-                   $(state),
-                   $(city)
-                 ) RETURNING
-                   id,
-                   name,
-                   state,
-                   city`;
+    const cmd = `
+      INSERT INTO distilleries(
+        name,
+        state,
+        city
+      ) VALUES (
+        $(name),
+        $(state),
+        $(city)
+      ) RETURNING
+        id,
+        name,
+        state,
+        city`;
 
     db.one(cmd, data)
       .then(data => resolve(data))
@@ -93,17 +94,18 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const data = Object.assign(existingData, newData),
-              cmd = `UPDATE distilleries SET
-                      name = $(name),
-                      state = $(state),
-                      city = $(city)
-                    WHERE id = $(id)
-                    RETURNING
-                      id,
-                      name,
-                      state,
-                      city`;
+        const cmd = `
+          UPDATE distilleries SET
+            name = $(name),
+            state = $(state),
+            city = $(city)
+          WHERE id = $(id)
+          RETURNING
+            id,
+            name,
+            state,
+            city`,
+          data = Object.assign(existingData, newData);
         return db.one(cmd, data);
       })
       .then(data => resolve(data))

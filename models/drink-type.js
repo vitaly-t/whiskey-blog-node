@@ -28,16 +28,17 @@ exports.create = function (data) {
       reject(`Failed to create drink type: ${validation.message}`);
     }
 
-    const cmd = `INSERT INTO drink_types(
-                   singular,
-                   plural
-                 ) VALUES (
-                   $(singular),
-                   $(plural)
-                 ) RETURNING
-                   id,
-                   singular,
-                   plural`;
+    const cmd = `
+      INSERT INTO drink_types(
+        singular,
+        plural
+      ) VALUES (
+        $(singular),
+        $(plural)
+      ) RETURNING
+        id,
+        singular,
+        plural`;
 
     db.one(cmd, data)
       .then(data => resolve(data))
@@ -85,15 +86,16 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const data = Object.assign(existingData, newData),
-              cmd = `UPDATE drink_types SET
-                      singular = $(singular),
-                      plural = $(plural)
-                    WHERE id = $(id)
-                    RETURNING
-                      id,
-                      singular,
-                      plural`;
+        const cmd = `
+          UPDATE drink_types SET
+            singular = $(singular),
+            plural = $(plural)
+          WHERE id = $(id)
+          RETURNING
+            id,
+            singular,
+            plural`,
+          data = Object.assign(existingData, newData);
         return db.one(cmd, data);
       })
       .then(data => resolve(data))
