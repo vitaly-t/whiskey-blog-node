@@ -1,10 +1,14 @@
 'use strict';
 
 /*
- * constructs a WHERE query of variable length, to be passed into pg-promise
+ * where: constructs a WHERE clause of variable length
+ *
+ * returns a string containing a WHERE clause, formatted to be passed into
+ * pg-promise. Additionally, modifies the passed `params` object so that
+ * data insertion is taken care of
  *
  * params: a params object for a new or existing SELECT statement
- * filterProp: the property of `params` containing an array of filters
+ * filterProp: the property of `params` that contains an array of filters
  */
 
 exports.where = function (params, filterProp) {

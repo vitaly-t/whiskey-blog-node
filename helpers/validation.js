@@ -1,18 +1,17 @@
 'use strict';
 
-function validateTypes(candidate, expectedTypes) {
-  let result = false;
-  for (const type of expectedTypes) {
-    if (type === 'date' && typeof candidate.getMonth === 'function') {
-      result = true;
-    } else if (type === 'array' && candidate.constructor === Array) {
-      result = true;
-    } else if (typeof candidate === type) {
-      result = true;
-    }
-  }
-  return result;
-}
+/*
+ * validate: validates a set of data against a schema
+ *
+ * returns an object:
+ *   result: `true` if validation passed, `false` if not
+ *   message: reason for producing said result
+ *
+ * data (object): fields and their values to check
+ * schema (object): schema object defining fields and their constraints
+ * suppressRequired (boolean): bypass `required` fields in schema definition.
+ *   Useful to testing individual fields
+ */
 
 exports.validate = function (data, schema, suppressRequired=false) {
   let result = { result: false, message: '' };
@@ -129,3 +128,28 @@ exports.validate = function (data, schema, suppressRequired=false) {
   result.result = true;
   return result;
 };
+
+
+/*
+ * validateTypes: utility function to type check a field
+ *
+ * returns `true` if the candidate is within the expected types, `false` if not
+ *
+ * candidate: the value of which to check the type
+ * expectedTypes (array of strings): an array of valid type names for this
+ *   field; e.g. 'number', 'date', 'boolean', etc
+ */
+
+function validateTypes(candidate, expectedTypes) {
+  let result = false;
+  for (const type of expectedTypes) {
+    if (type === 'date' && typeof candidate.getMonth === 'function') {
+      result = true;
+    } else if (type === 'array' && candidate.constructor === Array) {
+      result = true;
+    } else if (typeof candidate === type) {
+      result = true;
+    }
+  }
+  return result;
+}

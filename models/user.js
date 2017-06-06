@@ -5,6 +5,22 @@ const db = require('../models/_db').db,
       where = require('../helpers/where').where,
       bcrypt = require('bcrypt');
 
+
+/*
+ * User.validate: validates a set of user data
+ *
+ * returns an object:
+ *   result: `true` if validation passed, `false` if not
+ *   message: reason for producing said result
+ *
+ * note that here we're validating passwords and not hashes. Validation should
+ * be performed before hashing
+ *
+ * data (object): fields (as keys) and their values
+ * suppressRequired (boolean): ignore `required` fields in schema definition.
+ *   Useful for testing individual fields
+ */
+
 exports.validate = function (data, suppressRequired) {
   const schema = {
     name: {
@@ -35,7 +51,15 @@ exports.validate = function (data, suppressRequired) {
   return validation.validate(data, schema, suppressRequired);
 }
 
-// create a new user
+
+/*
+ * User.create: creates and stores and new User
+ *
+ * returns a Promise which, when resolved, will have stored this User
+ *
+ * data (object): fields (as keys) and their values
+ */
+
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(data);
@@ -71,12 +95,30 @@ exports.create = function (data) {
   });
 };
 
-// get a user by id
+
+/*
+ * User.get: fetches a single User by id
+ *
+ * returns a Promise which, when resolved, will produce a single object's worth
+ * of data
+ *
+ * id (integer): id of row in db
+ */
+
 exports.get = function (id) {
   return db.oneOrNone('SELECT id, name, username, access_level FROM users WHERE id = $1', id);
 };
 
-// get a user's password hash
+
+/*
+ * getHash: utility function that fetches a user's password hash, as this data
+ * is not made available by externally callable 'get' functions
+ *
+ * returns a 60-character string
+ *
+ * id (integer): the id of the user whose hash to fetch
+ */
+
 let getHash = function (id) {
   return new Promise((resolve, reject) => {
     db.one('SELECT password_hash FROM users WHERE id = $1', id)
@@ -85,7 +127,23 @@ let getHash = function (id) {
   });
 };
 
-// list users, with options to page, order, and filter
+
+/* User.list: gets many users, optionally paged, ordered, and filtered
+ *
+ * returns a Promise which, when resolved, will produce an array of objects,
+ * each representing one User (no joins)
+ *
+ * options (object): an object of parameters:
+ *   page (integer): the page of users to fetch. Default 1
+ *   limit (integer): number of items per page. Default 100
+ *   orderBy (string): name of the column to sort on. Default: 'id'
+ *   order (string): 'ASC' or 'DESC'. Default 'ASC'
+ *   filters (array of objects): any number of filters to be joined via AND op
+ *     field (string): the column to filter on
+ *     comparison (string): 'gt', 'gte', 'lt', 'lte'. If blank, defaults to =
+ *     value: (variable, native type): value on which to apply the comparison
+ */
+
 exports.list = function (options={}) {
   const defaults = {
     page: 1,
@@ -110,7 +168,19 @@ exports.list = function (options={}) {
   return db.any(cmd, params);
 };
 
-// change a user's info
+
+/*
+ * User.alter: changes any amount of data for a single User
+ *
+ * returns a Promise which, when resolved, will produce an object with the most
+ * current data of this User
+ *
+ * id (integer): the id of the User to alter
+ * newData (object): any number of fields (keys) to update with their new
+ *   values. Note that password hash should not be directly updated with this
+ *   method; pass the raw password instead and it will be hashed automatically
+ */
+
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
 
@@ -161,7 +231,15 @@ exports.alter = function (id, newData) {
   });
 };
 
-// hash a password
+
+/*
+ * User.createHash: hashes a password
+ *
+ * returns a Promise which, when resolved, will produce a hash string
+ *
+ * cleartext (string): the string to hash
+ */
+
 exports.createHash = function (cleartext) {
   return new Promise((resolve, reject) => {
     bcrypt.hash(cleartext, 12, (err, hash) => {
@@ -173,7 +251,17 @@ exports.createHash = function (cleartext) {
   });
 };
 
-// check a password
+
+/*
+ * User.checkPassword: checks an inputted password against a User's stored hash
+ *
+ * returns a Promise which, when resolved, will produce `true` if the passwords
+ * match or `false` if they don't
+ *
+ * id (integer): the id of the User to check against
+ * cleartext (string): the password to check
+ */
+
 exports.checkPassword = function (id, cleartext) {
   return new Promise((resolve, reject) => {
     getHash(id).then(hash => {
@@ -187,7 +275,15 @@ exports.checkPassword = function (id, cleartext) {
   });
 };
 
-// remove a user
+
+/*
+ * User.delete: removed a User from the db
+ *
+ * returns a Promise which, when resolved, will produce no data
+ *
+ * id (integer): the id of the User to delete
+ */
+
 exports.delete = function (id) {
   return db.none('DELETE FROM users WHERE users.id = $1', id);
 };

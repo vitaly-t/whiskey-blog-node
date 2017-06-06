@@ -3,6 +3,19 @@
 const db = require('../models/_db').db,
       validation = require('../helpers/validation');
 
+
+/*
+ * Rarity.validate: validates a set of rarity data
+ *
+ * returns an object:
+ *   result: `true` if validation passed, `false` if not
+ *   message: reason for producing said result
+ *
+ * data (object): fields (as keys) and their values
+ * suppressRequired (boolean): ignore `required` fields in schema definition.
+ *   Useful for testing individual fields
+ */
+
 exports.validate = function (data, suppressRequired) {
   const schema = {
     name: {
@@ -27,7 +40,15 @@ exports.validate = function (data, suppressRequired) {
   return validation.validate(data, schema, suppressRequired);
 }
 
-// create a new rarity
+
+/*
+ * Rarity.create: creates and stores and new Rarity
+ *
+ * returns a Promise which, when resolved, will have stored this Rarity
+ *
+ * data (object): fields (as keys) and their values
+ */
+
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(data);
@@ -56,12 +77,37 @@ exports.create = function (data) {
   });
 };
 
-// get a rarity by id
+
+/*
+ * Rarity.get: fetches a single Rarity by id
+ *
+ * returns a Promise which, when resolved, will produce a single object's worth
+ * of data
+ *
+ * id (integer): id of row in db
+ */
+
 exports.get = function (id) {
   return db.oneOrNone('SELECT * FROM rarities WHERE id = $1', id);
 };
 
-// list rarities, with options to page, order, and filter
+
+/* Rarity.list: gets many rarities, optionally paged, ordered, and filtered
+ *
+ * returns a Promise which, when resolved, will produce an array of objects,
+ * each representing one Rarity (no joins)
+ *
+ * options (object): an object of parameters:
+ *   page (integer): the page of rarities to fetch. Default 1
+ *   limit (integer): number of items per page. Default 100
+ *   orderBy (string): name of the column to sort on. Default: 'sort_order'
+ *   order (string): 'ASC' or 'DESC'. Default 'ASC'
+ *   filters (array of objects): any number of filters to be joined via AND op
+ *     field (string): the column to filter on
+ *     comparison (string): 'gt', 'gte', 'lt', 'lte'. If blank, defaults to =
+ *     value: (variable, native type): value on which to apply the comparison
+ */
+
 exports.list = function (options={}) {
   const defaults = {
     page: 1,
@@ -86,7 +132,17 @@ exports.list = function (options={}) {
   return db.any(cmd, params);
 };
 
-// change a rarity
+
+/*
+ * Rarity.alter: changes any amount of data for a single Rarity
+ *
+ * returns a Promise which, when resolved, will produce an object with the most
+ * current data of this Rarity
+ *
+ * id (integer): the id of the Rarity to alter
+ * newData (object): any number of fields (keys) to update with their new values
+ */
+
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(newData, true);
@@ -115,7 +171,15 @@ exports.alter = function (id, newData) {
   });
 };
 
-// remove a rarity
+
+/*
+ * Rarity.delete: removed a Rarity from the db
+ *
+ * returns a Promise which, when resolved, will produce no data
+ *
+ * id (integer): the id of the Rarity to delete
+ */
+
 exports.delete = function (id) {
   return db.none('DELETE FROM rarities WHERE rarities.id = $1', id);
 };
