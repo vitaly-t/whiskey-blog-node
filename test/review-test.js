@@ -65,68 +65,68 @@ describe('Review model', () => {
   });
 
   it('Validates Review titles and subtitles', function () {
-    expect(Review.validate({ title: 'Title' }).result).to.be.true;
-    expect(Review.validate({ subtitle: 'Sübtitle' }).result).to.be.true;
-    expect(Review.validate({ title: '' }).result).to.be.false;
-    expect(Review.validate({ subtitle: 4 }).result).to.be.false;
-    expect(Review.validate({ title: ['Title'] }).result).to.be.false;
+    expect(Review.validate({ title: 'Title' }, true).result).to.be.true;
+    expect(Review.validate({ subtitle: 'Sübtitle' }, true).result).to.be.true;
+    expect(Review.validate({ title: '' }, true).result).to.be.false;
+    expect(Review.validate({ subtitle: 4 }, true).result).to.be.false;
+    expect(Review.validate({ title: ['Title'] }, true).result).to.be.false;
   });
 
   it('Validates Review slugs', function () {
-    expect(Review.validate({ slug: 'title' }).result).to.be.true;
-    expect(Review.validate({ slug: 'dash-delimited-title' }).result).to.be.true;
-    expect(Review.validate({ slug: 'space delimited title' }).result).to.be.false;
-    expect(Review.validate({ slug: '0-leading-number' }).result).to.be.false;
-    expect(Review.validate({ slug: 'Sübtitle' }).result).to.be.false;
-    expect(Review.validate({ slug: '' }).result).to.be.false;
-    expect(Review.validate({ slug: 4 }).result).to.be.false;
-    expect(Review.validate({ slug: ['title'] }).result).to.be.false;
+    expect(Review.validate({ slug: 'title' }, true).result).to.be.true;
+    expect(Review.validate({ slug: 'dash-delimited-title' }, true).result).to.be.true;
+    expect(Review.validate({ slug: 'space delimited title' }, true).result).to.be.false;
+    expect(Review.validate({ slug: '0-leading-number' }, true).result).to.be.false;
+    expect(Review.validate({ slug: 'Sübtitle' }, true).result).to.be.false;
+    expect(Review.validate({ slug: '' }, true).result).to.be.false;
+    expect(Review.validate({ slug: 4 }, true).result).to.be.false;
+    expect(Review.validate({ slug: ['title'] }, true).result).to.be.false;
   });
 
   it('Validates Review publish dates', function () {
-    expect(Review.validate({ published_at: new Date() }).result).to.be.true;
-    expect(Review.validate({ published_at: 1496186149957 }).result).to.be.false;
-    expect(Review.validate({ published_at: '2017-05-30T00:00:00Z' }).result).to.be.false;
-    expect(Review.validate({ published_at: {} }).result).to.be.false;
-    expect(Review.validate({ published_at: after }).result).to.be.false;
+    expect(Review.validate({ published_at: new Date() }, true).result).to.be.true;
+    expect(Review.validate({ published_at: 1496186149957 }, true).result).to.be.false;
+    expect(Review.validate({ published_at: '2017-05-30T00:00:00Z' }, true).result).to.be.false;
+    expect(Review.validate({ published_at: {} }, true).result).to.be.false;
+    expect(Review.validate({ published_at: after }, true).result).to.be.false;
   });
 
   it('Validates Review foreign keys', function () {
-    expect(Review.validate({ author: 4 }).result).to.be.true;
-    expect(Review.validate({ author: 'Tim' }).result).to.be.false;
-    expect(Review.validate({ distillery: -1 }).result).to.be.false;
-    expect(Review.validate({ region: 5.45 }).result).to.be.false;
-    expect(Review.validate({ drink_type: after }).result).to.be.false;
-    expect(Review.validate({ rarity: 4.9 }).result).to.be.false;
+    expect(Review.validate({ author: 4 }, true).result).to.be.true;
+    expect(Review.validate({ author: 'Tim' }, true).result).to.be.false;
+    expect(Review.validate({ distillery: -1 }, true).result).to.be.false;
+    expect(Review.validate({ region: 5.45 }, true).result).to.be.false;
+    expect(Review.validate({ drink_type: after }, true).result).to.be.false;
+    expect(Review.validate({ rarity: 4.9 }, true).result).to.be.false;
   });
 
   it('Validates Review long text fields', function () {
-    expect(Review.validate({ body: 'Hi' }).result).to.be.true;
-    expect(Review.validate({ summary: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }).result).to.be.true;
-    expect(Review.validate({ body: '' }).result).to.be.false;
-    expect(Review.validate({ summary: true }).result).to.be.false;
+    expect(Review.validate({ body: 'Hi' }, true).result).to.be.true;
+    expect(Review.validate({ summary: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }, true).result).to.be.true;
+    expect(Review.validate({ body: '' }, true).result).to.be.false;
+    expect(Review.validate({ summary: true }, true).result).to.be.false;
   });
 
   it('Validates Review numerical fields', function () {
-    expect(Review.validate({ manufacturer_price: 40 }).result).to.be.true;
-    expect(Review.validate({ manufacturer_price: 29.95 }).result).to.be.true;
-    expect(Review.validate({ manufacturer_price: -5 }).result).to.be.false;
-    expect(Review.validate({ manufacturer_price: '$120' }).result).to.be.false;
-    expect(Review.validate({ rating: 80 }).result).to.be.true;
-    expect(Review.validate({ rating: 100.4 }).result).to.be.true;
-    expect(Review.validate({ rating: -20 }).result).to.be.true;
-    expect(Review.validate({ rating: "50" }).result).to.be.false;
+    expect(Review.validate({ manufacturer_price: 40 }, true).result).to.be.true;
+    expect(Review.validate({ manufacturer_price: 29.95 }, true).result).to.be.true;
+    expect(Review.validate({ manufacturer_price: -5 }, true).result).to.be.false;
+    expect(Review.validate({ manufacturer_price: '$120' }, true).result).to.be.false;
+    expect(Review.validate({ rating: 80 }, true).result).to.be.true;
+    expect(Review.validate({ rating: 100.4 }, true).result).to.be.true;
+    expect(Review.validate({ rating: -20 }, true).result).to.be.true;
+    expect(Review.validate({ rating: "50" }, true).result).to.be.false;
   });
 
   it('Validates Review numerical range fields', function () {
-    expect(Review.validate({ proof_min: 80 }).result).to.be.true;
-    expect(Review.validate({ proof_max: 138.2 }).result).to.be.true;
-    expect(Review.validate({ proof_min: 90, proof_max: 94 }).result).to.be.true;
-    expect(Review.validate({ proof_min: 120, proof_max: 90 }).result).to.be.false;
-    expect(Review.validate({ age_min: 25 }).result).to.be.true;
-    expect(Review.validate({ age_max: 0.5 }).result).to.be.true;
-    expect(Review.validate({ age_min: 1, age_max: 2 }).result).to.be.true;
-    expect(Review.validate({ age_min: 10, age_max: 8 }).result).to.be.false;
+    expect(Review.validate({ proof_min: 80 }, true).result).to.be.true;
+    expect(Review.validate({ proof_max: 138.2 }, true).result).to.be.true;
+    expect(Review.validate({ proof_min: 90, proof_max: 94 }, true).result).to.be.true;
+    expect(Review.validate({ proof_min: 120, proof_max: 90 }, true).result).to.be.false;
+    expect(Review.validate({ age_min: 25 }, true).result).to.be.true;
+    expect(Review.validate({ age_max: 0.5 }, true).result).to.be.true;
+    expect(Review.validate({ age_min: 1, age_max: 2 }, true).result).to.be.true;
+    expect(Review.validate({ age_min: 10, age_max: 8 }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -140,10 +140,9 @@ describe('Review model', () => {
           badData = {
             title: 'Title!',
             body: 'Body!'
-          },
-          requiredFields = ['title', 'author', 'body'];
-    expect(Review.validate(goodData, requiredFields).result).to.be.true;
-    expect(Review.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(Review.validate(goodData).result).to.be.true;
+    expect(Review.validate(badData).result).to.be.false;
   });
 
   it('Stores a complete Review', function () {

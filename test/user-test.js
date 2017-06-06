@@ -18,34 +18,34 @@ describe('User model', function () {
   });
 
   it('Validates user names', function () {
-    expect(User.validate({ name: 'Tim' }).result).to.be.true;
-    expect(User.validate({ name: '' }).result).to.be.false;
-    expect(User.validate({ name: 4 }).result).to.be.false;
-    expect(User.validate({ name: after }).result).to.be.false;
+    expect(User.validate({ name: 'Tim' }, true).result).to.be.true;
+    expect(User.validate({ name: '' }, true).result).to.be.false;
+    expect(User.validate({ name: 4 }, true).result).to.be.false;
+    expect(User.validate({ name: after }, true).result).to.be.false;
   });
 
   it('Validates user usernames', function () {
-    expect(User.validate({ username: 'username' }).result).to.be.true;
-    expect(User.validate({ username: 'üñîçø∂é' }).result).to.be.true;
-    expect(User.validate({ username: 'Tim' }).result).to.be.false;
-    expect(User.validate({ username: 19328 }).result).to.be.false;
-    expect(User.validate({ username: after }).result).to.be.false;
+    expect(User.validate({ username: 'username' }, true).result).to.be.true;
+    expect(User.validate({ username: 'üñîçø∂é' }, true).result).to.be.true;
+    expect(User.validate({ username: 'Tim' }, true).result).to.be.false;
+    expect(User.validate({ username: 19328 }, true).result).to.be.false;
+    expect(User.validate({ username: after }, true).result).to.be.false;
   });
 
   it('Validates user passwords', function () {
-    expect(User.validate({ password: 'abcdef' }).result).to.be.true;
-    expect(User.validate({ password: 'abcd' }).result).to.be.false;
-    expect(User.validate({ password: { password: 'password'} }).result).to.be.false;
-    expect(User.validate({ password: false }).result).to.be.false;
-    expect(User.validate({ password: after }).result).to.be.false;
+    expect(User.validate({ password: 'abcdef' }, true).result).to.be.true;
+    expect(User.validate({ password: 'abcd' }, true).result).to.be.false;
+    expect(User.validate({ password: { password: 'password'} }, true).result).to.be.false;
+    expect(User.validate({ password: false }, true).result).to.be.false;
+    expect(User.validate({ password: after }, true).result).to.be.false;
   });
 
   it('Validates user access levels', function () {
-    expect(User.validate({ access_level: 0 }).result).to.be.true;
-    expect(User.validate({ access_level: -1 }).result).to.be.false;
-    expect(User.validate({ access_level: 'a' }).result).to.be.false;
-    expect(User.validate({ access_level: true }).result).to.be.false;
-    expect(User.validate({ access_level: [1] }).result).to.be.false;
+    expect(User.validate({ access_level: 0 }, true).result).to.be.true;
+    expect(User.validate({ access_level: -1 }, true).result).to.be.false;
+    expect(User.validate({ access_level: 'a' }, true).result).to.be.false;
+    expect(User.validate({ access_level: true }, true).result).to.be.false;
+    expect(User.validate({ access_level: [1] }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -59,10 +59,9 @@ describe('User model', function () {
             name: 'Test User',
             password: 'abcdef',
             access_level: 1
-          },
-          requiredFields = ['name', 'username', 'password', 'access_level'];
-    expect(User.validate(goodData, requiredFields).result).to.be.true;
-    expect(User.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(User.validate(goodData).result).to.be.true;
+    expect(User.validate(badData).result).to.be.false;
   });
 
   it('Stores a user', function () {

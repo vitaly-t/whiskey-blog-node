@@ -15,27 +15,27 @@ describe('Region model', () => {
   });
 
   it('Validates names', function () {
-    expect(Region.validate({ name: 'Kentucky' }).result).to.be.true;
-    expect(Region.validate({ name: 'Hîghlands' }).result).to.be.true;
-    expect(Region.validate({ name: '' }).result).to.be.false;
-    expect(Region.validate({ name: 4 }).result).to.be.false;
-    expect(Region.validate({ name: ['Islay'] }).result).to.be.false;
+    expect(Region.validate({ name: 'Kentucky' }, true).result).to.be.true;
+    expect(Region.validate({ name: 'Hîghlands' }, true).result).to.be.true;
+    expect(Region.validate({ name: '' }, true).result).to.be.false;
+    expect(Region.validate({ name: 4 }, true).result).to.be.false;
+    expect(Region.validate({ name: ['Islay'] }, true).result).to.be.false;
   });
 
   it('Validates filter names', function () {
-    expect(Region.validate({ filter_name: 'Kentucky' }).result).to.be.true;
-    expect(Region.validate({ filter_name: 'Rest øf the US' }).result).to.be.true;
-    expect(Region.validate({ filter_name: '' }).result).to.be.false;
-    expect(Region.validate({ filter_name: 2 }).result).to.be.false;
-    expect(Region.validate({ filter_name: ['Tennessee'] }).result).to.be.false;
+    expect(Region.validate({ filter_name: 'Kentucky' }, true).result).to.be.true;
+    expect(Region.validate({ filter_name: 'Rest øf the US' }, true).result).to.be.true;
+    expect(Region.validate({ filter_name: '' }, true).result).to.be.false;
+    expect(Region.validate({ filter_name: 2 }, true).result).to.be.false;
+    expect(Region.validate({ filter_name: ['Tennessee'] }, true).result).to.be.false;
   });
 
   it('Validates sort orders', function () {
-    expect(Region.validate({ sort_order: 10 }).result).to.be.true;
-    expect(Region.validate({ sort_order: -10 }).result).to.be.true;
-    expect(Region.validate({ sort_order: 1.25 }).result).to.be.false;
-    expect(Region.validate({ sort_order: 'first' }).result).to.be.false;
-    expect(Region.validate({ sort_order: NaN }).result).to.be.false;
+    expect(Region.validate({ sort_order: 10 }, true).result).to.be.true;
+    expect(Region.validate({ sort_order: -10 }, true).result).to.be.true;
+    expect(Region.validate({ sort_order: 1.25 }, true).result).to.be.false;
+    expect(Region.validate({ sort_order: 'first' }, true).result).to.be.false;
+    expect(Region.validate({ sort_order: NaN }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -47,10 +47,9 @@ describe('Region model', () => {
           badData = {
             name: 'United States: Kentucky',
             filter_name: 'Kentucky'
-          },
-          requiredFields = ['name', 'filter_name', 'sort_order'];
-    expect(Region.validate(goodData, requiredFields).result).to.be.true;
-    expect(Region.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(Region.validate(goodData).result).to.be.true;
+    expect(Region.validate(badData).result).to.be.false;
   });
 
   it('Stores a Region', function () {

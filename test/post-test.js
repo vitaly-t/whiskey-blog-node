@@ -35,54 +35,54 @@ describe('Post model', () => {
   });
 
   it('Validates post titles', function () {
-    expect(Post.validate({ title: 'Title' }).result).to.be.true;
-    expect(Post.validate({ title: 'Tî†lé' }).result).to.be.true;
-    expect(Post.validate({ title: '' }).result).to.be.false;
-    expect(Post.validate({ title: 4 }).result).to.be.false;
-    expect(Post.validate({ title: ['Title'] }).result).to.be.false;
+    expect(Post.validate({ title: 'Title' }, true).result).to.be.true;
+    expect(Post.validate({ title: 'Tî†lé' }, true).result).to.be.true;
+    expect(Post.validate({ title: '' }, true).result).to.be.false;
+    expect(Post.validate({ title: 4 }, true).result).to.be.false;
+    expect(Post.validate({ title: ['Title'] }, true).result).to.be.false;
   });
 
   it('Validates Post slugs', function () {
-    expect(Post.validate({ slug: 'title' }).result).to.be.true;
-    expect(Post.validate({ slug: 'dash-delimited-title' }).result).to.be.true;
-    expect(Post.validate({ slug: 'space delimited title' }).result).to.be.false;
-    expect(Post.validate({ slug: '0-leading-number' }).result).to.be.false;
-    expect(Post.validate({ slug: 'nøƒancyünicode' }).result).to.be.false;
-    expect(Post.validate({ slug: '' }).result).to.be.false;
-    expect(Post.validate({ slug: 4 }).result).to.be.false;
-    expect(Post.validate({ slug: ['title'] }).result).to.be.false;
+    expect(Post.validate({ slug: 'title' }, true).result).to.be.true;
+    expect(Post.validate({ slug: 'dash-delimited-title' }, true).result).to.be.true;
+    expect(Post.validate({ slug: 'space delimited title' }, true).result).to.be.false;
+    expect(Post.validate({ slug: '0-leading-number' }, true).result).to.be.false;
+    expect(Post.validate({ slug: 'nøƒancyünicode' }, true).result).to.be.false;
+    expect(Post.validate({ slug: '' }, true).result).to.be.false;
+    expect(Post.validate({ slug: 4 }, true).result).to.be.false;
+    expect(Post.validate({ slug: ['title'] }, true).result).to.be.false;
   });
 
   it('Validates post publish dates', function () {
-    expect(Post.validate({ published_at: new Date() }).result).to.be.true;
-    expect(Post.validate({ published_at: 1496186149957 }).result).to.be.false;
-    expect(Post.validate({ published_at: '2017-05-30T00:00:00Z' }).result).to.be.false;
-    expect(Post.validate({ published_at: {} }).result).to.be.false;
-    expect(Post.validate({ published_at: after }).result).to.be.false;
+    expect(Post.validate({ published_at: new Date() }, true).result).to.be.true;
+    expect(Post.validate({ published_at: 1496186149957 }, true).result).to.be.false;
+    expect(Post.validate({ published_at: '2017-05-30T00:00:00Z' }, true).result).to.be.false;
+    expect(Post.validate({ published_at: {} }, true).result).to.be.false;
+    expect(Post.validate({ published_at: after }, true).result).to.be.false;
   });
 
   it('Validates post authors', function () {
-    expect(Post.validate({ author: 4 }).result).to.be.true;
-    expect(Post.validate({ author: 'Tim' }).result).to.be.false;
-    expect(Post.validate({ author: -1 }).result).to.be.false;
-    expect(Post.validate({ author: 5.45 }).result).to.be.false;
-    expect(Post.validate({ author: after }).result).to.be.false;
+    expect(Post.validate({ author: 4 }, true).result).to.be.true;
+    expect(Post.validate({ author: 'Tim' }, true).result).to.be.false;
+    expect(Post.validate({ author: -1 }, true).result).to.be.false;
+    expect(Post.validate({ author: 5.45 }, true).result).to.be.false;
+    expect(Post.validate({ author: after }, true).result).to.be.false;
   });
 
   it('Validates post summaries', function () {
-    expect(Post.validate({ summary: 'Summary!' }).result).to.be.true;
-    expect(Post.validate({ summary: '' }).result).to.be.false;
-    expect(Post.validate({ summary: 123 }).result).to.be.false;
-    expect(Post.validate({ summary: after }).result).to.be.false;
-    expect(Post.validate({ summary: ['a', 'b'] }).result).to.be.false;
+    expect(Post.validate({ summary: 'Summary!' }, true).result).to.be.true;
+    expect(Post.validate({ summary: '' }, true).result).to.be.false;
+    expect(Post.validate({ summary: 123 }, true).result).to.be.false;
+    expect(Post.validate({ summary: after }, true).result).to.be.false;
+    expect(Post.validate({ summary: ['a', 'b'] }, true).result).to.be.false;
   });
 
   it('Validates post bodies', function () {
-    expect(Post.validate({ body: 'Body!' }).result).to.be.true;
-    expect(Post.validate({ body: '' }).result).to.be.false;
-    expect(Post.validate({ body: 123 }).result).to.be.false;
-    expect(Post.validate({ body: after }).result).to.be.false;
-    expect(Post.validate({ body: ['a', 'b'] }).result).to.be.false;
+    expect(Post.validate({ body: 'Body!' }, true).result).to.be.true;
+    expect(Post.validate({ body: '' }, true).result).to.be.false;
+    expect(Post.validate({ body: 123 }, true).result).to.be.false;
+    expect(Post.validate({ body: after }, true).result).to.be.false;
+    expect(Post.validate({ body: ['a', 'b'] }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -95,10 +95,9 @@ describe('Post model', () => {
           badData = {
             title: 'Title!',
             body: 'Body!'
-          },
-          requiredFields = ['title', 'author', 'body'];
-    expect(Post.validate(goodData, requiredFields).result).to.be.true;
-    expect(Post.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(Post.validate(goodData).result).to.be.true;
+    expect(Post.validate(badData).result).to.be.false;
   });
 
   it('Stores a complete post', function () {

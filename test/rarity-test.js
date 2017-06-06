@@ -15,27 +15,27 @@ describe('Rarity model', () => {
   });
 
   it('Validates names', function () {
-    expect(Rarity.validate({ name: 'Common' }).result).to.be.true;
-    expect(Rarity.validate({ name: 'Cømmon' }).result).to.be.true;
-    expect(Rarity.validate({ name: '' }).result).to.be.false;
-    expect(Rarity.validate({ name: 4 }).result).to.be.false;
-    expect(Rarity.validate({ name: ['Uncommon'] }).result).to.be.false;
+    expect(Rarity.validate({ name: 'Common' }, true).result).to.be.true;
+    expect(Rarity.validate({ name: 'Cømmon' }, true).result).to.be.true;
+    expect(Rarity.validate({ name: '' }, true).result).to.be.false;
+    expect(Rarity.validate({ name: 4 }, true).result).to.be.false;
+    expect(Rarity.validate({ name: ['Uncommon'] }, true).result).to.be.false;
   });
 
   it('Validates filter names', function () {
-    expect(Rarity.validate({ filter_name: 'Hard-to-find' }).result).to.be.true;
-    expect(Rarity.validate({ filter_name: 'Hard-to-ƒind' }).result).to.be.true;
-    expect(Rarity.validate({ filter_name: '' }).result).to.be.false;
-    expect(Rarity.validate({ filter_name: 4 }).result).to.be.false;
-    expect(Rarity.validate({ filter_name: ['Easy-to-find'] }).result).to.be.false;
+    expect(Rarity.validate({ filter_name: 'Hard-to-find' }, true).result).to.be.true;
+    expect(Rarity.validate({ filter_name: 'Hard-to-ƒind' }, true).result).to.be.true;
+    expect(Rarity.validate({ filter_name: '' }, true).result).to.be.false;
+    expect(Rarity.validate({ filter_name: 4 }, true).result).to.be.false;
+    expect(Rarity.validate({ filter_name: ['Easy-to-find'] }, true).result).to.be.false;
   });
 
   it('Validates sort orders', function () {
-    expect(Rarity.validate({ sort_order: 10 }).result).to.be.true;
-    expect(Rarity.validate({ sort_order: 0 }).result).to.be.true;
-    expect(Rarity.validate({ sort_order: '1' }).result).to.be.false;
-    expect(Rarity.validate({ sort_order: 1.5 }).result).to.be.false;
-    expect(Rarity.validate({ sort_order: NaN }).result).to.be.false;
+    expect(Rarity.validate({ sort_order: 10 }, true).result).to.be.true;
+    expect(Rarity.validate({ sort_order: 0 }, true).result).to.be.true;
+    expect(Rarity.validate({ sort_order: '1' }, true).result).to.be.false;
+    expect(Rarity.validate({ sort_order: 1.5 }, true).result).to.be.false;
+    expect(Rarity.validate({ sort_order: NaN }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -46,10 +46,9 @@ describe('Rarity model', () => {
           },
           badData = {
             name: 'Common'
-          },
-          requiredFields = ['name', 'filter_name', 'sort_order'];
-    expect(Rarity.validate(goodData, requiredFields).result).to.be.true;
-    expect(Rarity.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(Rarity.validate(goodData).result).to.be.true;
+    expect(Rarity.validate(badData).result).to.be.false;
   });
 
   it('Stores a rarity', function () {

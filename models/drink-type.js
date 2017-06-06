@@ -3,27 +3,29 @@
 const db = require('../models/_db').db,
       validation = require('../helpers/validation');
 
-exports.validate = function (data, required) {
+exports.validate = function (data, suppressRequired) {
   const schema = {
     singular: {
       types: ['string'],
       minLength: 1,
-      maxLength: 64
+      maxLength: 64,
+      required: true
     },
     plural: {
       types: ['string'],
       minLength: 1,
-      maxLength: 64
+      maxLength: 64,
+      required: true
     }
   };
 
-  return validation.validate(data, schema, required);
+  return validation.validate(data, schema, suppressRequired);
 }
 
 // create a new drink type
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
-    const validation = exports.validate(data, ['singular', 'plural']);
+    const validation = exports.validate(data);
     if (validation.result === false) {
       reject(`Failed to create drink type: ${validation.message}`);
     }
@@ -79,7 +81,7 @@ exports.list = function (options={}) {
 // change a drink type
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
-    const validation = exports.validate(newData);
+    const validation = exports.validate(newData, true);
     if (validation.result === false) {
       reject(`Failed to alter drink type: ${validation.message}`);
     }

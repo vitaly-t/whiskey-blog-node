@@ -14,14 +14,15 @@ function validateTypes(candidate, expectedTypes) {
   return result;
 }
 
-exports.validate = function (data, schema, required) {
+exports.validate = function (data, schema, suppressRequired=false) {
   let result = { result: false, message: '' };
 
   // do a cursory check for required fields
-  if (required && required.length > 0) {
-    for (const field of required) {
-      if (!data.hasOwnProperty(field)) {
-        result.message = `Missing required field: '${field}'`;
+  if (!suppressRequired) {
+    for (const key of Object.keys(schema)) {
+      const field = schema[key];
+      if (field.required === true && !data.hasOwnProperty(key)) {
+        result.message = `Missing required field: '${key}'`;
         return result;
       }
     }

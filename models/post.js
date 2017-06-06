@@ -6,12 +6,13 @@ const db = require('../models/_db').db,
       slugFromString = require('../helpers/slug').fromString,
       User = require('./user');
 
-exports.validate = function (data, required) {
+exports.validate = function (data, suppressRequired) {
   const schema = {
     title: {
       types: ['string'],
       minLength: 1,
-      maxLength: 512
+      maxLength: 512,
+      required: true
     },
     slug: {
       types: ['string'],
@@ -25,7 +26,8 @@ exports.validate = function (data, required) {
     author: {
       types: ['number'],
       min: 0,
-      step: 1
+      step: 1,
+      required: true
     },
     summary: {
       types: ['string'],
@@ -33,7 +35,8 @@ exports.validate = function (data, required) {
     },
     body: {
       types: ['string'],
-      minLength: 1
+      minLength: 1,
+      required: true
     },
     related_reviews: {
       types: ['array'],
@@ -45,13 +48,13 @@ exports.validate = function (data, required) {
     }
   };
 
-  return validation.validate(data, schema, required);
+  return validation.validate(data, schema, suppressRequired);
 }
 
 // create a new post
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
-    const validation = exports.validate(data, ['title', 'author', 'body']);
+    const validation = exports.validate(data);
     if (validation.result === false) {
       reject(`Failed to create post: ${validation.message}`);
     }
@@ -195,7 +198,7 @@ exports.list = function (options={}) {
 // change a post
 exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
-    const validation = exports.validate(newData);
+    const validation = exports.validate(newData, true);
     if (validation.result === false) {
       reject(`Failed to alter post: ${validation.message}`);
     }

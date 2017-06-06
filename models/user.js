@@ -5,36 +5,40 @@ const db = require('../models/_db').db,
       where = require('../helpers/where').where,
       bcrypt = require('bcrypt');
 
-exports.validate = function (data, required) {
+exports.validate = function (data, suppressRequired) {
   const schema = {
     name: {
       types: ['string'],
       minLength: 1,
-      maxLength: 256
+      maxLength: 256,
+      required: true
     },
     username: {
       types: ['string'],
       minLength: 6,
-      maxLength: 256
+      maxLength: 256,
+      required: true
     },
     password: {
       types: ['string'],
-      minLength: 6
+      minLength: 6,
+      required: true
     },
     access_level: {
       types: ['number'],
       min: 0,
-      step: 1
+      step: 1,
+      required: true
     }
   };
 
-  return validation.validate(data, schema, required);
+  return validation.validate(data, schema, suppressRequired);
 }
 
 // create a new user
 exports.create = function (data) {
   return new Promise((resolve, reject) => {
-    const validation = exports.validate(data, ['name', 'username', 'password', 'access_level']);
+    const validation = exports.validate(data);
     if (validation.result === false) {
       reject(`Failed to create user: ${validation.message}`);
     }
@@ -139,7 +143,7 @@ exports.alter = function (id, newData) {
         .catch(e => reject(e));
     }
 
-    const validation = exports.validate(newData);
+    const validation = exports.validate(newData, true);
     if (validation.result === false) {
       reject(`Failed to alter user: ${validation.message}`);
     }

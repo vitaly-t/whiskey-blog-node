@@ -15,27 +15,27 @@ describe('Distillery model', () => {
   });
 
   it('Validates names', function () {
-    expect(Distillery.validate({ name: 'Maker\'s Mark' }).result).to.be.true;
-    expect(Distillery.validate({ name: 'Allt a\' Bhainne' }).result).to.be.true;
-    expect(Distillery.validate({ name: '' }).result).to.be.false;
-    expect(Distillery.validate({ name: 29 }).result).to.be.false;
-    expect(Distillery.validate({ name: ['Ardbeg'] }).result).to.be.false;
+    expect(Distillery.validate({ name: 'Maker\'s Mark' }, true).result).to.be.true;
+    expect(Distillery.validate({ name: 'Allt a\' Bhainne' }, true).result).to.be.true;
+    expect(Distillery.validate({ name: '' }, true).result).to.be.false;
+    expect(Distillery.validate({ name: 29 }, true).result).to.be.false;
+    expect(Distillery.validate({ name: ['Ardbeg'] }, true).result).to.be.false;
   });
 
   it('Validates states', function () {
-    expect(Distillery.validate({ state: 'Kentucky' }).result).to.be.true;
-    expect(Distillery.validate({ state: 'Kentücky' }).result).to.be.true;
-    expect(Distillery.validate({ state: '' }).result).to.be.false;
-    expect(Distillery.validate({ state: 50 }).result).to.be.false;
-    expect(Distillery.validate({ state: ['California'] }).result).to.be.false;
+    expect(Distillery.validate({ state: 'Kentucky' }, true).result).to.be.true;
+    expect(Distillery.validate({ state: 'Kentücky' }, true).result).to.be.true;
+    expect(Distillery.validate({ state: '' }, true).result).to.be.false;
+    expect(Distillery.validate({ state: 50 }, true).result).to.be.false;
+    expect(Distillery.validate({ state: ['California'] }, true).result).to.be.false;
   });
 
   it('Validates cities', function () {
-    expect(Distillery.validate({ city: 'Bardstown' }).result).to.be.true;
-    expect(Distillery.validate({ city: 'Ballindálloch' }).result).to.be.true;
-    expect(Distillery.validate({ city: 1 }).result).to.be.false;
-    expect(Distillery.validate({ city: '' }).result).to.be.false;
-    expect(Distillery.validate({ city: ['Louisville'] }).result).to.be.false;
+    expect(Distillery.validate({ city: 'Bardstown' }, true).result).to.be.true;
+    expect(Distillery.validate({ city: 'Ballindálloch' }, true).result).to.be.true;
+    expect(Distillery.validate({ city: 1 }, true).result).to.be.false;
+    expect(Distillery.validate({ city: '' }, true).result).to.be.false;
+    expect(Distillery.validate({ city: ['Louisville'] }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -46,10 +46,9 @@ describe('Distillery model', () => {
           },
           badData = {
             name: 'A Test Distillery'
-          },
-          requiredFields = ['name', 'city', 'state'];
-    expect(Distillery.validate(goodData, requiredFields).result).to.be.true;
-    expect(Distillery.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(Distillery.validate(goodData).result).to.be.true;
+    expect(Distillery.validate(badData).result).to.be.false;
   });
 
   it('Stores a Distillery', function () {

@@ -15,19 +15,19 @@ describe('DrinkType model', () => {
   });
 
   it('Validates drink type singular names', function () {
-    expect(DrinkType.validate({ singular: 'Rye' }).result).to.be.true;
-    expect(DrinkType.validate({ singular: 'Bøurbon' }).result).to.be.true;
-    expect(DrinkType.validate({ singular: '' }).result).to.be.false;
-    expect(DrinkType.validate({ singular: 4 }).result).to.be.false;
-    expect(DrinkType.validate({ singular: ['Scotch'] }).result).to.be.false;
+    expect(DrinkType.validate({ singular: 'Rye' }, true).result).to.be.true;
+    expect(DrinkType.validate({ singular: 'Bøurbon' }, true).result).to.be.true;
+    expect(DrinkType.validate({ singular: '' }, true).result).to.be.false;
+    expect(DrinkType.validate({ singular: 4 }, true).result).to.be.false;
+    expect(DrinkType.validate({ singular: ['Scotch'] }, true).result).to.be.false;
   });
 
   it('Validates drink type plural names', function () {
-    expect(DrinkType.validate({ plural: 'Ryes' }).result).to.be.true;
-    expect(DrinkType.validate({ plural: 'Bøurbons' }).result).to.be.true;
-    expect(DrinkType.validate({ plural: '' }).result).to.be.false;
-    expect(DrinkType.validate({ plural: 4 }).result).to.be.false;
-    expect(DrinkType.validate({ plural: ['Scotches'] }).result).to.be.false;
+    expect(DrinkType.validate({ plural: 'Ryes' }, true).result).to.be.true;
+    expect(DrinkType.validate({ plural: 'Bøurbons' }, true).result).to.be.true;
+    expect(DrinkType.validate({ plural: '' }, true).result).to.be.false;
+    expect(DrinkType.validate({ plural: 4 }, true).result).to.be.false;
+    expect(DrinkType.validate({ plural: ['Scotches'] }, true).result).to.be.false;
   });
 
   it('Correctly handles required fields', function () {
@@ -37,10 +37,9 @@ describe('DrinkType model', () => {
           },
           badData = {
             singular: 'Rye'
-          },
-          requiredFields = ['singular', 'plural'];
-    expect(DrinkType.validate(goodData, requiredFields).result).to.be.true;
-    expect(DrinkType.validate(badData, requiredFields).result).to.be.false;
+          };
+    expect(DrinkType.validate(goodData).result).to.be.true;
+    expect(DrinkType.validate(badData).result).to.be.false;
   });
 
   it('Stores a drink type', function () {
