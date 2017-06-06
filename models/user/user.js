@@ -1,8 +1,8 @@
 'use strict';
 
-const db = require('../models/_db').db,
-      validation = require('../helpers/validation'),
-      where = require('../helpers/where').where,
+const db = require('../_db').db,
+      validation = require('../../helpers/validation'),
+      where = require('../../helpers/where').where,
       bcrypt = require('bcrypt');
 
 

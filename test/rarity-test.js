@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      Rarity = require('../models/rarity');
+      Rarity = require('../models/rarity/rarity');
 
 describe('Rarity model', () => {
 

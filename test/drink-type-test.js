@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      DrinkType = require('../models/drink-type');
+      DrinkType = require('../models/drink-type/drink-type');
 
 describe('DrinkType model', () => {
 

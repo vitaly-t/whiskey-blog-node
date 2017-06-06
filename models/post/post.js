@@ -1,10 +1,10 @@
 'use strict';
 
-const db = require('../models/_db').db,
-      validation = require('../helpers/validation'),
-      where = require('../helpers/where').where,
-      slugFromString = require('../helpers/slug').fromString,
-      User = require('./user');
+const db = require('../_db').db,
+      validation = require('../../helpers/validation'),
+      where = require('../../helpers/where').where,
+      slugFromString = require('../../helpers/slug').fromString,
+      User = require('../user/user');
 
 
 /*
@@ -228,8 +228,7 @@ function getBy(columnName, value) {
   return db.oneOrNone(cmd, [columnName, value]).then(data => {
     let result = data.json_build_object;
 
-    // pg-promise doesn't seem to recognize dates returned in json,
-    // therefore parse these explicitly
+    // we have to parse these returned timestamps explicitly
     result.created_at = new Date(result.created_at);
     result.published_at = new Date(result.published_at);
     return result;

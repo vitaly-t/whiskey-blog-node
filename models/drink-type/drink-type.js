@@ -1,11 +1,11 @@
 'use strict';
 
-const db = require('../models/_db').db,
-      validation = require('../helpers/validation');
+const db = require('../_db').db,
+      validation = require('../../helpers/validation');
 
 
 /*
- * Distillery.validate: validates a set of distillery data
+ * DrinkType.validate: validates a set of drink type data
  *
  * returns an object:
  *   result: `true` if validation passed, `false` if not
@@ -18,22 +18,16 @@ const db = require('../models/_db').db,
 
 exports.validate = function (data, suppressRequired) {
   const schema = {
-    name: {
-      types: ['string'],
-      minLength: 1,
-      maxLength: 128,
-      required: true
-    },
-    state: {
+    singular: {
       types: ['string'],
       minLength: 1,
       maxLength: 64,
       required: true
     },
-    city: {
+    plural: {
       types: ['string'],
       minLength: 1,
-      maxLength: 128,
+      maxLength: 64,
       required: true
     }
   };
@@ -43,9 +37,9 @@ exports.validate = function (data, suppressRequired) {
 
 
 /*
- * Distillery.create: creates and stores and new Distillery
+ * DrinkType.create: creates and stores and new DrinkType
  *
- * returns a Promise which, when resolved, will have stored this Distillery
+ * returns a Promise which, when resolved, will have stored this DrinkType
  *
  * data (object): fields (as keys) and their values
  */
@@ -54,23 +48,20 @@ exports.create = function (data) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(data);
     if (validation.result === false) {
-      reject(`Failed to create distillery: ${validation.message}`);
+      reject(`Failed to create drink type: ${validation.message}`);
     }
 
     const cmd = `
-      INSERT INTO distilleries(
-        name,
-        state,
-        city
+      INSERT INTO drink_types(
+        singular,
+        plural
       ) VALUES (
-        $(name),
-        $(state),
-        $(city)
+        $(singular),
+        $(plural)
       ) RETURNING
         id,
-        name,
-        state,
-        city`;
+        singular,
+        plural`;
 
     db.one(cmd, data)
       .then(data => resolve(data))
@@ -80,7 +71,7 @@ exports.create = function (data) {
 
 
 /*
- * Distillery.get: fetches a single Distillery by id
+ * DrinkType.get: fetches a single DrinkType by id
  *
  * returns a Promise which, when resolved, will produce a single object's worth
  * of data
@@ -89,19 +80,19 @@ exports.create = function (data) {
  */
 
 exports.get = function (id) {
-  return db.oneOrNone('SELECT * FROM distilleries WHERE id = $1', id);
+  return db.oneOrNone('SELECT * FROM drink_types WHERE id = $1', id);
 };
 
 
-/* Distillery.list: gets many distilleries, optionally paged, ordered, and filtered
+/* DrinkType.list: gets many drink types, optionally paged, ordered, and filtered
  *
  * returns a Promise which, when resolved, will produce an array of objects,
- * each representing one Distillery (no joins)
+ * each representing one DrinkType (no joins)
  *
  * options (object): an object of parameters:
- *   page (integer): the page of distilleries to fetch. Default 1
+ *   page (integer): the page of drink types to fetch. Default 1
  *   limit (integer): number of items per page. Default 100
- *   orderBy (string): name of the column to sort on. Default: 'name'
+ *   orderBy (string): name of the column to sort on. Default: 'singular'
  *   order (string): 'ASC' or 'DESC'. Default 'ASC'
  *   filters (array of objects): any number of filters to be joined via AND op
  *     field (string): the column to filter on
@@ -113,7 +104,7 @@ exports.list = function (options={}) {
   const defaults = {
     page: 1,
     limit: 100,
-    orderBy: 'name',
+    orderBy: 'singular',
     order: 'ASC',
     offset: function () {
       return (this.page - 1) * this.limit;
@@ -122,7 +113,7 @@ exports.list = function (options={}) {
   };
 
   let params = Object.assign(defaults, options),
-      cmd = 'SELECT * FROM distilleries';
+      cmd = 'SELECT * FROM drink_types';
 
   if (params.filters.length > 0) {
     cmd += where(params, 'filters');
@@ -135,12 +126,12 @@ exports.list = function (options={}) {
 
 
 /*
- * Distillery.alter: changes any amount of data for a single Distillery
+ * DrinkType.alter: changes any amount of data for a single DrinkType
  *
  * returns a Promise which, when resolved, will produce an object with the most
- * current data of this Distillery
+ * current data of this DrinkType
  *
- * id (integer): the id of the Distillery to alter
+ * id (integer): the id of the DrinkType to alter
  * newData (object): any number of fields (keys) to update with their new values
  */
 
@@ -148,22 +139,20 @@ exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(newData, true);
     if (validation.result === false) {
-      reject(`Failed to alter distillery: ${validation.message}`);
+      reject(`Failed to alter drink type: ${validation.message}`);
     }
 
     exports.get(id)
       .then(existingData => {
         const cmd = `
-          UPDATE distilleries SET
-            name = $(name),
-            state = $(state),
-            city = $(city)
+          UPDATE drink_types SET
+            singular = $(singular),
+            plural = $(plural)
           WHERE id = $(id)
           RETURNING
             id,
-            name,
-            state,
-            city`,
+            singular,
+            plural`,
           data = Object.assign(existingData, newData);
         return db.one(cmd, data);
       })
@@ -174,13 +163,13 @@ exports.alter = function (id, newData) {
 
 
 /*
- * Distillery.delete: removed a Distillery from the db
+ * DrinkType.delete: removed a DrinkType from the db
  *
  * returns a Promise which, when resolved, will produce no data
  *
- * id (integer): the id of the Distillery to delete
+ * id (integer): the id of the DrinkType to delete
  */
 
 exports.delete = function (id) {
-  return db.none('DELETE FROM distilleries WHERE distilleries.id = $1', id);
+  return db.none('DELETE FROM drink_types WHERE drink_types.id = $1', id);
 };

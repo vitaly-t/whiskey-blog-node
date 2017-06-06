@@ -3,13 +3,13 @@
  * Should be of some use when building routes and views
  */
 
-const Distillery = require('./distillery'),
-      DrinkType = require('./drink-type'),
-      Post = require('./post'),
-      Rarity = require('./rarity'),
-      Region = require('./region'),
-      Review = require('./review'),
-      User = require('./user');
+const Distillery = require('./distillery/distillery'),
+      DrinkType = require('./drink-type/drink-type'),
+      Post = require('./post/post'),
+      Rarity = require('./rarity/rarity'),
+      Region = require('./region/region'),
+      Review = require('./review/review'),
+      User = require('./user/user');
 
 let content = {
   distilleries: [],

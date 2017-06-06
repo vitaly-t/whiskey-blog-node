@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      Distillery = require('../models/distillery');
+      Distillery = require('../models/distillery/distillery');
 
 describe('Distillery model', () => {
 

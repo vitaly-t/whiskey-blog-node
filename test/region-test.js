@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      Region = require('../models/region');
+      Region = require('../models/region/region');
 
 describe('Region model', () => {
 

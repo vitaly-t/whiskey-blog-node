@@ -2,8 +2,8 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      Post = require('../models/post'),
-      User = require('../models/user');
+      Post = require('../models/post/post'),
+      User = require('../models/user/user');
 
 describe('Post model', () => {
 

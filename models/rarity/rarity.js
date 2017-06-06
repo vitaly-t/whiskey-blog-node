@@ -1,11 +1,11 @@
 'use strict';
 
-const db = require('../models/_db').db,
-      validation = require('../helpers/validation');
+const db = require('../_db').db,
+      validation = require('../../helpers/validation');
 
 
 /*
- * Region.validate: validates a set of region data
+ * Rarity.validate: validates a set of rarity data
  *
  * returns an object:
  *   result: `true` if validation passed, `false` if not
@@ -42,9 +42,9 @@ exports.validate = function (data, suppressRequired) {
 
 
 /*
- * Region.create: creates and stores and new Region
+ * Rarity.create: creates and stores and new Rarity
  *
- * returns a Promise which, when resolved, will have stored this Region
+ * returns a Promise which, when resolved, will have stored this Rarity
  *
  * data (object): fields (as keys) and their values
  */
@@ -53,11 +53,11 @@ exports.create = function (data) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(data);
     if (validation.result === false) {
-      reject(`Failed to create region: ${validation.message}`);
+      reject(`Failed to create rarity: ${validation.message}`);
     }
 
     const cmd = `
-      INSERT INTO regions(
+      INSERT INTO rarities(
         name,
         filter_name,
         sort_order
@@ -79,7 +79,7 @@ exports.create = function (data) {
 
 
 /*
- * Region.get: fetches a single Region by id
+ * Rarity.get: fetches a single Rarity by id
  *
  * returns a Promise which, when resolved, will produce a single object's worth
  * of data
@@ -88,17 +88,17 @@ exports.create = function (data) {
  */
 
 exports.get = function (id) {
-  return db.oneOrNone('SELECT * FROM regions WHERE id = $1', id);
+  return db.oneOrNone('SELECT * FROM rarities WHERE id = $1', id);
 };
 
 
-/* Region.list: gets many regions, optionally paged, ordered, and filtered
+/* Rarity.list: gets many rarities, optionally paged, ordered, and filtered
  *
  * returns a Promise which, when resolved, will produce an array of objects,
- * each representing one Region (no joins)
+ * each representing one Rarity (no joins)
  *
  * options (object): an object of parameters:
- *   page (integer): the page of regions to fetch. Default 1
+ *   page (integer): the page of rarities to fetch. Default 1
  *   limit (integer): number of items per page. Default 100
  *   orderBy (string): name of the column to sort on. Default: 'sort_order'
  *   order (string): 'ASC' or 'DESC'. Default 'ASC'
@@ -121,7 +121,7 @@ exports.list = function (options={}) {
   };
 
   let params = Object.assign(defaults, options),
-      cmd = 'SELECT * FROM regions';
+      cmd = 'SELECT * FROM rarities';
 
   if (params.filters.length > 0) {
     cmd += where(params, 'filters');
@@ -134,12 +134,12 @@ exports.list = function (options={}) {
 
 
 /*
- * Region.alter: changes any amount of data for a single Region
+ * Rarity.alter: changes any amount of data for a single Rarity
  *
  * returns a Promise which, when resolved, will produce an object with the most
- * current data of this Region
+ * current data of this Rarity
  *
- * id (integer): the id of the Region to alter
+ * id (integer): the id of the Rarity to alter
  * newData (object): any number of fields (keys) to update with their new values
  */
 
@@ -147,13 +147,13 @@ exports.alter = function (id, newData) {
   return new Promise((resolve, reject) => {
     const validation = exports.validate(newData, true);
     if (validation.result === false) {
-      reject(`Failed to alter region: ${validation.message}`);
+      reject(`Failed to alter rarity: ${validation.message}`);
     }
 
     exports.get(id)
       .then(existingData => {
         const cmd = `
-          UPDATE regions SET
+          UPDATE rarities SET
             name = $(name),
             filter_name = $(filter_name),
             sort_order = $(sort_order)
@@ -163,7 +163,7 @@ exports.alter = function (id, newData) {
             name,
             filter_name,
             sort_order`,
-          data = Object.assign(existingData, newData)
+          data = Object.assign(existingData, newData);
         return db.one(cmd, data);
       })
       .then(data => resolve(data))
@@ -173,13 +173,13 @@ exports.alter = function (id, newData) {
 
 
 /*
- * Region.delete: removed a Region from the db
+ * Rarity.delete: removed a Rarity from the db
  *
  * returns a Promise which, when resolved, will produce no data
  *
- * id (integer): the id of the Region to delete
+ * id (integer): the id of the Rarity to delete
  */
 
 exports.delete = function (id) {
-  return db.none('DELETE FROM regions WHERE regions.id = $1', id);
+  return db.none('DELETE FROM rarities WHERE rarities.id = $1', id);
 };

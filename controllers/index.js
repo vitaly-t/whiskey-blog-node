@@ -1,7 +1,7 @@
 const express = require('express'),
       router = express.Router(),
-      Post = require('../models/post'),
-      Review = require('../models/review');
+      Post = require('../models/post/post'),
+      Review = require('../models/review/review');
 
 // load all controllers
 router.use('/posts', require('./posts'));

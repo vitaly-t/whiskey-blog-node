@@ -2,13 +2,13 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      Review = require('../models/review'),
-      Post = require('../models/post'),
-      User = require('../models/user'),
-      Distillery = require('../models/distillery'),
-      Region = require('../models/region'),
-      DrinkType = require('../models/drink-type'),
-      Rarity = require('../models/rarity');
+      Review = require('../models/review/review'),
+      Post = require('../models/post/post'),
+      User = require('../models/user/user'),
+      Distillery = require('../models/distillery/distillery'),
+      Region = require('../models/region/region'),
+      DrinkType = require('../models/drink-type/drink-type'),
+      Rarity = require('../models/rarity/rarity');
 
 describe('Review model', () => {
 

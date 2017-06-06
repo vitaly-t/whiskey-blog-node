@@ -2,7 +2,7 @@
 
 const expect = require('chai').expect,
       assert = require('chai').assert,
-      User = require('../models/user');
+      User = require('../models/user/user');
 
 describe('User model', function () {
 

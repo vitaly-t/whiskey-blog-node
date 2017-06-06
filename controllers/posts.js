@@ -1,6 +1,6 @@
 const express = require('express'),
       router = express.Router(),
-      Post = require('../models/post');
+      Post = require('../models/post/post');
 
 // return 100 recent posts
 router.get('/', function (req, res, next) {
