@@ -4,7 +4,19 @@ const db = require('../_db').db,
       validation = require('../../helpers/validation'),
       where = require('../../helpers/where').where,
       slugFromString = require('../../helpers/slug').fromString,
-      User = require('../user/user');
+      User = require('../user/user'),
+
+      // load sql queries for pg-promise
+      QueryFile = require('pg-promise').QueryFile,
+      qfOptions = { minify: true },
+      sqlCreate = new QueryFile(__dirname + '/_create.sql', qfOptions),
+      sqlGetBy = new QueryFile(__dirname + '/_getBy.sql', qfOptions),
+      sqlAlter = new QueryFile(__dirname + '/_alter.sql', qfOptions),
+      sqlDelete = new QueryFile(__dirname + '/_delete.sql', qfOptions),
+      sqlCreateRelatedReview = new QueryFile(__dirname + '/_create-related-review.sql', qfOptions),
+      sqlCreateRelatedPost = new QueryFile(__dirname + '/_create-related-post.sql', qfOptions),
+      sqlDeleteRelatedReviews = new QueryFile(__dirname + '/_delete-related-reviews.sql', qfOptions),
+      sqlDeleteRelatedPosts = new QueryFile(__dirname + '/_delete-related-posts.sql', qfOptions);
 
 
 /*
@@ -82,31 +94,6 @@ exports.create = function (data) {
 
     let stored;
 
-    const cmd = `
-      INSERT INTO posts(
-        title,
-        slug,
-        published_at,
-        author,
-        summary,
-        body
-      ) VALUES (
-        $(title),
-        $(slug),
-        $(published_at),
-        $(author),
-        $(summary),
-        $(body)
-      ) RETURNING
-        id,
-        title,
-        slug,
-        created_at,
-        published_at,
-        author,
-        summary,
-       body`;
-
     const defaultData = {
       title: null,
       slug: function () {
@@ -120,7 +107,7 @@ exports.create = function (data) {
 
     data = Object.assign(defaultData, data);
 
-    db.one(cmd, data)
+    db.one(sqlCreate, data)
       .then(returned => {
         stored = returned;
         return createRelated(stored.id, data.related_reviews, data.related_posts);
@@ -144,31 +131,15 @@ exports.create = function (data) {
 function createRelated(origin, reviews, posts) {
 
   // first, wipe out existing (avoiding update checks for now)
-  return db.none(`DELETE FROM posts_related_reviews WHERE origin = $1`, origin)
-    .then(() => db.none(`DELETE FROM posts_related_posts WHERE origin = $1`, origin))
+  return db.none(sqlDeleteRelatedReviews, origin)
+    .then(() => db.none(sqlDeleteRelatedPosts, origin))
     .then(() => {
       let ops = [];
       if (reviews) {
-        ops.concat(reviews.map(review => db.none(`
-          INSERT INTO posts_related_reviews(
-            origin,
-            related
-          ) VALUES (
-            $1,
-            $2
-          )
-        `, [origin, review])));
+        ops.concat(reviews.map(review => db.none(sqlCreateRelatedReview, [origin, review])));
       }
       if (posts) {
-        ops.concat(posts.map(post => db.none(`
-          INSERT INTO posts_related_posts(
-            origin,
-            related
-          ) VALUES (
-            $1,
-            $2
-          )
-        `, [origin, post])));
+        ops.concat(posts.map(post => db.none(sqlCreateRelatedPost, [origin, post])));
       }
       return Promise.all(ops);
     });
@@ -187,45 +158,7 @@ function createRelated(origin, reviews, posts) {
  */
 
 function getBy(columnName, value) {
-  // collect all these joins into a single query to avoid multiple chained
-  // operations
-  const cmd = `
-    SELECT json_build_object(
-      'id', posts.id,
-      'title', posts.title,
-      'slug', posts.slug,
-      'created_at', posts.created_at,
-      'published_at', posts.published_at,
-      'summary', posts.summary,
-      'body', posts.body,
-      'author', (SELECT json_build_object(
-          'id', users.id,
-          'name', users.name,
-          'username', users.username,
-          'access_level', users.access_level
-        ) FROM users WHERE users.id = posts.author),
-      'related_reviews', (SELECT json_agg(json_build_object(
-          'id', rel_r.id,
-          'title', rel_r.title,
-          'subtitle', rel_r.subtitle,
-          'slug', rel_r.slug,
-          'summary', rel_r.summary
-        )) FROM reviews rel_r INNER JOIN posts_related_reviews
-          ON posts_related_reviews.origin = posts.id
-          AND posts_related_reviews.related = rel_r.id),
-      'related_posts', (SELECT json_agg(json_build_object(
-          'id', rel_p.id,
-          'title', rel_p.title,
-          'slug', rel_p.slug,
-          'summary', rel_p.summary
-        )) FROM posts rel_p INNER JOIN posts_related_posts
-          ON posts_related_posts.origin = posts.id
-          AND posts_related_posts.related = rel_p.id)
-    )
-    FROM posts WHERE $1~ = $2
-  `;
-
-  return db.oneOrNone(cmd, [columnName, value]).then(data => {
+  return db.oneOrNone(sqlGetBy, [columnName, value]).then(data => {
     let result = data.json_build_object;
 
     // we have to parse these returned timestamps explicitly
@@ -326,25 +259,6 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const cmd = `
-          UPDATE posts SET
-            title = $(title),
-            slug = $(slug),
-            published_at = $(published_at),
-            author = $(author),
-            summary = $(summary),
-            body = $(body)
-          WHERE id = $(id)
-          RETURNING
-            id,
-            title,
-            slug,
-            created_at,
-            published_at,
-            author,
-            summary,
-            body`;
-
         // returned related objects have been expanded, and we can't reassign them in that state
         for (let relation of ['author', 'related_reviews', 'related_posts']) {
           if (existingData[relation] && typeof existingData[relation] === 'object') {
@@ -356,7 +270,7 @@ exports.alter = function (id, newData) {
 
         newData = Object.assign(existingData, newData);
 
-        return db.one(cmd, newData);
+        return db.one(sqlAlter, newData);
       })
       .then(returned => {
         stored = returned;
@@ -377,5 +291,5 @@ exports.alter = function (id, newData) {
  */
 
 exports.delete = function (id) {
-  return db.none('DELETE FROM posts WHERE posts.id = $1', id);
+  return db.none(sqlDelete, id);
 };

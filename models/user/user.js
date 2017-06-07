@@ -3,7 +3,16 @@
 const db = require('../_db').db,
       validation = require('../../helpers/validation'),
       where = require('../../helpers/where').where,
-      bcrypt = require('bcrypt');
+      bcrypt = require('bcrypt'),
+
+      // load sql queries for pg-promise
+      QueryFile = require('pg-promise').QueryFile,
+      qfOptions = { minify: true },
+      sqlCreate = new QueryFile(__dirname + '/_create.sql', qfOptions),
+      sqlGet = new QueryFile(__dirname + '/_get.sql', qfOptions),
+      sqlGetHash = new QueryFile(__dirname + '/_getHash.sql', qfOptions),
+      sqlAlter = new QueryFile(__dirname + '/_alter.sql', qfOptions),
+      sqlDelete = new QueryFile(__dirname + '/_delete.sql', qfOptions);
 
 
 /*
@@ -67,27 +76,10 @@ exports.create = function (data) {
       reject(`Failed to create user: ${validation.message}`);
     }
 
-    const cmd = `
-      INSERT INTO users(
-        name,
-        username,
-        password_hash,
-        access_level
-      ) VALUES (
-        $(name),
-        $(username),
-        $(password_hash),
-        $(access_level)
-      ) RETURNING
-        id,
-        name,
-        username,
-        access_level`;
-
     exports.createHash(data.password)
       .then(hash => {
         data.password_hash = hash;
-        return db.one(cmd, data)
+        return db.one(sqlCreate, data)
           .then(data => resolve(data))
           .catch(e => reject(e));
       })
@@ -106,7 +98,7 @@ exports.create = function (data) {
  */
 
 exports.get = function (id) {
-  return db.oneOrNone('SELECT id, name, username, access_level FROM users WHERE id = $1', id);
+  return db.oneOrNone(sqlGet, id);
 };
 
 
@@ -121,7 +113,7 @@ exports.get = function (id) {
 
 let getHash = function (id) {
   return new Promise((resolve, reject) => {
-    db.one('SELECT password_hash FROM users WHERE id = $1', id)
+    db.one(sqlGetHash, id)
       .then(data => resolve(data.password_hash))
       .catch(e => reject(e));
   });
@@ -194,19 +186,7 @@ exports.alter = function (id, newData) {
         .then(hash => {
           oldData.password_hash = hash;
           let data = Object.assign(oldData, newData);
-          const cmd = `
-            UPDATE users SET
-              name = $(name),
-              username = $(username),
-              password_hash = $(password_hash),
-              access_level = $(access_level)
-            WHERE id = $(id)
-            RETURNING
-              id,
-              name,
-              username,
-              access_level`;
-          db.one(cmd, data)
+          db.one(sqlAlter, data)
             .then(result => resolve(result))
             .catch(e => reject(e));
         })
@@ -285,5 +265,5 @@ exports.checkPassword = function (id, cleartext) {
  */
 
 exports.delete = function (id) {
-  return db.none('DELETE FROM users WHERE users.id = $1', id);
+  return db.none(sqlDelete, id);
 };

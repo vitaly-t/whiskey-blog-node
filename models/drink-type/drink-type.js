@@ -1,7 +1,15 @@
 'use strict';
 
 const db = require('../_db').db,
-      validation = require('../../helpers/validation');
+      validation = require('../../helpers/validation'),
+
+      // load sql queries for pg-promise
+      QueryFile = require('pg-promise').QueryFile,
+      qfOptions = { minify: true },
+      sqlCreate = new QueryFile(__dirname + '/_create.sql', qfOptions),
+      sqlGet = new QueryFile(__dirname + '/_get.sql', qfOptions),
+      sqlAlter = new QueryFile(__dirname + '/_alter.sql', qfOptions),
+      sqlDelete = new QueryFile(__dirname + '/_delete.sql', qfOptions);
 
 
 /*
@@ -51,19 +59,7 @@ exports.create = function (data) {
       reject(`Failed to create drink type: ${validation.message}`);
     }
 
-    const cmd = `
-      INSERT INTO drink_types(
-        singular,
-        plural
-      ) VALUES (
-        $(singular),
-        $(plural)
-      ) RETURNING
-        id,
-        singular,
-        plural`;
-
-    db.one(cmd, data)
+    db.one(sqlCreate, data)
       .then(data => resolve(data))
       .catch(e => reject(e));
   });
@@ -80,7 +76,7 @@ exports.create = function (data) {
  */
 
 exports.get = function (id) {
-  return db.oneOrNone('SELECT * FROM drink_types WHERE id = $1', id);
+  return db.oneOrNone(sqlGet, id);
 };
 
 
@@ -144,17 +140,8 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const cmd = `
-          UPDATE drink_types SET
-            singular = $(singular),
-            plural = $(plural)
-          WHERE id = $(id)
-          RETURNING
-            id,
-            singular,
-            plural`,
-          data = Object.assign(existingData, newData);
-        return db.one(cmd, data);
+        const data = Object.assign(existingData, newData);
+        return db.one(sqlAlter, data);
       })
       .then(data => resolve(data))
       .catch(e => reject(e));
@@ -171,5 +158,5 @@ exports.alter = function (id, newData) {
  */
 
 exports.delete = function (id) {
-  return db.none('DELETE FROM drink_types WHERE drink_types.id = $1', id);
+  return db.none(sqlDelete, id);
 };

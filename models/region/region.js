@@ -1,7 +1,15 @@
 'use strict';
 
 const db = require('../_db').db,
-      validation = require('../../helpers/validation');
+      validation = require('../../helpers/validation'),
+
+      // load sql queries for pg-promise
+      QueryFile = require('pg-promise').QueryFile,
+      qfOptions = { minify: true },
+      sqlCreate = new QueryFile(__dirname + '/_create.sql', qfOptions),
+      sqlGet = new QueryFile(__dirname + '/_get.sql', qfOptions),
+      sqlAlter = new QueryFile(__dirname + '/_alter.sql', qfOptions),
+      sqlDelete = new QueryFile(__dirname + '/_delete.sql', qfOptions);
 
 
 /*
@@ -56,22 +64,7 @@ exports.create = function (data) {
       reject(`Failed to create region: ${validation.message}`);
     }
 
-    const cmd = `
-      INSERT INTO regions(
-        name,
-        filter_name,
-        sort_order
-      ) VALUES (
-        $(name),
-        $(filter_name),
-        $(sort_order)
-      ) RETURNING
-        id,
-        name,
-        filter_name,
-        sort_order`;
-
-    db.one(cmd, data)
+    db.one(sqlCreate, data)
       .then(data => resolve(data))
       .catch(e => reject(e));
   });
@@ -88,7 +81,7 @@ exports.create = function (data) {
  */
 
 exports.get = function (id) {
-  return db.oneOrNone('SELECT * FROM regions WHERE id = $1', id);
+  return db.oneOrNone(sqlGet, id);
 };
 
 
@@ -152,19 +145,8 @@ exports.alter = function (id, newData) {
 
     exports.get(id)
       .then(existingData => {
-        const cmd = `
-          UPDATE regions SET
-            name = $(name),
-            filter_name = $(filter_name),
-            sort_order = $(sort_order)
-          WHERE id = $(id)
-          RETURNING
-            id,
-            name,
-            filter_name,
-            sort_order`,
-          data = Object.assign(existingData, newData)
-        return db.one(cmd, data);
+        const data = Object.assign(existingData, newData)
+        return db.one(sqlAlter, data);
       })
       .then(data => resolve(data))
       .catch(e => reject(e));
@@ -181,5 +163,5 @@ exports.alter = function (id, newData) {
  */
 
 exports.delete = function (id) {
-  return db.none('DELETE FROM regions WHERE regions.id = $1', id);
+  return db.none(sqlDelete, id);
 };
