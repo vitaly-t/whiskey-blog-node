@@ -9,7 +9,7 @@ const db = require('../_db').db,
       QueryFile = require('pg-promise').QueryFile,
       qfOptions = { minify: true },
       sqlCreate = new QueryFile(__dirname + '/_create.sql', qfOptions),
-      sqlGet = new QueryFile(__dirname + '/_get.sql', qfOptions),
+      sqlGetBy = new QueryFile(__dirname + '/_getBy.sql', qfOptions),
       sqlGetHash = new QueryFile(__dirname + '/_getHash.sql', qfOptions),
       sqlAlter = new QueryFile(__dirname + '/_alter.sql', qfOptions),
       sqlDelete = new QueryFile(__dirname + '/_delete.sql', qfOptions);
@@ -89,6 +89,22 @@ exports.create = function (data) {
 
 
 /*
+ * getBy: utility function that constructs the query to get a user
+ *
+ * returns a Promise which, when resolved, will produce a single object's worth
+ * of data
+ *
+ * columnName (string): the name of the db column on which to search. Better if
+ *   values for this column are unique
+ * value (variable, native type): the value by which to identify this User
+ */
+
+function getBy(columnName, value) {
+  return db.oneOrNone(sqlGetBy, [columnName, value]);
+}
+
+
+/*
  * User.get: fetches a single User by id
  *
  * returns a Promise which, when resolved, will produce a single object's worth
@@ -98,7 +114,21 @@ exports.create = function (data) {
  */
 
 exports.get = function (id) {
-  return db.oneOrNone(sqlGet, id);
+  return getBy('id', id);
+};
+
+
+/*
+ * User.getByUsername: fetches a single User by username
+ *
+ * returns a Promise which, when resolved, will produce a single object's worth
+ * of data
+ *
+ * username (string): unique username of user
+ */
+
+exports.getByUsername = function (username) {
+  return getBy('username', username);
 };
 
 
@@ -257,7 +287,7 @@ exports.checkPassword = function (id, cleartext) {
 
 
 /*
- * User.delete: removed a User from the db
+ * User.delete: removes a User from the db
  *
  * returns a Promise which, when resolved, will produce no data
  *
@@ -266,4 +296,37 @@ exports.checkPassword = function (id, cleartext) {
 
 exports.delete = function (id) {
   return db.none(sqlDelete, id);
+};
+
+
+/*
+ * User.authenticate: gets a user by username and checks their password
+ *
+ * returns a Promise which, when resolved, will produce the authenticated User.
+ * rejects if any step along the way fails
+ *
+ * username (string): the username to find the User by
+ * password (string): plaintext password to check
+ */
+
+exports.authenticate = function (username, password) {
+  let storedUser;
+
+  // todo: spoof password hash check time if user not found
+  return exports.getByUsername(username)
+    .then(user => {
+      if (!user) {
+        throw new Error('Can\'t find this username');
+      }
+      storedUser = user;
+      return exports.checkPassword(user.id, password)
+    })
+    .then(result => {
+      return new Promise((resolve, reject) => {
+        if (result) {
+          resolve(storedUser);
+        }
+        reject('Password didn\'t match');
+      });
+    });
 };

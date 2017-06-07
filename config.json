@@ -6,6 +6,9 @@
       "database": "nodeblog",
       "user": "node_user",
       "password": "node_password"
+    },
+    "session": {
+      "secret": "change me!"
     }
   },
   "production": {
