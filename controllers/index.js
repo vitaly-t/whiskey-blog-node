@@ -14,16 +14,12 @@ router.use('/reviews', require('./reviews'));
 router.use('/admin', require('./admin'));
 
 // homepage route
-router.get('/', function (req, res) {
-  let items;
-  Review.list({ limit: 5 })
-    .then(reviews => {
-      items = reviews;
-      return Post.list({ limit: 5 });
+router.get('/', function (req, res, next) {
+  Promise.all([ Review.list({ limit: 5 }), Post.list({ limit: 5 }) ])
+    .then(results => {
+      res.json(results[0].concat(results[1]).sort((a, b) => b.published_at.getTime() - a.published_at.getTime()));
     })
-    .then(posts => {
-      res.json(items.concat(posts).sort((a, b) => b.published_at.getTime() - a.published_at.getTime()));
-    })
+    .catch(next);
 });
 
 // 404 handler

@@ -319,7 +319,7 @@ exports.authenticate = function (username, password) {
         throw new Error('Can\'t find this username');
       }
       storedUser = user;
-      return exports.checkPassword(user.id, password)
+      return exports.checkPassword(user.id, password);
     })
     .then(result => {
       return new Promise((resolve, reject) => {
