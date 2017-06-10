@@ -14,6 +14,7 @@
 
 .header-logo {
   float: left;
+  margin: 0;
   a {
     display: block;
   }
@@ -188,7 +189,17 @@
       padding-right: $line*1.25;
     }
     a {
-      padding: 59px $line*3/4 $line*3/4;
+      padding: 59px $line*3/4 $line;
+    }
+  }
+}
+
+
+@media (min-width: #{$break-m + $line}) {
+  .header-logo {
+    width: 250px + $line*2;
+    a {
+      padding-left: $line*2;
     }
   }
 }

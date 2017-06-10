@@ -10,9 +10,9 @@ $milli: 13px;
 $kilo: 18px;
 $mega: 22px;
 $giga: 28px;
-$tera: 34px;
-$peta: 42px;
-$exa: 50px;
+$tera: 32px;
+$peta: 38px;
+$exa: 48px;
 $yotta: 60px;
 
 // page sizing
@@ -24,9 +24,9 @@ $bg: #f5f3f0;
 $copy: #585858;
 
 $primary: #04a35e;
-$primary-dark: darken($primary, 20%);
+$primary-dark: darken($primary, 15%);
 $accent: #009ba9;
-$accent-dark: darken($accent, 20%);
+$accent-dark: darken($accent, 10%);
 $action: #ec8517;
 
 // breakpoints

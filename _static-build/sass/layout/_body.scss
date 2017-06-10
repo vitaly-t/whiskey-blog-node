@@ -1,8 +1,64 @@
 /*! ---------- =body ---------- */
 
-.body-content {
+.content {
+  padding: $line;
+
+  @media #{$min-m} {
+    padding: $line*2;
+  }
+}
+
+.text-copy {
   @extend .group;
   a {
     @extend .text-link;
+  }
+
+  @media #{$min-s} {
+    text-align: justify;
+  }
+}
+
+.page-title {
+  color: $accent-dark;
+  &__sub {
+    display: block;
+    font-family: $font-stack-primary;
+    font-weight: 400;
+    font-style: italic;
+    font-size: $mega;
+    line-height: $line;
+    color: $copy;
+    opacity: 0.85;
+  }
+
+  @media #{$min-s} {
+    margin: 0 (-$line) $line;
+    padding-bottom: 8px;
+    text-align: center;
+    color: #fff;
+    background: $accent-dark url('../images/bg-title.jpg') no-repeat 50% 50%;
+    background-size: cover;
+    .content > &:first-child {
+      margin-top: -$line;
+    }
+    &__container {
+      display: block;
+      padding: $line $line $line*1.25;
+      background: rgba(0,0,0,0.4);
+    }
+    &__sub {
+      color: #fff;
+    }
+  }
+
+  @media #{$min-m} {
+    margin: 0 (-$line*2) $line;
+    .content > &:first-child {
+      margin-top: -$line*2;
+    }
+    &__sub {
+      font-size: $giga;
+    }
   }
 }
