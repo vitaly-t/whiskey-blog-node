@@ -12,6 +12,7 @@ Thumbs.db
 
 # processed css
 *.css
+*.css.map
 
 # Logs
 logs
