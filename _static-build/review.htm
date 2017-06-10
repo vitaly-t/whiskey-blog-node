@@ -9,6 +9,7 @@
 
     <title>Review | Tdw Static</title>
 
+    <link href="https://fonts.googleapis.com/css?family=Lato:700,900|Merriweather:400,400i,700,700i" rel="stylesheet" />
     <link rel="stylesheet" href="style/public.css" />
 
 </head>
@@ -22,6 +23,7 @@
             <img src="images/logo.png" alt="" />
         </a>
     </h1>
+    <button type="button" class="header-nav__toggle" data-toggle-target="next">Menu</button>
     <nav class="header-nav">
         <ul class="header-nav__list">
             <li class="header-nav__item"><a href="#0">Reviews</a></li>
@@ -53,9 +55,9 @@
         <dd class="review-stats__stat">Barely-legal rye <span class="review-stats__elaboration">(51% rye, 35% corn, 14% malted barley)</span></dd>
     </dl>
 
-    <div class="group margin">
+    <div class="body-content margin">
         <p>This is my first review for the newly-launched Tdw! This blog is for practical whiskey advice, I swear, but I can't resist. I chose this particular whiskey to post first because it is, to date, my favorite drink ever. It’s my yardstick. Everything that comes after, I'm comparing to this.</p>
-        <p>So back in the eighties, as the story goes, a customer bought 95 barrels of rye from Heaven Hill to be aged to taste and privately bottled. Fortunately for us all, the customer never showed up to claim them until they were over-aged (hah), prompting Heaven Hill to buy them back and offer them up for sale.</p>
+        <p>So back in the eighties, as the story goes, a customer bought 95 barrels of rye from <a href="#0">Heaven Hill</a> to be aged to taste and privately bottled. Fortunately for us all, the customer never showed up to claim them until they were over-aged (hah), prompting Heaven Hill to buy them back and offer them up for sale.</p>
         <p>That’s good for us because not many hyper-aged ryes tend to make it to the shelves. Rye had a slump in the 70s and 80s (Heaven Hill was one of a few producers to keep making it), and before its current boom was considered neither fashionable nor elegant; nobody stowed barrels of this away because nobody could have predicted the demand there is today. The few that happen to make it to market, though, are almost universally lauded.</p>
         <p>Rittenhouse 25-year was a one-time release of around 3000 bottles in 2009, the last of three releases following 21- and 23-year expressions. It was distilled in 1984, then aged in the coolest part of floor 1 of Heaven Hill’s rickhouse OO, allowing for gentler aging and preventing it from being an oaky mess.</p>
         <p>It's a non-chill-filtered straight rye. It's a single-barrel product, which means my experience will be at least slightly different than yours. My bottle is number 47 from barrel #2. Let's do this.</p>
@@ -87,6 +89,13 @@
 <footer class="page-footer" role="contentinfo">
     <div class="page-footer__content">Site, content, photography &copy; 2016&ndash;2017 Tim Gavlick. <a href="#0">Colophon</a></div>
 </footer>
+
+
+<!--[if lte IE 9]>
+    <script src="js/polyfills.js"></script>
+<![endif]-->
+<script src="js/lodash.min.js"></script>
+<script src="js/scripts.js"></script>
 
 
 </body>

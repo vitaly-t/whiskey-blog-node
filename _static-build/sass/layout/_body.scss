@@ -1,2 +1,8 @@
 /*! ---------- =body ---------- */
 
+.body-content {
+  @extend .group;
+  a {
+    @extend .text-link;
+  }
+}

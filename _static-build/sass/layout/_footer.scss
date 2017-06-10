@@ -1,2 +1,7 @@
 /*! ---------- =footer ---------- */
 
+.page-footer {
+  &::before {
+    @extend .page-header::before;
+  }
+}

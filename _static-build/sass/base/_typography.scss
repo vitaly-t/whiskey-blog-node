@@ -7,6 +7,10 @@ body {
   -ms-text-size-adjust: 100%;
 }
 
+.alternate-typeface {
+  font-family: $font-stack-secondary;
+}
+
 p, ol, ul, h1, h2, h3, h4, h5, h6 {
   margin-bottom: $line;
 }
@@ -21,7 +25,7 @@ ol, ul {
   margin-left: 2em;
 }
 h1, h2, h3, h4, h5, h6 {
-  font-family: $font-stack-secondary;
+  @extend .alternate-typeface;
   font-weight: 900;
   text-rendering: optimizeLegibility;
 }

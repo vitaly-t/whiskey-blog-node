@@ -24,11 +24,13 @@ $bg: #f5f3f0;
 $copy: #585858;
 
 $primary: #04a35e;
+$primary-dark: darken($primary, 20%);
 $accent: #009ba9;
+$accent-dark: darken($accent, 20%);
 $action: #ec8517;
 
 // breakpoints
-$break-s: 470px;
+$break-s: 600px;
 $break-m: 720px;
 $break-l: 960px;
 
