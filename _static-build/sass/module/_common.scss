@@ -1,0 +1,33 @@
+/*! ---------- =common =components ---------- */
+
+body {
+  background-color: $bg;
+}
+
+a {
+  text-decoration: none;
+  color: $primary;
+}
+
+.margin {
+  margin-bottom: $line;
+}
+.margin-large {
+  margin-bottom: $line*2;
+}
+.margin-small {
+  margin-bottom: $line/2;
+}
+.margin-top {
+  margin-top: $line;
+}
+.margin-top-large {
+  margin-top: $line*2;
+}
+.margin-top-small {
+  margin-top: $line/2;
+}
+
+.group {
+  @include clear;
+}

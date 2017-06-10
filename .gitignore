@@ -10,6 +10,9 @@ Thumbs.db
 # sass caches
 .sass-cache
 
+# processed css
+*.css
+
 # Logs
 logs
 *.log
