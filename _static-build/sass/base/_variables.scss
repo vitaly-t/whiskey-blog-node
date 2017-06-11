@@ -11,28 +11,32 @@ $kilo: 18px;
 $mega: 22px;
 $giga: 28px;
 $tera: 32px;
-$peta: 38px;
-$exa: 48px;
-$yotta: 60px;
+$peta: 36px;
+$exa: 42px;
+$yotta: 52px;
 
 // page sizing
 $page-width: 1024px;
 
 // common colors
-$bg: #f5f3f0;
-
 $copy: #585858;
 
 $primary: #04a35e;
+$primary-light: lighten($primary, 10%);
 $primary-dark: darken($primary, 15%);
 $accent: #009ba9;
+$accent-light: lighten($accent, 7%);
 $accent-dark: darken($accent, 10%);
 $action: #ec8517;
+
+$bg: #f5f3f0;
+$bg-light: lighten(desaturate($accent-dark, 92%), 66%);
 
 // breakpoints
 $break-s: 600px;
 $break-m: 720px;
-$break-l: 960px;
+$break-l: 1000px;
+$break-w: 1400px;
 
 // breakpoint usage
 $min-s: "(min-width: " + $break-s + ")";
@@ -43,6 +47,9 @@ $max-m: "(max-width: " + ($break-m - 1px) + ")";
 
 $min-l: "(min-width: " + $break-l + ")";
 $max-l: "(max-width: " + ($break-l - 1px) + ")";
+
+$min-w: "(min-width: " + $break-w + ")";
+$max-w: "(max-width: " + ($break-w - 1px) + ")";
 
 $hdpi: "only screen and (-webkit-min-device-pixel-ratio: 2)," +
        "only screen and (min-device-pixel-ratio: 2)," +

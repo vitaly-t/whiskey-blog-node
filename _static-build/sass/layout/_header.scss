@@ -158,6 +158,22 @@
     }
     a {
       padding: 37px $line/4 $line*3/4;
+      position: relative;
+      &::before {
+        content: '';
+        display: block;
+        height: 3px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: $line*3/4 - 3px;
+        background: $primary;
+        transition: all 0.1s ease-out;
+      }
+      &:not(:hover)::before {
+        left: 50%;
+        right: 50%;
+      }
       &:hover, &:focus {
         color: $primary;
       }
@@ -178,18 +194,23 @@
 
 @media #{$min-m} {
   .header-logo {
-    width: 250px + $line;
+    width: 250px + $line/2;
     a {
       padding-top: $line;
-      padding-left: $line;
+      padding-left: $line/2;
     }
   }
   .header-nav {
     &__list {
-      padding-right: $line*1.25;
+      padding-right: $line;
     }
     a {
-      padding: 59px $line*3/4 $line;
+      padding: 59px $line/2 $line;
+      &::before {
+        left: $line/4;
+        right: $line/4;
+        bottom: $line - 3px;
+      }
     }
   }
 }
@@ -197,9 +218,9 @@
 
 @media (min-width: #{$break-m + $line}) {
   .header-logo {
-    width: 250px + $line*2;
+    width: 250px + $line*1.5;
     a {
-      padding-left: $line*2;
+      padding-left: $line*1.5;
     }
   }
 }

@@ -1,10 +1,16 @@
 /*! ---------- =body ---------- */
 
+body {
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
 .content {
   padding: $line;
 
   @media #{$min-m} {
-    padding: $line*2;
+    padding: $line*1.5;
   }
 }
 
@@ -53,9 +59,9 @@
   }
 
   @media #{$min-m} {
-    margin: 0 (-$line*2) $line;
+    margin: 0 (-$line*1.5) $line*1.5;
     .content > &:first-child {
-      margin-top: -$line*2;
+      margin-top: -$line*1.5;
     }
     &__sub {
       font-size: $giga;
