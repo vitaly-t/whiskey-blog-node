@@ -224,3 +224,11 @@
     }
   }
 }
+
+
+@media #{$min-l} {
+  .page-header {
+    max-width: $page-width;
+    margin: 0 auto;
+  }
+}

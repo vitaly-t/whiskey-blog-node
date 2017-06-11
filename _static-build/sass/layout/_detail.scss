@@ -53,10 +53,14 @@
 
 .post-content {
   margin: $line*1.5 0 $line/2;
+  text-align: center;
   a {
     @extend .text-link;
     display: inline-block;
     margin: 0 $line $line/2 0;
+    &:last-child {
+      margin-right: 0;
+    }
   }
 }
 
@@ -125,10 +129,8 @@
 
 
 @media #{$min-l} {
-  .detail {
-    .page-header, .content, .page-footer {
-      width: $page-width;
-    }
+  .detail .content {
+    width: $page-width;
   }
   .page-main-image, .page-stats-image {
     &__image {

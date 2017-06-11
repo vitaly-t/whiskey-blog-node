@@ -38,6 +38,45 @@ a, button {
   margin-top: $line/2;
 }
 
+.article-card {
+  display: block;
+  padding: $line;
+  color: #fff;
+  background: $primary-dark;
+  position: relative;
+  &__image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: cover;
+    z-index: 1;
+    opacity: 0.2;
+  }
+  &__title, &__summary {
+    position: relative;
+    z-index: 2;
+  }
+  &__title {
+    margin: 0 0 $line/2;
+  }
+  &__subtitle {
+    display: block;
+    font-family: $font-stack-primary;
+    font-weight: 400;
+    font-style: italic;
+    font-size: $mega;
+    line-height: $line;
+  }
+  &__summary {
+    @extend .alternate-typeface;
+    opacity: 0.8;
+  }
+}
+
 .group {
   @include clear;
 }
