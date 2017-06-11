@@ -26,7 +26,12 @@ body {
 }
 
 .page-title {
-  color: $accent-dark;
+  margin: 0 (-$line) $line;
+  padding-bottom: 8px;
+  text-align: center;
+  color: #fff;
+  background: $accent-dark url('../images/bg-title.jpg') no-repeat 50% 50%;
+  background-size: cover;
   &__sub {
     display: block;
     font-family: $font-stack-primary;
@@ -34,28 +39,16 @@ body {
     font-style: italic;
     font-size: $mega;
     line-height: $line;
-    color: $copy;
+    color: #fff;
     opacity: 0.85;
   }
-
-  @media #{$min-s} {
-    margin: 0 (-$line) $line;
-    padding-bottom: 8px;
-    text-align: center;
-    color: #fff;
-    background: $accent-dark url('../images/bg-title.jpg') no-repeat 50% 50%;
-    background-size: cover;
-    .content > &:first-child {
-      margin-top: -$line;
-    }
-    &__container {
-      display: block;
-      padding: $line $line $line*1.25;
-      background: rgba(0,0,0,0.4);
-    }
-    &__sub {
-      color: #fff;
-    }
+  &__container {
+    display: block;
+    padding: $line $line $line*1.25;
+    background: rgba(0,0,0,0.4);
+  }
+  .content > &:first-child {
+    margin-top: -$line;
   }
 
   @media #{$min-m} {

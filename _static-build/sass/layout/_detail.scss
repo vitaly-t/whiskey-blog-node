@@ -3,7 +3,7 @@
 .review-stats {
   background: $bg-light;
   padding: $line;
-  margin: 0 (-$line) $line;
+  margin: -$line (-$line) $line;
   &__label, &__elaboration {
     font-family: $font-stack-primary;
     font-weight: 400;
@@ -87,7 +87,6 @@
 
 @media #{$min-s} {
   .review-stats {
-    margin-top: -$line;
     column-count: 2;
   }
   .page-main-image {
@@ -128,7 +127,7 @@
 @media #{$min-l} {
   .detail {
     .page-header, .content, .page-footer {
-      width: 700px;
+      width: $page-width;
     }
   }
   .page-main-image, .page-stats-image {
@@ -145,7 +144,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    left: 700px;
+    left: $page-width;
   }
 }
 
@@ -158,7 +157,7 @@
     }
   }
   .page-main-image {
-    left: 700px + $left-column-width;
+    left: $page-width + $left-column-width;
   }
   .page-stats-image, .review-stats {
     display: block;
