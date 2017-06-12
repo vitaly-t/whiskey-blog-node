@@ -3,7 +3,7 @@ $font-stack-primary: "Merriweather", "Georgia", serif;
 $font-stack-secondary: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 // text sizing
-$line: 26px;
+$line: 28px;
 $text: 17px;
 $micro: 15px;
 $milli: 13px;
@@ -28,6 +28,7 @@ $accent: #009ba9;
 $accent-light: lighten($accent, 7%);
 $accent-dark: darken($accent, 10%);
 $action: #ec8517;
+$action-dark: #b43b11;
 
 $bg: #f5f3f0;
 $bg-light: lighten(desaturate($accent-dark, 92%), 66%);
@@ -37,6 +38,7 @@ $break-s: 600px;
 $break-m: 720px;
 $break-l: 1000px;
 $break-w: 1400px;
+$break-hd: 1800px;
 
 // breakpoint usage
 $min-s: "(min-width: " + $break-s + ")";
@@ -50,6 +52,9 @@ $max-l: "(max-width: " + ($break-l - 1px) + ")";
 
 $min-w: "(min-width: " + $break-w + ")";
 $max-w: "(max-width: " + ($break-w - 1px) + ")";
+
+$min-hd: "(min-width: " + $break-hd + ")";
+$max-hd: "(max-width: " + ($break-hd - 1px) + ")";
 
 $hdpi: "only screen and (-webkit-min-device-pixel-ratio: 2)," +
        "only screen and (min-device-pixel-ratio: 2)," +

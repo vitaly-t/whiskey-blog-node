@@ -77,6 +77,13 @@ a, button {
   }
 }
 
+.toggle-active-text, .is-active .toggle-inactive-text {
+  display: none;
+}
+.is-active .toggle-active-text {
+  display: inline;
+}
+
 .group {
   @include clear;
 }

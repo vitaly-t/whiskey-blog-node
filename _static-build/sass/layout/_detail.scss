@@ -2,8 +2,8 @@
 
 .review-stats {
   background: $bg-light;
-  padding: $line;
-  margin: -$line (-$line) $line;
+  padding: $line $line $line/2;
+  margin: 0 (-$line) $line;
   &__label, &__elaboration {
     font-family: $font-stack-primary;
     font-weight: 400;
@@ -12,19 +12,23 @@
     color: $copy;
     opacity: 0.7;
   }
+  &__group {
+    display: inline-block;  // avoid break inside when columnized
+    width: 98%;
+    margin-bottom: $line/2;
+  }
   &__stat {
     @extend .alternate-typeface;
     font-size: $kilo;
     font-weight: 700;
     color: $accent-dark;
-    margin-bottom: $line/2;
-    &:last-child {
-      margin-bottom: 0;
-    }
   }
   &__elaboration {
     display: block;
     font-style: normal;
+  }
+  &__toggle {
+    @extend .alternate-typeface;
   }
 }
 
@@ -102,7 +106,7 @@
 
 @media #{$min-m} {
   .review-stats {
-    margin: -$line*1.5 (-$line*1.5) $line*1.5;
+    margin: 0 (-$line*1.5) $line;
     padding: $line*2;
     column-count: 3;
   }
@@ -129,8 +133,13 @@
 
 
 @media #{$min-l} {
-  .detail .content {
-    width: $page-width;
+  .detail {
+    .content {
+      width: $page-width;
+    }
+    .page-header, .page-footer {
+      margin-left: 0;
+    }
   }
   .page-main-image, .page-stats-image {
     &__image {
@@ -147,6 +156,55 @@
     right: 0;
     bottom: 0;
     left: $page-width;
+  }
+}
+
+
+@media #{$max-w} {
+  .review-stats {
+    .js & {
+      max-height: $line*22;
+      overflow: hidden;
+      opacity: 1;
+      transition: all 0.2s ease-out;
+      &:not(.is-active) {
+        max-height: 0;
+        visibility: hidden;
+        visibility: visible;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      &__toggle {
+        position: relative;
+        display: block;
+        padding: $line/4;
+        width: 100%;
+        width: calc(100% + #{$line*2});
+        margin: -$line/2 (-$line) 0;
+        background: $action;
+        background-image: linear-gradient(to right, $action-dark, $action);
+        color: #fff;
+        z-index: 2;
+      }
+    }
+    .no-js & {
+      &__toggle {
+        display: none;
+      }
+    }
+  }
+}
+
+
+@media #{$min-m} and #{$max-w} {
+  .review-stats {
+    .js & {
+      &__toggle {
+        margin: -$line*3/4 (-$line*1.5) 0;
+        width: calc(100% + #{$line*3});
+      }
+    }
   }
 }
 
@@ -173,17 +231,40 @@
   .review-stats {
     position: absolute;
     margin: 0;
-    padding: 317px $line*1.5 $line;
+    padding: $line*12 $line*1.5 $line;
     column-count: 1;
     background: rgba(0,0,0,0.6);
     z-index: 5;
     overflow-y: auto;
+    text-align: right;
+    &__group {
+      margin-bottom: $line;
+    }
     &__label, &__elaboration {
       color: #fff;
     }
     &__stat {
       color: $accent-light;
-      margin-bottom: $line*3/4;
     }
+    &__toggle {
+      display: none;
+    }
+  }
+}
+
+
+@media #{$min-hd} {
+  $left-column-width: 350px;
+  .detail {
+    .page-header, .content, .page-footer {
+      margin-left: $left-column-width;
+    }
+  }
+  .page-main-image {
+    left: $page-width + $left-column-width;
+  }
+  .page-stats-image, .review-stats {
+    display: block;
+    width: $left-column-width;
   }
 }
