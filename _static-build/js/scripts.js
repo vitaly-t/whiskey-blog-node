@@ -152,9 +152,81 @@ var TDW = (function (window, document) {
     }());
 
 
-    //////////////////////
-    //  initialization  //
-    //////////////////////
+    /* shared heights
+     * ==============
+     *
+     * match heights between unrelated elements
+     *
+     * default elements:
+     * <el data-height-group="groupname" />
+     */
+
+    var sharedHeights = (function () {
+        var heightGroups = {};
+
+        // public: update all shared-height elements
+        function update() {
+            var g, thisGroup, heights, maxHeight;
+
+            function resetHeight(el) {
+                el.style.minHeight = 0;
+                heights.push(el.offsetHeight);
+            }
+            function applyHeight(el) {
+                el.style.minHeight = maxHeight + 'px';
+            }
+
+            for (g in heightGroups) {
+                if (heightGroups.hasOwnProperty(g)) {
+                    thisGroup = heightGroups[g];
+                    heights = [];
+                    _.forEach(thisGroup, resetHeight);
+                    maxHeight = Math.max.apply(null, heights);
+                    _.forEach(thisGroup, applyHeight);
+                }
+            }
+        }
+
+        // public: add shared-height functionality to a node or nodelist
+        function add(els, groupName) {
+            _.forEach(toArray(els), function (el) {
+                var group = groupName || el.getAttribute('data-height-group');
+                if (!group) {
+                    console.warn('No group specified for shared-height element');
+                    return false;
+                }
+                heightGroups[group] = heightGroups[group] || [];
+                heightGroups[group].push(el);
+            });
+            return list();
+        }
+
+        // public: return heightGroups object
+        function list() {
+            return heightGroups;
+        }
+
+        // public: initialize with default elements
+        function init() {
+            add(document.querySelectorAll('[data-height-group]'));
+            update();
+        }
+
+        var debouncedUpdate = _.debounce(update, 75);
+        window.addEventListener('resize', debouncedUpdate);
+
+        return {
+            add: add,
+            list: list,
+            update: update,
+            init: init
+        };
+    }());
+
+
+    /* initialization
+     * ==============
+     */
 
     var init = function () {
         var skrollable = skrollr.init({
@@ -164,18 +236,20 @@ var TDW = (function (window, document) {
         });
 
         toggles.init();
+        sharedHeights.init();
 
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
     };
 
 
-    //////////////
-    //  public  //
-    //////////////
+    /* public
+     * ======
+     */
 
     return {
         toggles: toggles,
+        sharedHeights: sharedHeights,
         init: init
     };
 
