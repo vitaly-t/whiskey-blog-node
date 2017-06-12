@@ -28,7 +28,7 @@
     font-style: normal;
   }
   &__toggle {
-    @extend .alternate-typeface;
+    @include page-details-toggle($break-w);
   }
 }
 
@@ -160,55 +160,6 @@
 }
 
 
-@media #{$max-w} {
-  .review-stats {
-    .js & {
-      max-height: $line*22;
-      overflow: hidden;
-      opacity: 1;
-      transition: all 0.2s ease-out;
-      &:not(.is-active) {
-        max-height: 0;
-        visibility: hidden;
-        visibility: visible;
-        opacity: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-      }
-      &__toggle {
-        position: relative;
-        display: block;
-        padding: $line/4;
-        width: 100%;
-        width: calc(100% + #{$line*2});
-        margin: -$line/2 (-$line) 0;
-        background: $action;
-        background-image: linear-gradient(to right, $action-dark, $action);
-        color: #fff;
-        z-index: 2;
-      }
-    }
-    .no-js & {
-      &__toggle {
-        display: none;
-      }
-    }
-  }
-}
-
-
-@media #{$min-m} and #{$max-w} {
-  .review-stats {
-    .js & {
-      &__toggle {
-        margin: -$line*3/4 (-$line*1.5) 0;
-        width: calc(100% + #{$line*3});
-      }
-    }
-  }
-}
-
-
 @media #{$min-w} {
   $left-column-width: 250px;
   .detail {
@@ -245,9 +196,6 @@
     }
     &__stat {
       color: $accent-light;
-    }
-    &__toggle {
-      display: none;
     }
   }
 }

@@ -11,3 +11,47 @@
     max-width: $page-width;
   }
 }
+
+.list-filters {
+  margin: 0 (-$line) $line;
+  padding: $line;
+  &__facet + &__facet {
+    margin-top: $line;
+  }
+  &__label {
+    margin: 0;
+  }
+  &__choices {
+    list-style: none;
+    margin: 0;
+  }
+  &__choice a {
+    @extend .text-link;
+    @extend .alternate-typeface;
+  }
+  &__toggle {
+    @include page-details-toggle($page-width + 400px);
+  }
+}
+
+
+@media (min-width: $page-width + 400px) {
+  .list-filters {
+    $width: 200px;
+    width: $width;
+    float: left;
+    text-align: right;
+    margin-right: 0;
+    margin-left: calc(50% - #{$page-width/2} - #{$width});
+    padding: 0 $line 0 $line/2;
+  }
+}
+
+
+@media (min-width: $page-width + 500px) {
+  .list-filters {
+    $width: 250px;
+    width: $width;
+    margin-left: calc(50% - #{$page-width/2} - #{$width});
+  }
+}

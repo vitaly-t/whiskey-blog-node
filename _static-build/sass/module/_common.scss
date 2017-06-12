@@ -77,6 +77,61 @@ a, button {
   }
 }
 
+@mixin page-details-toggle($breakpoint) {
+  @extend .alternate-typeface;
+
+  @media (max-width: $breakpoint - 1px) {
+    .js & {
+      position: relative;
+      display: block;
+      padding: $line/4;
+      width: 100%;
+      width: calc(100% + #{$line*2});
+      margin: 0 (-$line);
+      background: $action;
+      background-image: linear-gradient(to right, $action-dark, $action);
+      color: #fff;
+      z-index: 2;
+      &__target {
+        max-height: $line*22;
+        overflow: hidden;
+        opacity: 1;
+        transition: all 0.2s ease-out;
+        &--long {
+          max-height: $line*40;
+        }
+        &:not(.is-active) {
+          max-height: 0;
+          visibility: hidden;
+          visibility: visible;
+          opacity: 0;
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+    }
+    .no-js & {
+      display: none;
+    }
+  }
+
+  @media #{$min-m} and (max-width: $breakpoint - 1px) {
+    .js & {
+      margin: 0 (-$line*1.5);
+      width: calc(100% + #{$line*3});
+    }
+    .page-title + & {
+      margin-top: -$line/2;
+    }
+  }
+
+  // toggled content is meant to be kicked off to the side by this point
+  @media (min-width: $breakpoint) {
+    display: none;
+  }
+}
+
+
 .toggle-active-text, .is-active .toggle-inactive-text {
   display: none;
 }

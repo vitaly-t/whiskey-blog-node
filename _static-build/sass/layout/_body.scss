@@ -7,6 +7,7 @@ body {
 }
 
 .content {
+  @extend .group;
   padding: $line;
 
   @media #{$min-m} {
@@ -36,6 +37,11 @@ body {
     display: block;
     color: #fff;
   }
+  &__container {
+    display: block;
+    padding: $line $line $line*1.25;
+    background: rgba(0,0,0,0.4);
+  }
   &__label {
     display: block;
     padding-top: $line/2;
@@ -55,10 +61,22 @@ body {
     color: #fff;
     opacity: 0.85;
   }
-  &__container {
+  &__links {
     display: block;
-    padding: $line $line $line*1.25;
-    background: rgba(0,0,0,0.4);
+    font-family: $font-stack-primary;
+    font-size: $text;
+    line-height: $line;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    a {
+      @extend .text-link;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      font-style: normal;
+      color: #fff;
+    }
   }
   .content > &:first-child {
     margin-top: -$line;
