@@ -224,6 +224,38 @@ var TDW = (function (window, document) {
     }());
 
 
+    /* misc
+     * ====
+     *
+     * miscellaneous small enhancements
+     */
+
+    var misc = (function () {
+
+        // gradiate background colors of lists of article cards
+        var blendListColors = function () {
+            var color1 = [2, 63, 37],
+                color2 = [0, 85, 93];
+            _.forEach(document.getElementsByClassName('article-list'), function (list) {
+                var cards = list.querySelectorAll('.article-card'),
+                    steps = color1.map(function (__, i) {
+                        return (color1[i] - color2[i]) / cards.length
+                    });
+                _.forEach(cards, function (card, i) {
+                    var thisColor = steps.map(function (step, j) {
+                        return color1[j] - step * i;
+                    });
+                    card.style.backgroundColor = 'rgb(' + thisColor.join(',') + ')';
+                });
+            });
+        };
+
+        return {
+            blendListColors: blendListColors
+        };
+    })();
+
+
     /* initialization
      * ==============
      */
@@ -237,6 +269,8 @@ var TDW = (function (window, document) {
 
         toggles.init();
         sharedHeights.init();
+
+        misc.blendListColors();
 
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
