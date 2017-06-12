@@ -1,0 +1,13 @@
+/* ---------- =list pages ---------- */
+
+.article-list {
+  list-style: none;
+  margin: 0 auto $line*2;
+  &__item + &__item {
+    margin-top: $line/2;
+  }
+
+  .list & {
+    max-width: $page-width;
+  }
+}
