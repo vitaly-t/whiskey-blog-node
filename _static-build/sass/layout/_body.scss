@@ -20,10 +20,6 @@ body {
   a {
     @extend .text-link;
   }
-
-  @media #{$min-s} {
-    text-align: justify;
-  }
 }
 
 .page-title {
