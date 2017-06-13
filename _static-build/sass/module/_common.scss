@@ -77,6 +77,47 @@ a, button {
   }
 }
 
+.load-more {
+  $arrow-width: 60px;
+
+  text-align: center;
+  &__link {
+    @extend .alternate-typeface;
+    display: inline-block;
+    padding-bottom: $line;
+    position: relative;
+    &::before, &::after {
+      content: '';
+      display: block;
+      width: $arrow-width/2;
+      height: 3px;
+      position: absolute;
+      top: 100%;
+      margin-top: -$line;
+      left: 50%;
+      background: $primary;
+      transition: background 0.15s ease-out, margin 0.15s ease-out;
+    }
+    &::before {
+      margin-left: -$arrow-width/2;
+      transform-origin: 0 0;
+      transform: skew(0, 10deg);
+    }
+    &::after {
+      right: 0;
+      transform-origin: 100% 0;
+      transform: skew(0, -10deg);
+    }
+    &:hover {
+      color: $accent;
+      &::before, &::after {
+        background: $accent;
+        margin-top: -$line*3/4;
+      }
+    }
+  }
+}
+
 @mixin page-details-toggle($breakpoint) {
   @extend .alternate-typeface;
 
@@ -130,7 +171,6 @@ a, button {
     display: none;
   }
 }
-
 
 .toggle-active-text, .is-active .toggle-inactive-text {
   display: none;
