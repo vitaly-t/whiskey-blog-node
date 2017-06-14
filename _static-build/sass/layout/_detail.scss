@@ -32,6 +32,28 @@
   }
 }
 
+.text-contents {
+  margin: 0 (-$line) $line;
+  padding: $line;
+  background: $accent-dark;
+  background-image: linear-gradient(to right, $primary-dark, $accent-dark);
+  color: #fff;
+  &__label {
+    display: inline-block;
+    margin-right: $line/2;
+    font-size: $micro;
+    font-style: italic;
+    opacity: 0.7;
+  }
+  a {
+    @extend .text-link--inverse;
+    @extend .alternate-typeface;
+    display: inline-block;
+    margin-right: $line/2;
+    position: relative;
+  }
+}
+
 .related {
   padding-top: 8px;
   margin: $line (-$line);
@@ -93,6 +115,26 @@
 }
 
 
+@media #{$max-s} {
+  // arrange contents links vertically, and space them a bit
+  .text-contents {
+    line-height: $line*1.25;
+    &__label {
+      display: block;
+    }
+    a {
+      display: inline;
+      line-height: $line;
+      &::after {
+        content: '\A';
+        white-space: pre;
+      }
+    }
+  }
+
+}
+
+
 @media #{$min-s} {
   .review-stats {
     column-count: 2;
@@ -100,6 +142,17 @@
   .page-main-image {
     width: 40%;
     height: 50vw;
+  }
+  .text-contents {
+    a:not(:last-child)::after {
+      content: ',';
+      position: absolute;
+      left: 100%;
+      left: calc(100% + 0.15em);
+    }
+    a:not(:last-child):hover::after {
+      opacity: 0;
+    }
   }
 }
 
@@ -109,6 +162,10 @@
     margin: 0 (-$line*1.5) $line;
     padding: $line*2;
     column-count: 3;
+  }
+  .text-contents {
+    margin: 0 (-$line*1.5) $line;
+    padding: $line $line*1.5;
   }
   .related {
     margin: $line*1.5 (-$line*1.5) $line;
@@ -128,6 +185,9 @@
     &__image {
       transform: none !important;
     }
+  }
+  .page-main-image ~ .text-copy .text-contents {
+    margin-top: $line*1.5;
   }
 }
 

@@ -20,6 +20,13 @@ body {
   a {
     @extend .text-link;
   }
+  // review-specific subheading annotations
+  h2 + h3 {
+    margin-top: -$line;
+    font-weight: 400;
+    opacity: 0.7;
+    font-size: $mega;
+  }
 }
 
 .page-title {

@@ -17,6 +17,14 @@ a, button {
     color: #fff;
     box-shadow: 0 0 0 3px $accent, inset 0 (-($line + 3px)) 0 $accent;
   }
+  &--inverse {
+    color: #fff;
+    box-shadow: 0 3px 0 rgba(255,255,255,0.4);
+    &:hover, &:focus {
+      color: $accent;
+      box-shadow: 0 0 0 3px #fff, inset 0 (-($line + 3px)) 0 #fff;
+    }
+  }
 }
 
 .margin {
