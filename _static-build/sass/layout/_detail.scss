@@ -1,4 +1,4 @@
-/* ---------- =reviews ---------- */
+/* ---------- =detail views ---------- */
 
 .review-stats {
   background: $bg-light;
@@ -197,6 +197,17 @@
     &__stat {
       color: $accent-light;
     }
+  }
+
+  .detail .text-copy figure {
+    $overhang: 250px;
+
+    max-width: $overhang*2 - $line*1.5;
+    float: left;
+    margin-left: -$overhang;
+    margin-right: $line;
+    position: relative;
+    z-index: 6;
   }
 }
 

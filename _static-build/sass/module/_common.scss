@@ -38,6 +38,42 @@ a, button {
   margin-top: $line/2;
 }
 
+figure {
+  background: mix($bg, $bg-light, 20%);
+  padding: $line/2;
+  margin-bottom: $line;
+  overflow: hidden;
+  clear: both;
+  @media #{$min-s} {
+    .text-copy & {
+      display: table;
+      max-width: 50%;
+      margin-left: $line;
+      float: right;
+      &:nth-of-type(2n) {
+        float: left;
+        margin-left: 0;
+        margin-right: $line;
+      }
+      figcaption {
+        display: table-caption;
+        caption-side: bottom;
+        background: mix($bg, $bg-light, 20%);
+        padding: 0 $line/2 $line/2;
+        margin: 0 0 $line/2;
+      }
+    }
+  }
+}
+figcaption {
+  display: block;
+  font-style: italic;
+  font-size: $micro;
+  img + & {
+    margin: $line/2 0 0;
+  }
+}
+
 .article-card {
   display: block;
   padding: $line;
