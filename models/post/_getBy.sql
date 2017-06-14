@@ -5,6 +5,7 @@
 SELECT json_build_object(
   'id', posts.id,
   'title', posts.title,
+  'subtitle', posts.subtitle,
   'slug', posts.slug,
   'created_at', posts.created_at,
   'published_at', posts.published_at,
@@ -28,6 +29,7 @@ SELECT json_build_object(
   'related_posts', (SELECT json_agg(json_build_object(
       'id', rel_p.id,
       'title', rel_p.title,
+      'subtitle', rel_p.subtitle,
       'slug', rel_p.slug,
       'summary', rel_p.summary
     )) FROM posts rel_p INNER JOIN posts_related_posts

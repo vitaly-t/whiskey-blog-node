@@ -4,6 +4,7 @@
 
 INSERT INTO posts(
   title,
+  subtitle,
   slug,
   published_at,
   author,
@@ -11,6 +12,7 @@ INSERT INTO posts(
   body
 ) VALUES (
   $(title),
+  $(subtitle),
   $(slug),
   $(published_at),
   $(author),
@@ -19,6 +21,7 @@ INSERT INTO posts(
 ) RETURNING
   id,
   title,
+  subtitle,
   slug,
   created_at,
   published_at,

@@ -34,12 +34,17 @@ describe('Post model', () => {
       .catch(e => console.error(e));
   });
 
-  it('Validates post titles', function () {
+  it('Validates post titles and subtitles', function () {
     expect(Post.validate({ title: 'Title' }, true).result).to.be.true;
     expect(Post.validate({ title: 'Tî†lé' }, true).result).to.be.true;
     expect(Post.validate({ title: '' }, true).result).to.be.false;
     expect(Post.validate({ title: 4 }, true).result).to.be.false;
     expect(Post.validate({ title: ['Title'] }, true).result).to.be.false;
+    expect(Post.validate({ subtitle: 'Subtitle' }, true).result).to.be.true;
+    expect(Post.validate({ subtitle: 'ßübTî†lé' }, true).result).to.be.true;
+    expect(Post.validate({ subtitle: '' }, true).result).to.be.false;
+    expect(Post.validate({ subtitle: 4 }, true).result).to.be.false;
+    expect(Post.validate({ subtitle: ['Subtitle'] }, true).result).to.be.false;
   });
 
   it('Validates Post slugs', function () {
@@ -103,6 +108,7 @@ describe('Post model', () => {
   it('Stores a complete post', function () {
     return Post.create({
         title: 'My Post Title',
+        subtitle: 'An Essay',
         slug: 'my-post-title',
         author: userIds[0],
         summary: 'A great summary',
@@ -112,6 +118,7 @@ describe('Post model', () => {
         expect(data.id).to.be.a.number;
         ids.push(data.id);
         expect(data.title).to.equal('My Post Title');
+        expect(data.subtitle).to.equal('An Essay');
         expect(data.slug).to.equal('my-post-title');
         expect(data.author.id).to.be.a.number;
         expect(data.summary).to.equal('A great summary');
@@ -124,6 +131,7 @@ describe('Post model', () => {
       .then(data => {
         expect(data.id).to.equal(ids[0]);
         expect(data.title).to.equal('My Post Title');
+        expect(data.subtitle).to.equal('An Essay');
         expect(data.slug).to.equal('my-post-title');
         expect(data.published_at).to.be.a('date');
         expect(data.author.id).to.be.a.number;
@@ -135,6 +143,7 @@ describe('Post model', () => {
   it('Creates missing slugs automatically', function () {
     return Post.create({
         title: 'Something You Should Know',
+        subtitle: 'For Real',
         author: userIds[0],
         summary: 'A great summary',
         body: 'This is a fantastic post.'
@@ -142,7 +151,7 @@ describe('Post model', () => {
       .then(data => {
         expect(data.id).to.be.a('number');
         ids.push(data.id);
-        expect(data.slug).to.equal('something-you-should-know');
+        expect(data.slug).to.equal('something-you-should-know-for-real');
       });
   });
 

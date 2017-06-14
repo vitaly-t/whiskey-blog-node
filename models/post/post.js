@@ -39,6 +39,11 @@ exports.validate = function (data, suppressRequired) {
       maxLength: 512,
       required: true
     },
+    subtitle: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
     slug: {
       types: ['string'],
       minLength: 1,
@@ -96,8 +101,9 @@ exports.create = function (data) {
 
     const defaultData = {
       title: null,
+      subtitle: null,
       slug: function () {
-        return slugFromString(this.title);
+        return slugFromString(this.title + ' ' + (this.subtitle || ''));
       },
       published_at: new Date(),
       author: null,

@@ -4,6 +4,7 @@
 
 UPDATE posts SET
   title = $(title),
+  subtitle = $(subtitle),
   slug = $(slug),
   published_at = $(published_at),
   author = $(author),
@@ -13,6 +14,7 @@ WHERE id = $(id)
 RETURNING
   id,
   title,
+  subtitle,
   slug,
   created_at,
   published_at,
