@@ -68,6 +68,26 @@ exports.validate = function (data, suppressRequired) {
       minLength: 1,
       required: true
     },
+    main_image: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    side_image: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    home_image: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
+    list_image: {
+      types: ['string'],
+      minLength: 1,
+      maxLength: 512
+    },
     related_reviews: {
       types: ['array'],
       elementTypes: ['number']
@@ -109,6 +129,10 @@ exports.create = function (data) {
       author: null,
       summary: null,
       body: null,
+      main_image: null,
+      side_image: null,
+      home_image: null,
+      list_image: null
     }
 
     data = Object.assign(defaultData, data);

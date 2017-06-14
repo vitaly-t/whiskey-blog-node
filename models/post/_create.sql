@@ -9,7 +9,11 @@ INSERT INTO posts(
   published_at,
   author,
   summary,
-  body
+  body,
+  main_image,
+  side_image,
+  home_image,
+  list_image
 ) VALUES (
   $(title),
   $(subtitle),
@@ -17,7 +21,11 @@ INSERT INTO posts(
   $(published_at),
   $(author),
   $(summary),
-  $(body)
+  $(body),
+  $(main_image),
+  $(side_image),
+  $(home_image),
+  $(list_image)
 ) RETURNING
   id,
   title,
@@ -27,4 +35,8 @@ INSERT INTO posts(
   published_at,
   author,
   summary,
-  body;
+  body,
+  main_image,
+  side_image,
+  home_image,
+  list_image;

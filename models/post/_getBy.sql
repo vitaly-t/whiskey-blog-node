@@ -11,6 +11,10 @@ SELECT json_build_object(
   'published_at', posts.published_at,
   'summary', posts.summary,
   'body', posts.body,
+  'main_image', posts.main_image,
+  'side_image', posts.side_image,
+  'home_image', posts.home_image,
+  'list_image', posts.list_image,
   'author', (SELECT json_build_object(
       'id', users.id,
       'name', users.name,
