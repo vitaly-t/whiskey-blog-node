@@ -18,9 +18,7 @@ $yotta: 48px;
 // page sizing
 $page-width: 700px;
 
-// common colors
-$copy: #585858;
-
+// theme colors
 $primary: #04a35e;
 $primary-light: lighten($primary, 10%);
 $primary-dark: darken($primary, 20%);
@@ -30,8 +28,14 @@ $accent-dark: darken($accent, 15%);
 $action: #ec8517;
 $action-dark: #b43b11;
 
+// common colors
+$copy: #585858;
 $bg: #f5f3f0;
 $bg-light: lighten(desaturate($accent-dark, 92%), 66%);
+
+// status colors
+$positive: #23b22a;
+$negative: #cd4014;
 
 // breakpoints
 $break-s: 600px;
