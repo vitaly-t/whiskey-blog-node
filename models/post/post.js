@@ -225,8 +225,7 @@ exports.list = function (options={}) {
     limit: 100,
     orderBy: 'published_at',
     order: 'DESC',
-    offset: a => (a.page - 1) * a.limit
-    },
+    offset: a => (a.page - 1) * a.limit,
     filters: []
   };
 
