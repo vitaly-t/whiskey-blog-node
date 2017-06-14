@@ -250,8 +250,41 @@ var TDW = (function (window, document) {
             });
         };
 
+        // only overhang review figures if review stats wouldn't be in the way
+        var nudgeArticleFigures = function () {
+            var stats = document.querySelector('.review-stats'),
+                figures = document.querySelectorAll('.text-copy figure'),
+                lowestStat;
+
+            function update() {
+                var cutoff = lowestStat.getBoundingClientRect().y + lowestStat.offsetHeight;
+                _.forEach(figures, function (figure) {
+                    figure.classList.remove('can-nudge');
+                    if (figure.getBoundingClientRect().y > cutoff) {
+                        figure.classList.add('can-nudge');
+                    }
+                });
+            }
+
+            if (figures.length > 0) {
+                // if stats exist, do calculations
+                if (stats) {
+                    lowestStat = stats.lastElementChild;
+                    update();
+                    window.addEventListener('resize', _.throttle(update, 100));
+
+                // otherwise, everything's good to go
+                } else {
+                    _.forEach(figures, function (figure) {
+                        figure.classList.add('can-nudge');
+                    });
+                }
+            }
+        }
+
         return {
-            blendListColors: blendListColors
+            blendListColors: blendListColors,
+            nudgeArticleFigures: nudgeArticleFigures
         };
     })();
 
@@ -270,6 +303,7 @@ var TDW = (function (window, document) {
         toggles.init();
         sharedHeights.init();
 
+        misc.nudgeArticleFigures();
         misc.blendListColors();
 
         document.documentElement.classList.remove('no-js');

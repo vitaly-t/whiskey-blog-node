@@ -200,14 +200,15 @@
   }
 
   .detail .text-copy figure {
-    $overhang: 250px;
-
-    max-width: $overhang*2 - $line*1.5;
     float: left;
-    margin-left: -$overhang;
+    margin-left: 0;
     margin-right: $line;
-    position: relative;
-    z-index: 6;
+    &.can-nudge {
+      max-width: $left-column-width*2 - $line*1.5;
+      margin-left: -($left-column-width + $line);
+      position: relative;
+      z-index: 6;
+    }
   }
 }
 
@@ -225,5 +226,10 @@
   .page-stats-image, .review-stats {
     display: block;
     width: $left-column-width;
+  }
+
+  .detail .text-copy figure.can-nudge {
+    max-width: $left-column-width*2 - $line*1.5;
+    margin-left: -($left-column-width + $line);
   }
 }

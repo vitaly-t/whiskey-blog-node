@@ -39,7 +39,8 @@ a, button {
 }
 
 figure {
-  background: mix($bg, $bg-light, 20%);
+  $figure-bg: darken($accent-dark, 6%);
+  background: $figure-bg;
   padding: $line/2;
   margin-bottom: $line;
   overflow: hidden;
@@ -58,7 +59,7 @@ figure {
       figcaption {
         display: table-caption;
         caption-side: bottom;
-        background: mix($bg, $bg-light, 20%);
+        background: $figure-bg;
         padding: 0 $line/2 $line/2;
         margin: 0 0 $line/2;
       }
@@ -69,6 +70,7 @@ figcaption {
   display: block;
   font-style: italic;
   font-size: $micro;
+  color: #fff;
   img + & {
     margin: $line/2 0 0;
   }
