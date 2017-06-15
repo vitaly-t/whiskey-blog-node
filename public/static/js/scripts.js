@@ -303,10 +303,37 @@ var TDW = (function (window, document) {
             });
         };
 
+        var createFigureMarkup = function () {
+            _.forEach(document.getElementsByClassName('text-copy'), function (container) {
+                _.forEach(container.querySelectorAll('img'), function (image) {
+                    if (image.alt && image.alt.trim().length > 0) {
+                        var figure = document.createElement('figure'),
+                            caption = document.createElement('figcaption'),
+                            referenceEl, tmpParent;
+
+                        // un-nest images from paragraphs (created via markdown)
+                        if (image.parentNode.tagName.toLowerCase() === 'p') {
+                            tmpParent = image.parentNode;
+                            referenceEl = tmpParent.previousElementSibling;
+                            tmpParent.parentNode.removeChild(tmpParent);
+                        } else {
+                            referenceEl = image.previousElementSibling;
+                        }
+
+                        figure.appendChild(image);
+                        figure.appendChild(caption);
+                        caption.textContent = image.alt;
+                        referenceEl.parentElement.insertBefore(figure, referenceEl);
+                    }
+                });
+            });
+        };
+
         return {
             blendListColors: blendListColors,
             nudgeArticleFigures: nudgeArticleFigures,
-            createTableOfContents: createTableOfContents
+            createTableOfContents: createTableOfContents,
+            createFigureMarkup: createFigureMarkup
         };
     })();
 
@@ -325,8 +352,9 @@ var TDW = (function (window, document) {
         toggles.init();
         sharedHeights.init();
 
-        misc.nudgeArticleFigures();
         misc.createTableOfContents();
+        misc.createFigureMarkup();
+        misc.nudgeArticleFigures();
         misc.blendListColors();
 
         document.documentElement.classList.remove('no-js');

@@ -1,0 +1,111 @@
+{% extends "../_layout.twig" %}
+
+{% block title %}{{ review.title }} {{ review.subtitle }}{% endblock %}
+
+{% block layoutClass %}detail{% endblock %}
+
+{% block content %}
+  <article class="content" role="main">
+    <h1 class="page-title">
+      <span class="page-title__container">
+        {{ review.title }}
+        {% if review.subtitle %}
+          <span class="page-title__sub">{{ review.subtitle }}</span>
+        {% endif %}
+      </span>
+    </h1>
+
+    <button class="review-stats__toggle" data-toggle-target="next"><span class="toggle-inactive-text">Show</span> <span class="toggle-active-text">Hide</span> details</button>
+
+    <dl class="review-stats review-stats__toggle__target review-stats__toggle__target--long">
+      {% if review.distillery %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Distilled by</dt>
+          <dd class="review-stats__stat">{{ review.distillery.name }}</dd>
+        </div>
+      {% endif %}
+      {% if review.proof_min or review.proof_max %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Proof</dt>
+          <dd class="review-stats__stat">
+            {{ displayProof(review.proof_min, review.proof_max) }}
+          </dd>
+        </div>
+      {% endif %}
+      {% if review.age_min or review.age_max %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Age</dt>
+          <dd class="review-stats__stat">{{ displayAge(review.age_min, review.age_max) }}</dd>
+        </div>
+      {% endif %}
+      {% if review.rarity %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Rarity</dt>
+          <dd class="review-stats__stat">{{ review.rarity.name }}</dd>
+        </div>
+      {% endif %}
+      {% if review.manufacturer_price %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Suggested retail price</dt>
+          <dd class="review-stats__stat">{{ displayPrice(review.manufacturer_price) }}</dd>
+        </div>
+      {% endif %}
+      {% if review.realistic_price %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Realistic price</dt>
+          <dd class="review-stats__stat">{{ review.realistic_price }}</dd>
+        </div>
+      {% endif %}
+      {% if review.mashbill_description or review.mashbill_recipe %}
+        <div class="review-stats__group">
+          <dt class="review-stats__label">Mashbill</dt>
+          <dd class="review-stats__stat">
+            {{ review.mashbill_description }}
+            {% if review.mashbill_recipe %}
+              <span class="review-stats__elaboration">({{ review.mashbill_recipe }})</span>
+            {% endif %}
+          </dd>
+        </div>
+      {% endif %}
+    </dl>
+
+    <div class="page-main-image">
+      <div class="page-main-image__image" style="background-image: url('{{ review.main_image }}');" data-0="transform: translateY(40px);" data-0-end="transform: translateY(-40px);"></div>
+    </div>
+
+    <div class="page-stats-image">
+      <div class="page-stats-image__image" style="background-image: url('{{ review.side_image }}');" data-0="transform: translateY(40px);" data-0-end="transform: translateY(-40px);"></div>
+    </div>
+
+    <div class="text-copy margin">
+      {% markdown %}
+        {{ review.body }}
+      {% endmarkdown %}
+    </div>
+
+    {% if review.related_reviews or review.related_posts %}
+      <aside class="related">
+        <div class="related__container">
+          <h3 class="related__label">Related Stuff</h3>
+          <ul class="related__list">
+            {% for rel in review.related_reviews %}
+              <li class="related__item">
+                <a href="/reviews/{{ rel.slug }}">{{ rel.title }} {{ rel.subtitle }} Review</a>
+              </li>
+            {% endfor %}
+            {% for rel in review.related_posts %}
+              <li class="related__item">
+                <a href="/articles/{{ rel.slug }}">{{ rel.title }} {{ rel.subtitle }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </aside>
+    {% endif %}
+
+    <div class="post-content">
+      <a href="/reviews">Back to all reviews</a>
+      <a href="/review-ethics">Review ethics</a>
+    </div>
+  </article>
+{% endblock %}

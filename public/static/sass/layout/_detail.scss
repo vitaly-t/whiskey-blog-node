@@ -109,6 +109,9 @@
   width: 150px;
   height: 300px;
   margin: 0 $line $line/4 0;
+  &__image {
+    background-color: mix($copy, #000, 30%);
+  }
 }
 .page-stats-image {
   display: none;

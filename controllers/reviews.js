@@ -12,8 +12,12 @@ router.get('/', function (req, res, next) {
 // get a review by url slug
 router.get('/:slug', function (req, res, next) {
   Review.getBySlug(req.params.slug)
-    .then(review => res.json(review))
-    .catch(e => next());
+    .then(review => {
+      return res.render('../views/reviews/detail.twig', {
+        review: review
+      });
+    })
+    .catch(next);
 });
 
 module.exports = router;

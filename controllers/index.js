@@ -2,10 +2,15 @@ const Twig = require('twig'),
       express = require('express'),
       router = express.Router(),
       Post = require('../models/post/post'),
-      Review = require('../models/review/review');
+      Review = require('../models/review/review'),
+      _displayFunctions = require('../helpers/display.js'),
+      twigMarkdown = require('twig-markdown');
 
 // pre-routing middleware
 router.use(require('../middleware/session'));
+
+// templating extensions
+Twig.extend(twigMarkdown);
 
 // load all controllers
 router.use('/login', require('./login'));
