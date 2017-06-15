@@ -1,0 +1,66 @@
+// font stacks
+$font-stack-primary: "Merriweather", "Georgia", serif;
+$font-stack-secondary: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+// text sizing
+$line: 28px;
+$text: 17px;
+$micro: 15px;
+$milli: 13px;
+$kilo: 18px;
+$mega: 22px;
+$giga: 28px;
+$tera: 32px;
+$peta: 36px;
+$exa: 42px;
+$yotta: 48px;
+
+// page sizing
+$page-width: 700px;
+
+// theme colors
+$primary: #04a35e;
+$primary-light: lighten($primary, 10%);
+$primary-dark: darken($primary, 20%);
+$accent: #009ba9;
+$accent-light: lighten($accent, 7%);
+$accent-dark: darken($accent, 15%);
+$action: #ec8517;
+$action-dark: #b43b11;
+
+// common colors
+$copy: #585858;
+$bg: #f5f3f0;
+$bg-light: lighten(desaturate($accent-dark, 92%), 66%);
+
+// status colors
+$positive: #23b22a;
+$negative: #cd4014;
+
+// breakpoints
+$break-s: 600px;
+$break-m: 720px;
+$break-l: 1000px;
+$break-w: 1400px;
+$break-hd: 1800px;
+
+// breakpoint usage
+$min-s: "(min-width: " + $break-s + ")";
+$max-s: "(max-width: " + ($break-s - 1px) + ")";
+
+$min-m: "(min-width: " + $break-m + ")";
+$max-m: "(max-width: " + ($break-m - 1px) + ")";
+
+$min-l: "(min-width: " + $break-l + ")";
+$max-l: "(max-width: " + ($break-l - 1px) + ")";
+
+$min-w: "(min-width: " + $break-w + ")";
+$max-w: "(max-width: " + ($break-w - 1px) + ")";
+
+$min-hd: "(min-width: " + $break-hd + ")";
+$max-hd: "(max-width: " + ($break-hd - 1px) + ")";
+
+$hdpi: "only screen and (-webkit-min-device-pixel-ratio: 2)," +
+       "only screen and (min-device-pixel-ratio: 2)," +
+       "only screen and (min-resolution: 192dpi)," +
+       "only screen and (min-resolution: 2dppx)";

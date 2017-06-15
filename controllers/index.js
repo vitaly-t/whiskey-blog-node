@@ -1,4 +1,5 @@
-const express = require('express'),
+const Twig = require('twig'),
+      express = require('express'),
       router = express.Router(),
       Post = require('../models/post/post'),
       Review = require('../models/review/review');
@@ -17,7 +18,9 @@ router.use('/admin', require('./admin'));
 router.get('/', function (req, res, next) {
   Promise.all([ Review.list({ limit: 5 }), Post.list({ limit: 5 }) ])
     .then(results => {
-      res.json(results[0].concat(results[1]).sort((a, b) => b.published_at.getTime() - a.published_at.getTime()));
+      return res.render('../views/home/index.twig', {
+        items: results[0].concat(results[1]).sort((a, b) => b.published_at.getTime() - a.published_at.getTime())
+      })
     })
     .catch(next);
 });

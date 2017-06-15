@@ -1,0 +1,99 @@
+/* ---------- =admin ---------- */
+
+.admin-list {
+  list-style: none;
+  margin: 0;
+  &__item + &__item {
+    margin-top: $line;
+    padding-top: $line;
+    border-top: 1px solid $bg-light;
+  }
+  p {
+    margin-bottom: 0;
+    margin-top: $line/4;
+  }
+  &__name, &__status, &__title, &__subtitle {
+    display: block;
+  }
+  &__status {
+    color: $copy;
+    font-size: $micro;
+    &--published {
+      color: $positive;
+    }
+    &--unpublished {
+      color: $negative;
+    }
+  }
+  &__title {
+    @extend .alternate-typeface;
+    font-size: $mega;
+    font-weight: 700;
+    color: $accent-dark;
+  }
+  &__subtitle {
+    font-style: italic;
+    color: $accent-dark;
+  }
+  &__date {
+    font-style: italic;
+    font-size: $micro;
+    opacity: 0.7;
+  }
+  &__actions {
+    a {
+      @extend .alternate-typeface;
+      display: inline-block;
+      margin-right: $line/2;
+    }
+  }
+
+  @media #{$min-s} {
+    &__status, &__title, &__subtitle {
+      display: inline-block;
+    }
+  }
+
+  @media #{$min-w} {
+    &__item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    &__name {
+      order: 1;
+      flex: 1 0;
+    }
+    &__actions {
+      order: 2;
+      text-align: right;
+      margin-top: 0 !important;
+    }
+    &__date, &__description {
+      order: 3;
+      flex: 0 1 100%;
+    }
+  }
+}
+
+.admin-actions {
+  margin: 0 0 $line;
+  .admin-heading + & {
+    margin-top: -$line;
+  }
+  a {
+    @extend .alternate-typeface;
+    @extend .text-link;
+    display: inline-block;
+    + a {
+      margin-left: $line/2;
+    }
+  }
+
+  @media #{$min-s} and #{$max-m}, #{$min-l} {
+    .admin-heading + & {
+      text-align: right;
+      margin-top: -$line*2.5;
+    }
+  }
+}

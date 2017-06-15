@@ -3,7 +3,7 @@ const express = require('express');
 let app = express();
 
 // pass-through static directory
-app.use(express.static(__dirname = '/static'));
+app.use(express.static('public'));
 
 // load all controllers
 app.use(require('./controllers'));

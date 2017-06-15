@@ -1,5 +1,4 @@
-const Twig = require('twig'),
-      express = require('express'),
+const express = require('express'),
       bodyParser = require('body-parser'),
       router = express.Router(),
       User = require('../models/user/user'),

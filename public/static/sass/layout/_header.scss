@@ -1,0 +1,234 @@
+/*! ---------- =header ---------- */
+
+.page-header {
+  @extend .group;
+  position: relative;
+  &::before {
+    content: '';
+    display: block;
+    height: 8px;
+    background-color: $primary;
+    background-image: linear-gradient(to right, $primary, $accent);
+  }
+}
+
+.header-logo {
+  float: left;
+  margin: 0;
+  a {
+    display: block;
+  }
+}
+
+.header-nav {
+  a {
+    @extend .alternate-typeface;
+    @extend .group;
+    display: block;
+    text-align: center;
+    font-weight: 700;
+    color: $copy;
+  }
+  &__list {
+    list-style: none;
+    margin: 0;
+  }
+  &__toggle {
+    @extend .alternate-typeface;
+  }
+}
+
+
+@media #{$max-s} {
+  .header-nav {
+    clear: both;
+    .js & {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: $accent-dark url('../images/bg-mobile-menu.jpg') no-repeat 50% 50%;
+      background-size: cover;
+      z-index: -1;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.15s ease-out;
+      &.is-active {
+        z-index: 10;
+        opacity: 1;
+        visibility: visible;
+      }
+      &__toggle {
+        display: block;
+        padding: $line/2 $line $line/2 $line*2.5;
+        position: absolute;
+        right: 0;
+        top: 32px;
+        z-index: 20;
+        &::before, &::after {
+          content: '';
+          display: block;
+          width: $line;
+          height: 2px;
+          margin-top: -1px;
+          background: $copy;
+          position: absolute;
+          left: $line;
+          top: 50%;
+          transition: transform 0.2s ease-out;
+        }
+        &::before {
+          box-shadow: 0 (-5px) 0 $copy, 0 5px 0 $copy;
+          transition: transform 0.2s ease-out, box-shadow 0.2s ease-out 0.2s;
+        }
+        &.is-active {
+          position: fixed;
+          color: #fff;
+          &::before, &::after {
+            background: #fff;
+          }
+          &::before {
+            transform: rotate(-45deg);
+            box-shadow: 0 (-15px) 0 rgba(255,255,255,0), 0 15px 0 rgba(255,255,255,0);
+            transition: transform 0.2s ease-out 0.4s, box-shadow 0.2s ease-out;
+          }
+          &::after {
+            transform: rotate(45deg);
+            transition: transform 0.2s ease-out 0.4s;
+          }
+        }
+      }
+      &__list {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+      }
+      &__item::before {
+        content: '';
+        display: block;
+        width: $line;
+        height: 2px;
+        background: #fff;
+        opacity: 0.2;
+        margin: 0 auto;
+      }
+      &__item:first-child::before {
+        display: none;
+      }
+      a {
+        padding: $line*3/4 $line;
+        font-family: $font-stack-primary;
+        font-style: italic;
+        font-size: $mega;
+        color: #fff;
+        font-weight: 400;
+      }
+    }
+    .no-js & {
+      margin: 0 0 $line $line;
+      &__toggle {
+        display: none;
+      }
+      a {
+        color: $accent;
+      }
+    }
+  }
+}
+
+
+@media #{$min-s} {
+  .header-nav {
+    &__toggle {
+      display: none;
+    }
+    &__list {
+      text-align: right;
+      padding-right: $line*3/4;
+    }
+    &__item {
+      display: inline-block;
+    }
+    a {
+      padding: 37px $line/4 $line*3/4;
+      position: relative;
+      &::before {
+        content: '';
+        display: block;
+        height: 3px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: $line*3/4 - 3px;
+        background: $primary;
+        transition: all 0.1s ease-out;
+      }
+      &:not(:hover)::before {
+        left: 50%;
+        right: 50%;
+      }
+      &:hover, &:focus {
+        color: $primary;
+      }
+    }
+  }
+}
+
+
+@media #{$max-m} {
+  .header-logo {
+    width: 213px;
+    a {
+      padding: $line/2 0 $line/2 $line/2;
+    }
+  }
+}
+
+
+@media #{$min-m} {
+  .header-logo {
+    width: 250px + $line/2;
+    a {
+      padding-top: $line;
+      padding-left: $line/2;
+    }
+  }
+  .header-nav {
+    &__list {
+      padding-right: $line;
+    }
+    a {
+      padding: 59px $line/2 $line;
+      &::before {
+        left: $line/4;
+        right: $line/4;
+        bottom: $line - 3px;
+      }
+    }
+  }
+}
+
+
+@media (min-width: #{$break-m + $line}) {
+  .header-logo {
+    width: 250px + $line*1.5;
+    a {
+      padding-left: $line*1.5;
+    }
+  }
+}
+
+
+@media #{$min-l} {
+  .page-header {
+    max-width: $page-width;
+    margin: 0 auto;
+  }
+}

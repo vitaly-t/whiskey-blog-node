@@ -1,0 +1,24 @@
+/*! ---------- =footer ---------- */
+
+.page-footer {
+  &::before {
+    @extend .page-header::before;
+  }
+  &__content {
+    padding: $line;
+    font-size: $milli;
+    text-align: center;
+    color: transparentize($copy, 0.3);
+  }
+  a {
+    @extend .text-link;
+    font-style: normal;
+  }
+}
+
+@media #{$min-l} {
+  .page-footer {
+    max-width: $page-width;
+    margin: 0 auto;
+  }
+}

@@ -1,0 +1,61 @@
+{% extends "../_layout.twig" %}
+
+{% block title %}Home{% endblock %}
+
+{% block layoutClass %}home{% endblock %}
+
+{% block content %}
+  <section role="main">
+
+    <div class="home-latest">
+      <div class="home-latest__image" style="background-image: url('{{ items[0].home_image }}');"></div>
+      <h1 class="page-title">
+        <a href="/{% if items[0].rating %}reviews{% else %}articles{% endif %}/{{ items[0].slug }}">
+          <span class="page-title__container">
+            <span class="page-title__label">Latest post:</span>
+            {{ items[0].title }}
+            <span class="page-title__sub">
+              {{ items[0].subtitle }}
+              {% if items[0].rating %}
+                Review
+              {% endif %}
+            </span>
+          </span>
+        </a>
+      </h1>
+      {% if items[0].summary %}
+        <p class="home-latest__summary">{{ items[0].summary }}</p>
+      {% endif %}
+    </div>
+
+    <ul class="home-feed">
+      {% for item in items %}
+        {% if not loop.index0 == 0 %}
+          <li class="home-feed__item">
+            <a href="/{% if item.rating %}reviews{% else %}articles{% endif %}/{{ item.slug }}" class="home-feed__link article-card" data-height-group="home-cards">
+              <div class="article-card__image" style="background-image: url('{{ item.list_image }}')"></div>
+              <h2 class="article-card__title">
+                {{ item.title }}
+                <span class="article-card__subtitle">
+                  {{ item.subtitle }}
+                  {% if item.rating %}
+                    Review
+                  {% endif %}
+                </span>
+              </h2>
+              {% if item.summary %}
+                <p class="article-card__summary">{{ item.summary }}</p>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <div class="home-more">
+      <a href="/reviews">More reviews</a>
+      <a href="/articles">More articles</a>
+    </div>
+
+</section>
+{% endblock %}

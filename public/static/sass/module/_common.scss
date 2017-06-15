@@ -1,0 +1,230 @@
+/*! ---------- =common =components ---------- */
+
+body {
+  background-color: $bg;
+}
+
+a {
+  text-decoration: none;
+  color: $primary;
+}
+a, button {
+  transition: color 0.15s ease-out, opacity 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+.text-link {
+  box-shadow: 0 3px 0 $primary;
+  &:hover, &:focus {
+    color: #fff;
+    box-shadow: 0 0 0 3px $accent, inset 0 (-($line + 3px)) 0 $accent;
+  }
+  &--inverse {
+    color: #fff;
+    box-shadow: 0 3px 0 rgba(255,255,255,0.4);
+    &:hover, &:focus {
+      color: $accent;
+      box-shadow: 0 0 0 3px #fff, inset 0 (-($line + 3px)) 0 #fff;
+    }
+  }
+}
+
+.margin {
+  margin-bottom: $line;
+}
+.margin-large {
+  margin-bottom: $line*2;
+}
+.margin-small {
+  margin-bottom: $line/2;
+}
+.margin-top {
+  margin-top: $line;
+}
+.margin-top-large {
+  margin-top: $line*2;
+}
+.margin-top-small {
+  margin-top: $line/2;
+}
+
+figure {
+  $figure-bg: darken($accent-dark, 6%);
+  background: $figure-bg;
+  padding: $line/2;
+  margin-bottom: $line;
+  overflow: hidden;
+  clear: both;
+  @media #{$min-s} {
+    .text-copy & {
+      display: table;
+      max-width: 50%;
+      margin-left: $line;
+      float: right;
+      &:nth-of-type(2n) {
+        float: left;
+        margin-left: 0;
+        margin-right: $line;
+      }
+      figcaption {
+        display: table-caption;
+        caption-side: bottom;
+        background: $figure-bg;
+        padding: 0 $line/2 $line/2;
+        margin: 0 0 $line/2;
+      }
+    }
+  }
+}
+figcaption {
+  display: block;
+  font-style: italic;
+  font-size: $micro;
+  color: #fff;
+  img + & {
+    margin: $line/2 0 0;
+  }
+}
+
+.article-card {
+  display: block;
+  padding: $line;
+  color: #fff;
+  background: $primary-dark;
+  position: relative;
+  &__image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: cover;
+    z-index: 1;
+    opacity: 0.2;
+  }
+  &__title, &__summary {
+    position: relative;
+    z-index: 2;
+  }
+  &__title {
+    margin: 0 0 $line/2;
+  }
+  &__subtitle {
+    display: block;
+    font-family: $font-stack-primary;
+    font-weight: 400;
+    font-style: italic;
+    font-size: $mega;
+    line-height: $line;
+  }
+  &__summary {
+    @extend .alternate-typeface;
+    opacity: 0.8;
+  }
+}
+
+.load-more {
+  $arrow-width: 60px;
+
+  text-align: center;
+  &__link {
+    @extend .alternate-typeface;
+    display: inline-block;
+    padding-bottom: $line;
+    position: relative;
+    &::before, &::after {
+      content: '';
+      display: block;
+      width: $arrow-width/2;
+      height: 3px;
+      position: absolute;
+      top: 100%;
+      margin-top: -$line;
+      left: 50%;
+      background: $primary;
+      transition: background 0.15s ease-out, margin 0.15s ease-out;
+    }
+    &::before {
+      margin-left: -$arrow-width/2;
+      transform-origin: 0 0;
+      transform: skew(0, 10deg);
+    }
+    &::after {
+      right: 0;
+      transform-origin: 100% 0;
+      transform: skew(0, -10deg);
+    }
+    &:hover {
+      color: $accent;
+      &::before, &::after {
+        background: $accent;
+        margin-top: -$line*3/4;
+      }
+    }
+  }
+}
+
+@mixin page-details-toggle($breakpoint) {
+  @extend .alternate-typeface;
+
+  @media (max-width: $breakpoint - 1px) {
+    .js & {
+      position: relative;
+      display: block;
+      padding: $line/4;
+      width: 100%;
+      width: calc(100% + #{$line*2});
+      margin: 0 (-$line);
+      background: $action;
+      background-image: linear-gradient(to right, $action-dark, $action);
+      color: #fff;
+      z-index: 2;
+      &__target {
+        max-height: $line*22;
+        overflow: hidden;
+        opacity: 1;
+        transition: all 0.2s ease-out;
+        &--long {
+          max-height: $line*40;
+        }
+        &:not(.is-active) {
+          max-height: 0;
+          visibility: hidden;
+          visibility: visible;
+          opacity: 0;
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+      }
+    }
+    .no-js & {
+      display: none;
+    }
+  }
+
+  @media #{$min-m} and (max-width: $breakpoint - 1px) {
+    .js & {
+      margin: 0 (-$line*1.5);
+      width: calc(100% + #{$line*3});
+    }
+    .page-title + & {
+      margin-top: -$line/2;
+    }
+  }
+
+  // toggled content is meant to be kicked off to the side by this point
+  @media (min-width: $breakpoint) {
+    display: none;
+  }
+}
+
+.toggle-active-text, .is-active .toggle-inactive-text {
+  display: none;
+}
+.is-active .toggle-active-text {
+  display: inline;
+}
+
+.group {
+  @include clear;
+}
