@@ -12,7 +12,11 @@ router.get('/', function (req, res, next) {
 // get a post by url slug
 router.get('/:slug', function (req, res, next) {
   Post.getBySlug(req.params.slug)
-    .then(post => res.json(post))
+    .then(post => {
+      return res.render('../views/posts/detail.twig', {
+        post: post
+      });
+    })
     .catch(e => next());
 });
 

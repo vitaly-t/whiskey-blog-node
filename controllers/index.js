@@ -15,7 +15,7 @@ Twig.extend(twigMarkdown);
 // load all controllers
 router.use('/login', require('./login'));
 router.use('/logout', require('./logout'));
-router.use('/posts', require('./posts'));
+router.use('/articles', require('./posts'));
 router.use('/reviews', require('./reviews'));
 router.use('/admin', require('./admin'));
 

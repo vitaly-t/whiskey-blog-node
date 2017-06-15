@@ -1,0 +1,56 @@
+{% extends "../_layout.twig" %}
+
+{% block title %}{{ post.title }} {{ post.subtitle }}{% endblock %}
+
+{% block layoutClass %}detail{% endblock %}
+
+{% block content %}
+  <article class="content" role="main">
+    <h1 class="page-title">
+      <span class="page-title__container">
+        {{ post.title }}
+        {% if post.subtitle %}
+          <span class="page-title__sub">{{ post.subtitle }}</span>
+        {% endif %}
+      </span>
+    </h1>
+
+    <div class="page-main-image">
+      <div class="page-main-image__image" style="background-image: url('{{ post.main_image }}');" data-0="transform: translateY(40px);" data-0-end="transform: translateY(-40px);"></div>
+    </div>
+
+    <div class="page-stats-image">
+      <div class="page-stats-image__image" style="background-image: url('{{ post.side_image }}');" data-0="transform: translateY(40px);" data-0-end="transform: translateY(-40px);"></div>
+    </div>
+
+    <div class="text-copy margin">
+      {% markdown %}
+        {{ post.body }}
+      {% endmarkdown %}
+    </div>
+
+    {% if post.related_reviews or post.related_posts %}
+      <aside class="related">
+        <div class="related__container">
+          <h3 class="related__label">Related Stuff</h3>
+          <ul class="related__list">
+            {% for rel in post.related_posts %}
+              <li class="related__item">
+                <a href="/articles/{{ rel.slug }}">{{ rel.title }} {{ rel.subtitle }}</a>
+              </li>
+            {% endfor %}
+            {% for rel in post.related_reviews %}
+              <li class="related__item">
+                <a href="/reviews/{{ rel.slug }}">{{ rel.title }} {{ rel.subtitle }} Review</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </aside>
+    {% endif %}
+
+    <div class="post-content">
+      <a href="/articles">Back to all articles</a>
+    </div>
+  </article>
+{% endblock %}

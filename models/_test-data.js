@@ -82,7 +82,11 @@ Deserunt adipisci labore voluptates repudiandae, error quod. Iure, illum ullam v
 - Quae modi quasi facilis nobis
 - Voluptatem officia autem quidem
 
-Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possimus odit itaque praesentium aut perferendis veritatis minus dolores commodi. Distinctio earum vel reprehenderit at rem, corporis qui suscipit aliquid perferendis assumenda placeat, dicta vitae cupiditate, quisquam officia ut ducimus, aperiam dolores nemo. Nulla, hic!`
+Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possimus odit itaque praesentium aut perferendis veritatis minus dolores commodi. Distinctio earum vel reprehenderit at rem, corporis qui suscipit aliquid perferendis assumenda placeat, dicta vitae cupiditate, quisquam officia ut ducimus, aperiam dolores nemo. Nulla, hic!`,
+      main_image: '/uploads/placeholder/placeholder-review-main.jpg',
+      side_image: '/uploads/placeholder/placeholder-review-side.jpg',
+      home_image: '/uploads/placeholder/placeholder-review-home.jpg',
+      list_image: '/uploads/placeholder/placeholder-review-list.jpg'
     });
   })
   .then(post => {
@@ -99,7 +103,11 @@ Deserunt adipisci labore voluptates repudiandae, error quod. Iure, illum ullam v
 - Quae modi quasi facilis nobis
 - Voluptatem officia autem quidem
 
-Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possimus odit itaque praesentium aut perferendis veritatis minus dolores commodi. Distinctio earum vel reprehenderit at rem, corporis qui suscipit aliquid perferendis assumenda placeat, dicta vitae cupiditate, quisquam officia ut ducimus, aperiam dolores nemo. Nulla, hic!`
+Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possimus odit itaque praesentium aut perferendis veritatis minus dolores commodi. Distinctio earum vel reprehenderit at rem, corporis qui suscipit aliquid perferendis assumenda placeat, dicta vitae cupiditate, quisquam officia ut ducimus, aperiam dolores nemo. Nulla, hic!`,
+      main_image: '/uploads/placeholder/placeholder-review-main.jpg',
+      side_image: '/uploads/placeholder/placeholder-review-side.jpg',
+      home_image: '/uploads/placeholder/placeholder-review-home.jpg',
+      list_image: '/uploads/placeholder/placeholder-review-list.jpg'
     });
   })
   .then(post => {
