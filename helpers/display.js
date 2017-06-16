@@ -44,7 +44,9 @@ Twig.extendFunction('displayAge', function (...ages) {
     return age + ' years';
   }
 
-  if (ages.length === 1 || ages[0] === ages[1]) {
+  if (ages.length === 0) {
+    return formatAge(0);
+  } else if (ages.length === 1 || ages[0] === ages[1]) {
     return formatAge(ages[0]);
   } else {
     if (ages.every(age => age >= 1)) {
@@ -71,7 +73,9 @@ Twig.extendFunction('displayPrice', function (...prices) {
     }
   }
 
-  if (prices.length === 1 || prices[0] === prices[1]) {
+  if (prices.length === 0) {
+    return 'Unknown';
+  } else if (prices.length === 1 || prices[0] === prices[1]) {
     return '$' + formatPrice(prices[0]);
   } else {
     return '$' + prices.map(price => formatPrice(price)).join(' – ');

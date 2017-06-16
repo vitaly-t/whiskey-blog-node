@@ -32,12 +32,10 @@
           </dd>
         </div>
       {% endif %}
-      {% if review.age_min or review.age_max %}
-        <div class="review-stats__group">
-          <dt class="review-stats__label">Age</dt>
-          <dd class="review-stats__stat">{{ displayAge(review.age_min, review.age_max) }}</dd>
-        </div>
-      {% endif %}
+      <div class="review-stats__group">
+        <dt class="review-stats__label">Age</dt>
+        <dd class="review-stats__stat">{{ displayAge(review.age_min, review.age_max) }}</dd>
+      </div>
       {% if review.rarity %}
         <div class="review-stats__group">
           <dt class="review-stats__label">Rarity</dt>
