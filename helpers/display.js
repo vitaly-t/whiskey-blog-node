@@ -34,7 +34,9 @@ Twig.extendFunction('displayAge', function (...ages) {
   ages = clean(ages);
 
   function formatAge(age) {
-    if (age === 1) {
+    if (age === 0) {
+      return 'Unknown (NAS)'
+    } else if (age === 1) {
       return '1 year';
     } else if (age > 0 && age < 1) {
       return Math.round(age * 12) + ' months';
@@ -74,4 +76,34 @@ Twig.extendFunction('displayPrice', function (...prices) {
   } else {
     return '$' + prices.map(price => formatPrice(price)).join(' – ');
   }
+});
+
+
+/*
+ * modifyQueryString: returns a new query string to be appended to a url
+ *
+ * uses the existing query string on the current page. Requires
+ * `res.locals.query = req.query;` in route
+ *
+ * params: an object whose keys and values correspond to the qs keys and values
+ */
+
+Twig.extendFunction('modifyQueryString', function (params) {
+  let baseParams = {},
+      newParams = {},
+      paramsArray = [];
+
+  // locals seem to get aggregated here on each iteration,
+  // but provides the `_keys` variable for the relevant stuff
+  for (const key in this.context._locals.query._keys) {
+    baseParams[key] = this.context._locals.query[key];
+  }
+
+  newParams = Object.assign(baseParams, params);
+  for (const key of Object.keys(newParams)) {
+    if (key != '_keys') {
+      paramsArray.push(`${key}=${newParams[key]}`);
+    }
+  }
+  return '?' + paramsArray.join('&');
 });
