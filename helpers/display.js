@@ -105,9 +105,13 @@ Twig.extendFunction('modifyQueryString', function (params) {
 
   newParams = Object.assign(baseParams, params);
   for (const key of Object.keys(newParams)) {
-    if (key != '_keys') {
+    if (key != '_keys' && newParams[key]) {
       paramsArray.push(`${key}=${newParams[key]}`);
     }
   }
-  return '?' + paramsArray.join('&');
+
+  if (paramsArray.length > 0) {
+    return '?' + paramsArray.join('&');
+  }
+  return '';
 });

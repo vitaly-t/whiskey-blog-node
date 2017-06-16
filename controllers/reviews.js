@@ -7,36 +7,44 @@ const express = require('express'),
 
 // return 100 recent reviews
 router.get('/', function (req, res, next) {
-  let facets = {}
+  let facets = {},
+      appliedFilters = {};
 
   // make query params available in template functions
   res.locals.query = req.query;
 
+  // sorting
   if (req.query.sort) {
     switch (res.locals.query.sort) {
       case 'best':
         facets.orderBy = 'rating';
         facets.order = 'DESC';
+        appliedFilters.sort = 'what I liked the most';
         break;
       case 'worst':
         facets.orderBy = 'rating';
         facets.order = 'ASC';
+        appliedFilters.sort = 'what I liked the least';
         break;
       case 'cheapest':
         facets.orderBy = 'manufacturer_price';
         facets.order = 'ASC';
+        appliedFilters.sort = 'lowest price';
         break;
       case 'priciest':
         facets.orderBy = 'manufacturer_price';
         facets.order = 'DESC';
+        appliedFilters.sort = 'highest price';
         break;
       case 'hottest':
         facets.orderBy = 'proof_min';
         facets.order = 'DESC';
+        appliedFilters.sort = 'highest proof';
         break;
       case 'oldest':
         facets.orderBy = 'age_min';
         facets.order = 'DESC';
+        appliedFilters.sort = 'highest age';
         break;
     }
   }
@@ -53,7 +61,8 @@ router.get('/', function (req, res, next) {
         drinkTypes: data[1],
         rarities: data[2],
         regions: data[3],
-        path: req.baseUrl
+        path: req.baseUrl,
+        appliedFilters: appliedFilters
       });
     })
     .catch(next);

@@ -12,7 +12,16 @@
     </h1>
 
     <div class="list-active-filters">
-      <p>Showing <a href="#0">easy-to-find</a> <a href="#0">bourbons</a> above <a href="#0">10 years of age</a> that cost <a href="#0">between $20 and $40</a>, sorted by <a href="#0">what I liked the most</a>.</p>
+      <p>
+        {% if not appliedFilters is empty %}
+          Showing all whiskies
+          {% if appliedFilters.sort %}
+            in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
+          {% endif %}
+        {% else %}
+          Showing all reviews, most recent first.
+        {% endif %}
+      </p>
     </div>
 
     <button class="list-filters__toggle" data-toggle-target="next"><span class="toggle-inactive-text">Show</span> <span class="toggle-active-text">Hide</span> filters</button>
@@ -25,8 +34,8 @@
           <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'worst' }) }}">My least favorite</a></li>
           <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'cheapest' }) }}">Cheapest</a></li>
           <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'priciest' }) }}">Priciest</a></li>
-          <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'hottest' }) }}">Highest Proof</a></li>
-          <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'oldest' }) }}">Most Aged</a></li>
+          <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'hottest' }) }}">Hottest</a></li>
+          <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'oldest' }) }}">Oldest</a></li>
         </ul>
       </div>
 
@@ -54,10 +63,6 @@
         </li>
       {% endfor %}
     </ul>
-
-    <div class="load-more">
-      <a href="#0" class="load-more__link">Load more</a>
-    </div>
 
   </section>
 {% endblock %}
