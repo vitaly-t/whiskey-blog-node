@@ -1,0 +1,63 @@
+{% extends "../_layout.twig" %}
+
+{% block title %}Reviews{% endblock %}
+
+{% block layoutClass %}list{% endblock %}
+
+{% block content %}
+  <section class="content" role="main">
+
+    <h1 class="page-title">
+      <span class="page-title__container">Reviews <span class="page-title__links">See also: <a href="/review-ethics">Review ethics</a></span></span>
+    </h1>
+
+    <div class="list-active-filters">
+      <p>Showing <a href="#0">easy-to-find</a> <a href="#0">bourbons</a> above <a href="#0">10 years of age</a> that cost <a href="#0">between $20 and $40</a>, sorted by <a href="#0">what I liked the most</a>.</p>
+    </div>
+
+    <button class="list-filters__toggle" data-toggle-target="next"><span class="toggle-inactive-text">Show</span> <span class="toggle-active-text">Hide</span> filters</button>
+
+    <aside class="list-filters list-filters__toggle__target">
+      <div class="list-filters__facet">
+        <h4 class="list-filters__label">Sort by</h4>
+        <ul class="list-filters__choices">
+          <li class="list-filters__choice"><a href="#0">My favorite</a></li>
+          <li class="list-filters__choice"><a href="#0">My least favorite</a></li>
+          <li class="list-filters__choice"><a href="#0">Cheapest</a></li>
+          <li class="list-filters__choice"><a href="#0">Priciest</a></li>
+          <li class="list-filters__choice"><a href="#0">Burniest</a></li>
+          <li class="list-filters__choice"><a href="#0">Most Aged</a></li>
+        </ul>
+      </div>
+
+      <div class="list-filters__facet">
+        <h4 class="list-filters__label">Rarity</h4>
+        <ul class="list-filters__choices">
+          {% for rarity in rarities %}
+            <li class="list-filters__choice"><a href="#0">{{ rarity.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+
+    <ul class="article-list">
+      {% for review in reviews %}
+        <li class="article-list__item">
+          <a href="/reviews/{{ review.slug }}" class="article-card">
+            <div class="article-card__image" style="background-image: url('{{ review.list_image }}')"></div>
+            <h2 class="article-card__title">
+              {{ review.title }}
+              <span class="article-card__subtitle">{{ review.subtitle }}</span>
+            </h2>
+            <p class="article-card__summary">{{ review.summary }}</p>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <div class="load-more">
+      <a href="#0" class="load-more__link">Load more</a>
+    </div>
+
+  </section>
+{% endblock %}
