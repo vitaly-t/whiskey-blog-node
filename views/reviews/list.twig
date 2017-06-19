@@ -14,7 +14,13 @@
     <div class="list-active-filters">
       <p>
         {% if not appliedFilters is empty %}
-          Showing all whiskies
+          Showing
+          {% if appliedFilters.rarity %}
+            <a href="{{ path }}{{ modifyQueryString({ rarity: null }) }}">{{ appliedFilters.rarity }}</a>
+          {% else %}
+            all
+          {% endif %}
+          whiskies
           {% if appliedFilters.sort %}
             in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
           {% endif %}
@@ -43,7 +49,7 @@
         <h4 class="list-filters__label">Rarity</h4>
         <ul class="list-filters__choices">
           {% for rarity in rarities %}
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ rarity: rarity.name })|lower }}">{{ rarity.name }}</a></li>
+            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ rarity: rarity.id }) }}">{{ rarity.name }}</a></li>
           {% endfor %}
         </ul>
       </div>

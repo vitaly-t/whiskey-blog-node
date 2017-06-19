@@ -10,6 +10,8 @@ router.get('/', function (req, res, next) {
   let facets = {},
       appliedFilters = {};
 
+  facets.filters = [];
+
   // make query params available in template functions
   res.locals.query = req.query;
 
@@ -49,12 +51,23 @@ router.get('/', function (req, res, next) {
     }
   }
 
-  Promise.all([
-      Review.list(facets),
-      DrinkType.list(),
-      Rarity.list(),
-      Region.list()
-    ])
+  Rarity.get(parseInt(req.query.rarity) || 0)
+    .then(rarity => {
+      if (rarity) {
+        facets.filters.push({
+          field: 'rarity',
+          value: rarity.id
+        });
+        appliedFilters.rarity = rarity.filter_name;
+      }
+
+      return Promise.all([
+        Review.list(facets),
+        DrinkType.list(),
+        Rarity.list(),
+        Region.list()
+      ])
+    })
     .then(data => {
       return res.render('../views/reviews/list.twig', {
         reviews: data[0],
