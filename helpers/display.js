@@ -93,15 +93,9 @@ Twig.extendFunction('displayPrice', function (...prices) {
  */
 
 Twig.extendFunction('modifyQueryString', function (params) {
-  let baseParams = {},
+  let baseParams = Object.assign({}, this.context._locals.query),
       newParams = {},
       paramsArray = [];
-
-  // locals seem to get aggregated here on each iteration,
-  // but provides the `_keys` variable for the relevant stuff
-  for (const key in this.context._locals.query._keys) {
-    baseParams[key] = this.context._locals.query[key];
-  }
 
   newParams = Object.assign(baseParams, params);
   for (const key of Object.keys(newParams)) {
