@@ -5,12 +5,11 @@ const express = require('express'),
       Rarity = require('../models/rarity/rarity'),
       Region = require('../models/region/region');
 
-// return 100 recent reviews
-router.get('/', function (req, res, next) {
-  let facets = {},
-      appliedFilters = {};
 
-  facets.filters = [];
+// list reviews, with options to sort and filter in the query string
+router.get('/', function (req, res, next) {
+  let facets = { filters: [] },
+      appliedFilters = {};
 
   // make query params available in template functions
   res.locals.query = req.query;
@@ -51,7 +50,20 @@ router.get('/', function (req, res, next) {
     }
   }
 
-  Rarity.get(parseInt(req.query.rarity) || 0)
+  // filter by drink type
+  DrinkType.get(parseInt(req.query.type, 10) || -1)
+    .then(drinkType => {
+      if (drinkType) {
+        facets.filters.push({
+          field: 'drink_type',
+          value: drinkType.id
+        });
+        appliedFilters.drinkType = drinkType.plural;
+      }
+
+      // filter by rarity
+      return Rarity.get(parseInt(req.query.rarity, 10) || -1);
+    })
     .then(rarity => {
       if (rarity) {
         facets.filters.push({
@@ -61,13 +73,27 @@ router.get('/', function (req, res, next) {
         appliedFilters.rarity = rarity.filter_name;
       }
 
+      // filter by region
+      return Region.get(parseInt(req.query.region, 10) || -1);
+    })
+    .then(region => {
+      if (region) {
+        facets.filters.push({
+          field: 'region',
+          value: region.id
+        });
+        appliedFilters.region = region.filter_name;
+      }
+
+      // finally, do main list query, as well as list all items of supporting types
       return Promise.all([
         Review.list(facets),
         DrinkType.list(),
         Rarity.list(),
         Region.list()
-      ])
+      ]);
     })
+
     .then(data => {
       return res.render('../views/reviews/list.twig', {
         reviews: data[0],
@@ -81,6 +107,7 @@ router.get('/', function (req, res, next) {
     .catch(next);
 });
 
+
 // get a review by url slug
 router.get('/:slug', function (req, res, next) {
   Review.getBySlug(req.params.slug)
@@ -91,5 +118,6 @@ router.get('/:slug', function (req, res, next) {
     })
     .catch(next);
 });
+
 
 module.exports = router;
