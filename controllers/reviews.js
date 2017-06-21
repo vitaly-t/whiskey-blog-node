@@ -30,12 +30,12 @@ router.get('/', function (req, res, next) {
       case 'cheapest':
         facets.orderBy = 'manufacturer_price';
         facets.order = 'ASC';
-        appliedFilters.sort = 'lowest price';
+        appliedFilters.sort = 'lowest MSRP';
         break;
       case 'priciest':
         facets.orderBy = 'manufacturer_price';
         facets.order = 'DESC';
-        appliedFilters.sort = 'highest price';
+        appliedFilters.sort = 'highest MSRP';
         break;
       case 'hottest':
         facets.orderBy = 'proof_min';
