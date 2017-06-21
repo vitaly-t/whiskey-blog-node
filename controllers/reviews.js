@@ -50,6 +50,66 @@ router.get('/', function (req, res, next) {
     }
   }
 
+  // filter by proof
+  if (req.query.minproof || req.query.maxProof) {
+    const minProof = parseFloat(req.query.minproof, 10) || 80;
+          maxProof = parseFloat(req.query.maxproof, 10) || 200;
+    if (!isNaN(minProof) && minProof > 80 && minProof <= maxProof) {
+      facets.filters.push({
+        field: 'proof_max',
+        comparison: 'gte',
+        value: minProof
+      });
+    }
+    if (!isNaN(maxProof) && maxProof < 200 && maxProof >= minProof) {
+      facets.filters.push({
+        field: 'proof_min',
+        comparison: 'lte',
+        value: maxProof
+      });
+    }
+  }
+
+  // filter by age
+  if (req.query.minage || req.query.maxage) {
+    const minAge = parseFloat(req.query.minage, 10) || 0;
+          maxAge = parseFloat(req.query.maxage, 10) || 20;
+    if (!isNaN(minAge) && minAge > 0 && minAge <= maxAge) {
+      facets.filters.push({
+        field: 'age_max',
+        comparison: 'gte',
+        value: minAge
+      });
+    }
+    if (!isNaN(maxAge) && maxAge < 20 && maxAge >= minAge) {
+      facets.filters.push({
+        field: 'age_min',
+        comparison: 'lte',
+        value: maxAge
+      });
+    }
+  }
+
+  // filter by manufacturer price
+  if (req.query.minprice || req.query.maxprice) {
+    const minPrice = parseFloat(req.query.minprice, 10) || 0;
+          maxPrice = parseFloat(req.query.maxprice, 10) || 200;
+    if (!isNaN(minPrice) && minPrice > 0 && minPrice <= maxPrice) {
+      facets.filters.push({
+        field: 'manufacturer_price',
+        comparison: 'gte',
+        value: minPrice
+      });
+    }
+    if (!isNaN(maxPrice) && maxPrice < 200 && maxPrice >= minPrice) {
+      facets.filters.push({
+        field: 'manufacturer_price',
+        comparison: 'lte',
+        value: maxPrice
+      });
+    }
+  }
+
   // filter by drink type
   DrinkType.get(parseInt(req.query.type, 10) || -1)
     .then(drinkType => {
