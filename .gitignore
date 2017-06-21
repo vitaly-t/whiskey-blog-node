@@ -14,6 +14,9 @@ Thumbs.db
 *.css
 *.css.map
 
+# processed js
+scripts.min.js
+
 # Logs
 logs
 *.log

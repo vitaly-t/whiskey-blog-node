@@ -4,7 +4,12 @@
   "description": "I'm going to try to make a specialized blog app with Node now",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "sass": "node-sass public/static/sass/ -o public/static/style/ --output-style compressed",
+    "sass-watch": "node-sass public/static/sass/ -o public/static/style/ --output-style compressed -w",
+    "uglify": "uglifyjs public/static/js/lodash.min.js public/static/js/scripts.js -c -o public/static/js/scripts.min.js",
+    "migrate": "migrate up",
+    "build": "npm install && npm run migrate && npm run sass && npm run uglify"
   },
   "repository": {
     "type": "git",
@@ -26,8 +31,10 @@
     "express": "^4.15.3",
     "express-session": "^1.15.3",
     "migrate": "^0.2.3",
+    "node-sass": "^4.5.3",
     "pg-promise": "^5.7.1",
     "twig": "^1.10.5",
-    "twig-markdown": "^0.1.2"
+    "twig-markdown": "^0.1.2",
+    "uglify-js": "^3.0.18"
   }
 }
