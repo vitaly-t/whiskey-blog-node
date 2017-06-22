@@ -1,0 +1,103 @@
+/* ----------- =forms ----------- */
+
+// range inputs. Thanks to css-tricks for a starting point
+// https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
+
+$track-height: 8px;
+@mixin track {
+  background: $bg-light;
+  background-image: linear-gradient(to right, #3b5 0%, #ca3 40%, #c42 100%);
+}
+@mixin track-focus {
+  border-color: $accent;
+}
+
+$thumb-width: $line/2;
+$thumb-height: $line;
+@mixin thumb {
+  border: 1px solid darken($bg-light, 10%);
+  border-radius: 1px;
+  background: $bg;
+}
+@mixin thumb-focus {
+  background: #fff;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  margin: $line/2 0;
+  width: 100%;
+}
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: $track-height;
+  cursor: pointer;
+  @include track;
+}
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: $track-height;
+  cursor: pointer;
+  @include track;
+}
+input[type="range"]::-ms-track {
+  width: 100%;
+  height: $track-height;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  border-width: ($track-height/2 - $thumb-height/2) 0;
+  color: transparent;
+}
+input[type="range"]::-ms-fill-lower {
+  @include track;
+}
+input[type="range"]::-ms-fill-upper {
+  @include track;
+}
+input[type="range"]:focus::-webkit-slider-runnable-track {
+  @include track-focus;
+}
+input[type="range"]:focus::-moz-range-track {
+  @include track-focus;
+}
+input[type="range"]:focus::-ms-fill-lower {
+  @include track-focus;
+}
+input[type="range"]:focus::-ms-fill-upper {
+  @include track-focus;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: $thumb-width;
+  height: $thumb-height;
+  margin-top: -($thumb-height/2 - $track-height/2 + 1px);
+  cursor: pointer;
+  @include thumb;
+}
+input[type="range"]::-moz-range-thumb {
+  width: $thumb-width;
+  height: $thumb-height;
+  cursor: pointer;
+  @include thumb;
+}
+input[type="range"]::-ms-thumb {
+  width: $thumb-width;
+  height: $thumb-height;
+  cursor: pointer;
+  @include thumb;
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  @include thumb-focus;
+}
+input[type="range"]:focus::-moz-range-thumb {
+  @include thumb-focus;
+}
+input[type="range"]:focus::-ms-thumb {
+  @include thumb-focus;
+}
