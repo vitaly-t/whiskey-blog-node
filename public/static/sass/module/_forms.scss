@@ -9,6 +9,8 @@ $track-height: 8px;
   $g1: transparent;
   $g2: transparentize($bg, 0.8);
   background-image: linear-gradient(to right, #3b5 0%, #ca3 40%, #c42 100%);
+  position: relative;
+  z-index: 1;
 }
 @mixin track-focus {
   border-color: $accent;
@@ -20,6 +22,8 @@ $thumb-height: $line;
   border: 1px solid darken($bg-light, 10%);
   border-radius: 1px;
   background: $bg;
+  position: relative;
+  z-index: 3;
 }
 @mixin thumb-focus {
   background: #fff;
@@ -27,79 +31,170 @@ $thumb-height: $line;
 
 input[type="range"] {
   -webkit-appearance: none;
-  margin: $line/2 0;
+  margin: 0;
   width: 100%;
-}
-input[type="range"]:focus {
-  outline: none;
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: $track-height;
+    cursor: pointer;
+    margin: (($thumb-height - $track-height)/2) 0;
+    @include track;
+  }
+  &::-moz-range-track {
+    width: 100%;
+    height: $track-height;
+    cursor: pointer;
+    @include track;
+  }
+  &::-ms-track {
+    width: 100%;
+    height: $track-height;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    border-width: ($track-height/2 - $thumb-height/2) 0;
+    color: transparent;
+  }
+  &::-ms-fill-lower {
+    @include track;
+  }
+  &::-ms-fill-upper {
+    @include track;
+  }
+  &:focus::-webkit-slider-runnable-track {
+    @include track-focus;
+  }
+  &:focus::-moz-range-track {
+    @include track-focus;
+  }
+  &:focus::-ms-fill-lower {
+    @include track-focus;
+  }
+  &:focus::-ms-fill-upper {
+    @include track-focus;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: $thumb-width;
+    height: $thumb-height;
+    margin-top: -($thumb-height/2 - $track-height/2 + 1px);
+    cursor: pointer;
+    @include thumb;
+  }
+  &::-moz-range-thumb {
+    width: $thumb-width;
+    height: $thumb-height;
+    cursor: pointer;
+    @include thumb;
+  }
+  &::-ms-thumb {
+    width: $thumb-width;
+    height: $thumb-height;
+    cursor: pointer;
+    @include thumb;
+  }
+  &:focus::-webkit-slider-thumb {
+    @include thumb-focus;
+  }
+  &:focus::-moz-range-thumb {
+    @include thumb-focus;
+  }
+  &:focus::-ms-thumb {
+    @include thumb-focus;
+  }
 }
 
-input[type="range"]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: $track-height;
-  cursor: pointer;
-  @include track;
-}
-input[type="range"]::-moz-range-track {
-  width: 100%;
-  height: $track-height;
-  cursor: pointer;
-  @include track;
-}
-input[type="range"]::-ms-track {
-  width: 100%;
-  height: $track-height;
-  cursor: pointer;
-  background: transparent;
-  border-color: transparent;
-  border-width: ($track-height/2 - $thumb-height/2) 0;
-  color: transparent;
-}
-input[type="range"]::-ms-fill-lower {
-  @include track;
-}
-input[type="range"]::-ms-fill-upper {
-  @include track;
-}
-input[type="range"]:focus::-webkit-slider-runnable-track {
-  @include track-focus;
-}
-input[type="range"]:focus::-moz-range-track {
-  @include track-focus;
-}
-input[type="range"]:focus::-ms-fill-lower {
-  @include track-focus;
-}
-input[type="range"]:focus::-ms-fill-upper {
-  @include track-focus;
-}
+.range-group {
+  position: relative;
+  min-height: max($track-height, $thumb-height);
+  margin: $line/4 0;
+  input[type="range"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: $thumb-width;
-  height: $thumb-height;
-  margin-top: -($thumb-height/2 - $track-height/2 + 1px);
-  cursor: pointer;
-  @include thumb;
-}
-input[type="range"]::-moz-range-thumb {
-  width: $thumb-width;
-  height: $thumb-height;
-  cursor: pointer;
-  @include thumb;
-}
-input[type="range"]::-ms-thumb {
-  width: $thumb-width;
-  height: $thumb-height;
-  cursor: pointer;
-  @include thumb;
-}
-input[type="range"]:focus::-webkit-slider-thumb {
-  @include thumb-focus;
-}
-input[type="range"]:focus::-moz-range-thumb {
-  @include thumb-focus;
-}
-input[type="range"]:focus::-ms-thumb {
-  @include thumb-focus;
+    // let first slider thumb show through
+    &:last-child::-webkit-slider-runnable-track {
+      border: none;
+      background: transparent;
+    }
+    &:last-child::-moz-range-track {
+      border: none;
+      background: transparent;
+    }
+    &:last-child::-ms-track {
+      border: none;
+      background: transparent;
+    }
+
+    // allow events on thumbs only, such that the overlapping track
+    // doesn't steal events from the first thumb
+    &::-webkit-slider-thumb {
+      pointer-events: all;
+    }
+    &::-moz-range-thumb {
+      pointer-events: all;
+    }
+    &::-ms-thumb {
+      pointer-events: all;
+    }
+
+    // cover areas outside selected range
+    @mixin occlude-left {
+      $shadow: '-#{$thumb-width} 0 0 #{$bg}';
+      @for $i from 2 through 50 {
+        $shadow: '#{$shadow}, -#{$thumb-width * $i} 0 0 #{$bg}';
+      }
+      box-shadow: unquote($shadow);
+    }
+    @mixin occlude-right {
+      $shadow: '#{$thumb-width} 0 0 #{$bg}';
+      @for $i from 2 through 50 {
+        $shadow: '#{$shadow}, #{$thumb-width * $i} 0 0 #{$bg}';
+      }
+      box-shadow: unquote($shadow);
+    }
+    &:first-child::-webkit-slider-thumb {
+      @include occlude-left;
+    }
+    &:first-child::-moz-range-thumb {
+      @include occlude-left;
+    }
+    &:first-child::-ms-thumb {
+      @include occlude-left;
+    }
+    &:last-child::-webkit-slider-thumb {
+      @include occlude-right;
+    }
+    &:last-child::-moz-range-thumb {
+      @include occlude-right;
+    }
+    &:last-child::-ms-thumb {
+      @include occlude-right;
+    }
+  }
+
+  // provide ghost bounds to help user visualize limits
+  &::before, &::after {
+    content: '';
+    display: block;
+    width: 2px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 4;
+    background: $bg-light;
+  }
+  &::before {
+    right: 100%;
+  }
+  &::after {
+    left: 100%;
+  }
 }

@@ -24,14 +24,14 @@
   &__label {
     margin: 0;
   }
+  .range-group {
+    margin: $line/2 0 0;
+  }
   &__range-label {
     width: 100%;
-    position: absolute;
-    left: 0;
-    top: 50%;
-    margin-top: -$line/8;
     text-align: center;
     font-size: $micro;
+    line-height: $micro;
     font-style: italic;
     opacity: 0.8;
   }
