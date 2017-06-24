@@ -364,18 +364,21 @@ var TDW = (function (window, document) {
         function bindRanges(els) {
             _.forEach(els, function (el) {
                 el.addEventListener('change', _.throttle(function (ev) {
-                    var urlSearch = location.search.substring(1),
-                        params = JSON.parse('{"' + decodeURI(urlSearch).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'),
-                        newParams = [];
+                    var urlParams = location.search.substring(1),
+                        paramsObj = {},
+                        paramsList = [];
+                    if (urlParams) {
+                        paramsObj = JSON.parse('{"' + decodeURI(urlParams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+                    }
 
-                    params[el.name] = el.value;
-                    for (var key in params) {
-                        if (params.hasOwnProperty(key)) {
-                            newParams.push(encodeURI(key) + '=' + encodeURI(params[key]));
+                    paramsObj[el.name] = el.value;
+                    for (var key in paramsObj) {
+                        if (paramsObj.hasOwnProperty(key)) {
+                            paramsList.push(encodeURI(key) + '=' + encodeURI(paramsObj[key]));
                         }
                     }
 
-                    getList(window.location.pathname + '?' + newParams.join('&'));
+                    getList(window.location.pathname + '?' + paramsList.join('&'));
                 }, 200));
             });
         }

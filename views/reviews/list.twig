@@ -37,6 +37,24 @@
             in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
           {% endif %}
 
+          {% if appliedFilters.minProof and appliedFilters.maxProof %}
+            <span class="list-active-filters__clause">
+              between
+              <a href="{{ path }}{{ modifyQueryString({ minproof: null }) }}">{{ appliedFilters.minProof }}</a>
+              and
+              <a href="{{ path }}{{ modifyQueryString({ maxproof: null }) }}">{{ appliedFilters.maxProof }}</a>
+              proof
+            </span>
+          {% elseif appliedFilters.minProof %}
+            <span class="list-active-filters__clause">
+              <a href="{{ path }}{{ modifyQueryString({ minproof: null }) }}">above {{ appliedFilters.minProof }} proof</a>
+            </span>
+          {% elseif appliedFilters.maxProof %}
+            <span class="list-active-filters__clause">
+              <a href="{{ path }}{{ modifyQueryString({ maxproof: null }) }}">below {{ appliedFilters.maxProof }} proof</a>
+            </span>
+          {% endif %}
+
         {% else %}
           Showing all whiskey reviews
         {% endif %}

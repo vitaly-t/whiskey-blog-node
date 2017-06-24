@@ -60,6 +60,7 @@ router.get('/', function (req, res, next) {
         comparison: 'gte',
         value: minProof
       });
+      appliedFilters.minProof = minProof;
     }
     if (!isNaN(maxProof) && maxProof < 200 && maxProof >= minProof) {
       facets.filters.push({
@@ -67,6 +68,7 @@ router.get('/', function (req, res, next) {
         comparison: 'lte',
         value: maxProof
       });
+      appliedFilters.maxProof = maxProof;
     }
   }
 
@@ -80,6 +82,7 @@ router.get('/', function (req, res, next) {
         comparison: 'gte',
         value: minAge
       });
+      appliedFilters.minAge = minAge;
     }
     if (!isNaN(maxAge) && maxAge < 20 && maxAge >= minAge) {
       facets.filters.push({
@@ -87,6 +90,7 @@ router.get('/', function (req, res, next) {
         comparison: 'lte',
         value: maxAge
       });
+      appliedFilters.maxAge = maxAge;
     }
   }
 
@@ -100,6 +104,7 @@ router.get('/', function (req, res, next) {
         comparison: 'gte',
         value: minPrice
       });
+      appliedFilters.minPrice = minPrice;
     }
     if (!isNaN(maxPrice) && maxPrice < 200 && maxPrice >= minPrice) {
       facets.filters.push({
@@ -107,6 +112,7 @@ router.get('/', function (req, res, next) {
         comparison: 'lte',
         value: maxPrice
       });
+      appliedFilters.maxPrice = maxPrice;
     }
   }
 
