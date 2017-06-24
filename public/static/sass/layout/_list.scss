@@ -18,7 +18,7 @@
   &__facet {
     position: relative;
   }
-  &__facet + &__facet {
+  &__facet + &__facet, #list-link-filters + &__facet {
     margin-top: $line;
   }
   &__label {

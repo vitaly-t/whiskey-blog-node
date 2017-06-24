@@ -255,7 +255,7 @@ var TDW = (function (window, document) {
             }
         }
 
-        // create a facsimile of multiple range inputs
+        // create a facsimile of multiple range inputs via mutual constraints
         function constrain() {
             // lower bound inputs
             _.forEach(document.querySelectorAll('input[type="range"][data-min-constrain]'), function (constrainer) {
@@ -269,13 +269,14 @@ var TDW = (function (window, document) {
                             tVal = parseFloat(target.value, 10);
                         if (cVal > tVal) {
                             target.value = Math.min(cVal + step, max);
+                            triggerChangeEvent(target);
                             if (label) {
                                 updateLabel(target, label);
                             }
                         }
                     });
                 }
-            })
+            });
             // upper bound inputs
             _.forEach(document.querySelectorAll('input[type="range"][data-max-constrain]'), function (constrainer) {
                 var target = document.getElementById(constrainer.getAttribute('data-max-constrain')),
@@ -288,13 +289,25 @@ var TDW = (function (window, document) {
                             tVal = parseFloat(target.value, 10);
                         if (cVal < tVal) {
                             target.value = Math.max(cVal - step, min);
+                            triggerChangeEvent(target);
                             if (label) {
                                 updateLabel(target, label);
                             }
                         }
                     });
                 }
-            })
+            });
+            // trigger change event
+            // thanks to https://stackoverflow.com/questions/2856513/how-can-i-trigger-an-onchange-event-manually
+            function triggerChangeEvent(el) {
+                if ("createEvent" in document) {
+                    var ev = document.createEvent("HTMLEvents");
+                    ev.initEvent("change", false, true);
+                    el.dispatchEvent(ev);
+                } else {
+                    el.fireEvent("onchange");
+                }
+            }
         }
 
         return {
@@ -302,6 +315,82 @@ var TDW = (function (window, document) {
             constrain: constrain
         }
     }());
+
+
+    /* list ajax updater
+     * =================
+     *
+     * no need to reload the whole page for list filtering
+     */
+
+    var listUpdater = (function () {
+
+        var listenerElements = '.list-filters__choice > a, .list-active-filters a';
+
+        // send the request and update relevant areas with response
+        function getList(url) {
+            var xhr = new XMLHttpRequest(),
+                containers = ['list-active-filters', 'list-link-filters', 'article-list'],
+                tmp = document.createElement('div');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    tmp.innerHTML = xhr.responseText;
+                    _.forEach(containers, function (container) {
+                        var target = document.getElementById(container),
+                            newHTML = tmp.querySelector('#' + container);
+                        if (target && newHTML) {
+                            target.innerHTML = newHTML.innerHTML;
+                            // re-bind ajax behavior to fresh links
+                            bindClicks(target.querySelectorAll(listenerElements));
+                        }
+                    });
+                    window.history.pushState('', '', url);
+                }
+            };
+            xhr.open('GET', url);
+            xhr.send(null);
+        }
+
+        function bindClicks(els) {
+            _.forEach(els, function (el) {
+                el.addEventListener('click', function (ev) {
+                    ev.preventDefault();
+                    getList(el.href);
+                });
+            });
+        }
+
+        function bindRanges(els) {
+            _.forEach(els, function (el) {
+                el.addEventListener('change', _.throttle(function (ev) {
+                    var urlSearch = location.search.substring(1),
+                        params = JSON.parse('{"' + decodeURI(urlSearch).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'),
+                        newParams = [];
+
+                    params[el.name] = el.value;
+                    for (var key in params) {
+                        if (params.hasOwnProperty(key)) {
+                            newParams.push(encodeURI(key) + '=' + encodeURI(params[key]));
+                        }
+                    }
+
+                    getList(window.location.pathname + '?' + newParams.join('&'));
+                }, 200));
+            });
+        }
+
+        function init() {
+            bindClicks(document.querySelectorAll(listenerElements));
+            bindRanges(document.querySelectorAll('.list-filters input[type="range"]'));
+
+        }
+
+        return {
+            init: init
+        };
+
+    })();
 
 
     /* misc
@@ -433,6 +522,7 @@ var TDW = (function (window, document) {
         sharedHeights.init();
         ranges.registerLabels();
         ranges.constrain();
+        listUpdater.init();
 
         misc.createTableOfContents();
         misc.createFigureMarkup();

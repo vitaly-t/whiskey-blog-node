@@ -11,7 +11,7 @@
       <span class="page-title__container">Reviews <span class="page-title__links">See also: <a href="/review-ethics">Review ethics</a></span></span>
     </h1>
 
-    <div class="list-active-filters">
+    <div class="list-active-filters" id="list-active-filters">
       <p>
         {% if not appliedFilters is empty %}
           Showing
@@ -47,43 +47,46 @@
 
     <aside class="list-filters list-filters__toggle__target">
       <form action="{{ path }}{{ modifyQueryString({}) }}" method="get">
-        <div class="list-filters__facet">
-          <h4 class="list-filters__label">Sort by</h4>
-          <ul class="list-filters__choices">
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'best' }) }}">My favorite</a></li>
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'worst' }) }}">My least favorite</a></li>
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'cheapest' }) }}">Cheapest</a></li>
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'priciest' }) }}">Priciest</a></li>
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'hottest' }) }}">Hottest</a></li>
-            <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'oldest' }) }}">Oldest</a></li>
-          </ul>
-        </div>
 
-        <div class="list-filters__facet">
-          <h4 class="list-filters__label">Type</h4>
-          <ul class="list-filters__choices">
-            {% for drinkType in drinkTypes %}
-              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ type: drinkType.id }) }}">{{ drinkType.singular }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+        <div id="list-link-filters">
+          <div class="list-filters__facet">
+            <h4 class="list-filters__label">Sort by</h4>
+            <ul class="list-filters__choices">
+              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'best' }) }}">My favorite</a></li>
+              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'worst' }) }}">My least favorite</a></li>
+              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'cheapest' }) }}">Cheapest</a></li>
+              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'priciest' }) }}">Priciest</a></li>
+              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'hottest' }) }}">Hottest</a></li>
+              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ sort: 'oldest' }) }}">Oldest</a></li>
+            </ul>
+          </div>
 
-        <div class="list-filters__facet">
-          <h4 class="list-filters__label">Rarity</h4>
-          <ul class="list-filters__choices">
-            {% for rarity in rarities %}
-              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ rarity: rarity.id }) }}">{{ rarity.name }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+          <div class="list-filters__facet">
+            <h4 class="list-filters__label">Type</h4>
+            <ul class="list-filters__choices">
+              {% for drinkType in drinkTypes %}
+                <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ type: drinkType.id }) }}">{{ drinkType.singular }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
 
-        <div class="list-filters__facet">
-          <h4 class="list-filters__label">Region</h4>
-          <ul class="list-filters__choices">
-            {% for region in regions %}
-              <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ region: region.id }) }}">{{ region.name }}</a></li>
-            {% endfor %}
-          </ul>
+          <div class="list-filters__facet">
+            <h4 class="list-filters__label">Rarity</h4>
+            <ul class="list-filters__choices">
+              {% for rarity in rarities %}
+                <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ rarity: rarity.id }) }}">{{ rarity.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div class="list-filters__facet">
+            <h4 class="list-filters__label">Region</h4>
+            <ul class="list-filters__choices">
+              {% for region in regions %}
+                <li class="list-filters__choice"><a href="{{ path }}{{ modifyQueryString({ region: region.id }) }}">{{ region.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
 
         <div class="list-filters__facet">
@@ -135,7 +138,7 @@
       </form>
     </aside>
 
-    <ul class="article-list">
+    <ul class="article-list" id="article-list">
       {% for review in reviews %}
         <li class="article-list__item">
           <a href="/reviews/{{ review.slug }}" class="article-card">
