@@ -255,8 +255,51 @@ var TDW = (function (window, document) {
             }
         }
 
+        // create a facsimile of multiple range inputs
+        function constrain() {
+            // lower bound inputs
+            _.forEach(document.querySelectorAll('input[type="range"][data-min-constrain]'), function (constrainer) {
+                var target = document.getElementById(constrainer.getAttribute('data-min-constrain')),
+                    step = parseFloat(constrainer.step, 10) || 1,
+                    max = parseFloat(constrainer.max, 10) || 100,
+                    label = document.querySelector('output[for="' + target.id + '"]');
+                if (target && target.tagName.toLowerCase() === 'input' && target.type.toLowerCase() === 'range') {
+                    constrainer.addEventListener('input', function (ev) {
+                        var cVal = parseFloat(constrainer.value, 10),
+                            tVal = parseFloat(target.value, 10);
+                        if (cVal > tVal) {
+                            target.value = Math.min(cVal + step, max);
+                            if (label) {
+                                updateLabel(target, label);
+                            }
+                        }
+                    });
+                }
+            })
+            // upper bound inputs
+            _.forEach(document.querySelectorAll('input[type="range"][data-max-constrain]'), function (constrainer) {
+                var target = document.getElementById(constrainer.getAttribute('data-max-constrain')),
+                    step = parseFloat(constrainer.step, 10) || 1,
+                    min = parseFloat(constrainer.min, 10) || 0,
+                    label = document.querySelector('output[for="' + target.id + '"]');
+                if (target && target.tagName.toLowerCase() === 'input' && target.type.toLowerCase() === 'range') {
+                    constrainer.addEventListener('input', function (ev) {
+                        var cVal = parseFloat(constrainer.value, 10),
+                            tVal = parseFloat(target.value, 10);
+                        if (cVal < tVal) {
+                            target.value = Math.max(cVal - step, min);
+                            if (label) {
+                                updateLabel(target, label);
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
         return {
-            registerLabels: registerLabels
+            registerLabels: registerLabels,
+            constrain: constrain
         }
     }());
 
@@ -389,6 +432,7 @@ var TDW = (function (window, document) {
         toggles.init();
         sharedHeights.init();
         ranges.registerLabels();
+        ranges.constrain();
 
         misc.createTableOfContents();
         misc.createFigureMarkup();
