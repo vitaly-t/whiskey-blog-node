@@ -224,6 +224,43 @@ var TDW = (function (window, document) {
     }());
 
 
+    /* range input enhancements
+     * ========================
+     */
+
+    var ranges = (function () {
+
+        // output range values to element
+        // <output for="range-input-id"></output>
+        function registerLabels() {
+            _.forEach(document.querySelectorAll('output[for]'), function (output) {
+                var input = document.getElementById(output.getAttribute('for'));
+                if (input && input.tagName.toLowerCase() === 'input' && input.type.toLowerCase() === 'range') {
+                    updateLabel(input, output);
+                    input.addEventListener('input', function (ev) {
+                        updateLabel(input, output);
+                    });
+                }
+            });
+        }
+        function updateLabel(input, output) {
+            if (input.min && input.value === input.min && input.getAttribute('data-min-label')) {
+                output.textContent = input.getAttribute('data-min-label');
+            } else if (input.max && input.value === input.max && input.getAttribute('data-max-label')) {
+                output.textContent = input.getAttribute('data-max-label');
+            } else if (input.getAttribute('data-unit')) {
+                output.textContent = input.value + input.getAttribute('data-unit');
+            } else {
+                output.textContent = input.value;
+            }
+        }
+
+        return {
+            registerLabels: registerLabels
+        }
+    }());
+
+
     /* misc
      * ====
      *
@@ -351,6 +388,7 @@ var TDW = (function (window, document) {
 
         toggles.init();
         sharedHeights.init();
+        ranges.registerLabels();
 
         misc.createTableOfContents();
         misc.createFigureMarkup();

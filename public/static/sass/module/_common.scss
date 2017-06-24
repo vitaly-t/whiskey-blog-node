@@ -164,7 +164,7 @@ figcaption {
   }
 }
 
-@mixin page-details-toggle($breakpoint) {
+@mixin page-details-toggle($breakpoint, $height) {
   @extend .alternate-typeface;
 
   @media (max-width: $breakpoint - 1px) {
@@ -180,7 +180,7 @@ figcaption {
       color: #fff;
       z-index: 2;
       &__target {
-        max-height: $line*22;
+        max-height: $height;
         overflow: hidden;
         opacity: 1;
         transition: all 0.2s ease-out;

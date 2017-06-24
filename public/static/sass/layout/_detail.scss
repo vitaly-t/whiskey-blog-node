@@ -28,7 +28,7 @@
     font-style: normal;
   }
   &__toggle {
-    @include page-details-toggle($break-w);
+    @include page-details-toggle($break-w, $line*22);
   }
 }
 

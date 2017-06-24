@@ -8,12 +8,7 @@ $track-height: 8px;
   background: $bg-light;
   $g1: transparent;
   $g2: transparentize($bg, 0.8);
-  background-image: linear-gradient(to right, $g1 19%, $g2 19%, $g2 20%, $g1 20%),
-                    linear-gradient(to right, $g1 39%, $g2 39%, $g2 40%, $g1 40%),
-                    linear-gradient(to right, $g1 59%, $g2 59%, $g2 60%, $g1 60%),
-                    linear-gradient(to right, $g1 79%, $g2 79%, $g2 80%, $g1 80%),
-                    linear-gradient(to right, #3b5 0%, #ca3 40%, #c42 100%);
-  background-repeat: repeat-x, no-repeat;
+  background-image: linear-gradient(to right, #3b5 0%, #ca3 40%, #c42 100%);
 }
 @mixin track-focus {
   border-color: $accent;

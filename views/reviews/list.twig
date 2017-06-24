@@ -88,20 +88,38 @@
 
         <div class="list-filters__facet">
           <h4 class="list-filters__label">Proof</h4>
-          <input type="range" name="minproof" id="minproof" min="80" max="200" value="80" step="1" data-min-constrain="maxproof" />
-          <input type="range" name="maxproof" id="maxproof" min="80" max="200" value="200" step="1" data-max-constrain="minproof" />
+          <input type="range" name="minproof" id="minproof" min="80" max="200" value="80" step="1" data-unit="°" data-min-constrain="maxproof" />
+          <input type="range" name="maxproof" id="maxproof" min="80" max="200" value="200" step="1" data-unit="°" data-max-constrain="minproof" />
+
+          <div class="list-filters__range-label">
+            <output for="minproof"></output>
+            &ndash;
+            <output for="maxproof"></output>
+          </div>
         </div>
 
         <div class="list-filters__facet">
           <h4 class="list-filters__label">Age</h4>
-          <input type="range" name="minage" id="minage" min="0" max="20" value="0" step="1" data-min-constrain="maxage" data-min-label="NAS" data-max-label="really old" />
-          <input type="range" name="maxage" id="maxage" min="0" max="20" value="30" step="1" data-max-constrain="minage" data-min-label="NAS" data-max-label="really old" />
+          <input type="range" name="minage" id="minage" min="0" max="20" value="0" step="1" data-min-constrain="maxage" data-min-label="Unknown" data-max-label="Infinity" />
+          <input type="range" name="maxage" id="maxage" min="0" max="20" value="30" step="1" data-unit=" years" data-max-constrain="minage" data-min-label="Unknown" data-max-label="Infinity" />
+
+          <div class="list-filters__range-label">
+            <output for="minage"></output>
+            &ndash;
+            <output for="maxage"></output>
+          </div>
         </div>
 
         <div class="list-filters__facet">
           <h4 class="list-filters__label">MSRP</h4>
-          <input type="range" name="minprice" id="minprice" min="0" max="200" value="0" step="10" data-min-constrain="maxprice" data-max-label="all the money" />
-          <input type="range" name="maxprice" id="maxprice" min="0" max="200" value="300" step="10" data-max-constrain="minprice" data-max-label="all the money" />
+          <input type="range" name="minprice" id="minprice" min="0" max="200" value="0" step="10" data-min-constrain="maxprice" data-max-label="lots" />
+          <input type="range" name="maxprice" id="maxprice" min="0" max="200" value="300" step="10" data-max-constrain="minprice" data-max-label="lots" />
+
+          <div class="list-filters__range-label">
+            $<output for="minprice"></output>
+            &ndash;
+            <output for="maxprice"></output>
+          </div>
         </div>
 
         <button type="submit" class="list-filters__submit">Apply</button>
