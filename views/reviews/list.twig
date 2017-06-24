@@ -33,10 +33,6 @@
             <a href="{{ path }}{{ modifyQueryString({ region: null }) }}">{{ appliedFilters.region }}</a>
           {% endif %}
 
-          {% if appliedFilters.sort %}
-            in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
-          {% endif %}
-
           {% if appliedFilters.minProof and appliedFilters.maxProof %}
             <span class="list-active-filters__clause">
               between
@@ -53,6 +49,50 @@
             <span class="list-active-filters__clause">
               <a href="{{ path }}{{ modifyQueryString({ maxproof: null }) }}">below {{ appliedFilters.maxProof }} proof</a>
             </span>
+          {% endif %}
+
+          {% if appliedFilters.minAge and appliedFilters.maxAge %}
+            <span class="list-active-filters__clause">
+              between
+              <a href="{{ path }}{{ modifyQueryString({ minage: null }) }}">{{ appliedFilters.minAge }}</a>
+              and
+              <a href="{{ path }}{{ modifyQueryString({ maxage: null }) }}">{{ appliedFilters.maxAge }}</a>
+              years of age
+            </span>
+          {% elseif appliedFilters.minAge %}
+            <span class="list-active-filters__clause">
+              <a href="{{ path }}{{ modifyQueryString({ minage: null }) }}">over {{ appliedFilters.minAge }} years old</a>
+            </span>
+          {% elseif appliedFilters.maxAge %}
+            <span class="list-active-filters__clause">
+              <a href="{{ path }}{{ modifyQueryString({ maxage: null }) }}">under {{ appliedFilters.maxAge }} years old</a>
+            </span>
+          {% endif %}
+
+          {% if appliedFilters.minPrice and appliedFilters.maxPrice %}
+            <span class="list-active-filters__clause">
+              that cost between
+              <a href="{{ path }}{{ modifyQueryString({ minprice: null }) }}">${{ appliedFilters.minPrice }}</a>
+              and
+              <a href="{{ path }}{{ modifyQueryString({ maxprice: null }) }}">${{ appliedFilters.maxPrice }}</a>
+            </span>
+          {% elseif appliedFilters.minPrice %}
+            <span class="list-active-filters__clause">
+              that cost
+              <a href="{{ path }}{{ modifyQueryString({ minprice: null }) }}">over ${{ appliedFilters.minPrice }}</a>
+            </span>
+          {% elseif appliedFilters.maxPrice %}
+            <span class="list-active-filters__clause">
+              that cost
+              <a href="{{ path }}{{ modifyQueryString({ maxprice: null }) }}">under ${{ appliedFilters.maxPrice }}</a>
+            </span>
+          {% endif %}
+
+          {% if appliedFilters.sort %}
+            {% if appliedFilters|length > 3 %}
+              , all
+            {% endif %}
+            in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
           {% endif %}
 
         {% else %}
