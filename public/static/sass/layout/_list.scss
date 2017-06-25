@@ -85,6 +85,9 @@ $x-size: 14px;
       }
     }
   }
+  &__clause:first-of-type::before {
+    content: "that are ";
+  }
 }
 
 
@@ -98,6 +101,7 @@ $x-size: 14px;
 
 @media #{$min-w} {
   .list-active-filters {
+    line-height: $line*2;
     a {
       margin-right: 0;
       &::before, &::after {

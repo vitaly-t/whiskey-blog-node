@@ -346,6 +346,7 @@ var TDW = (function (window, document) {
                         }
                     });
                     window.history.pushState('', '', url);
+                    misc.enhanceFilterSentences();
                 }
             };
             xhr.open('GET', url);
@@ -454,6 +455,7 @@ var TDW = (function (window, document) {
             }
         };
 
+        // create tables of contents for articles based on headings in the body copy
         var createTableOfContents = function () {
             _.forEach(document.getElementsByClassName('text-copy'), function (container) {
                 var subheadings = container.querySelectorAll('h2'),
@@ -475,6 +477,7 @@ var TDW = (function (window, document) {
             });
         };
 
+        // enhance markup of images outputted from markdown
         var createFigureMarkup = function () {
             _.forEach(document.getElementsByClassName('text-copy'), function (container) {
                 _.forEach(container.querySelectorAll('img'), function (image) {
@@ -501,11 +504,41 @@ var TDW = (function (window, document) {
             });
         };
 
+        // make filter summary sentences more natural-sounding
+        function enhanceFilterSentences() {
+            var comma = document.createElement('span'),
+                and = document.createTextNode(' and ');
+            comma.textContent = ', ';
+            comma.className = 'unkerned-punctuation';
+            _.forEach(document.getElementsByClassName('list-active-filters'), function (container) {
+                var clauses = container.querySelectorAll('.list-active-filters__clause');
+
+                // 3 or more parts goes to list style, e.g.:
+                // "thing 1, thing 2, and thing 3"
+                // you'll pry my oxford comma from my cold, dead hands
+                if (clauses.length >= 3) {
+                    _.forEach(clauses, function (clause, i) {
+                        if (i === clauses.length - 1) {
+                            clause.insertBefore(and.cloneNode(true), clause.firstChild);
+                        }
+                        if (i !== 0) {
+                            clause.insertBefore(comma.cloneNode(true), clause.firstChild);
+                        }
+                    });
+
+                // 2 or more parts means just a simple "and" between them
+                } else if (clauses.length === 2) {
+                    clauses[1].insertBefore(and.cloneNode(true), clauses[1].firstChild);
+                }
+            });
+        }
+
         return {
             blendListColors: blendListColors,
             nudgeArticleFigures: nudgeArticleFigures,
             createTableOfContents: createTableOfContents,
-            createFigureMarkup: createFigureMarkup
+            createFigureMarkup: createFigureMarkup,
+            enhanceFilterSentences: enhanceFilterSentences
         };
     })();
 
@@ -527,6 +560,7 @@ var TDW = (function (window, document) {
         ranges.constrain();
         listUpdater.init();
 
+        misc.enhanceFilterSentences();
         misc.createTableOfContents();
         misc.createFigureMarkup();
         misc.nudgeArticleFigures();

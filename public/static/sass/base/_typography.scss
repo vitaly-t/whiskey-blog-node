@@ -48,6 +48,11 @@ h5 {
   font-size: $kilo;
 }
 
+.unkerned-punctuation {
+  display: inline-block;
+  margin-left: -0.3em;
+}
+
 
 @media #{$min-m} {
   h1 {

@@ -18,14 +18,12 @@
 
           {% if appliedFilters.rarity %}
             <a href="{{ path }}{{ modifyQueryString({ rarity: null }) }}">{{ appliedFilters.rarity }}</a>
-          {% else %}
-            all
           {% endif %}
 
           {% if appliedFilters.drinkType %}
             <a href="{{ path }}{{ modifyQueryString({ type: null }) }}">{{ appliedFilters.drinkType }}</a>
           {% else %}
-            whiskies
+            all whiskies
           {% endif %}
 
           {% if appliedFilters.region %}
@@ -43,11 +41,11 @@
             </span>
           {% elseif appliedFilters.minProof %}
             <span class="list-active-filters__clause">
-              <a href="{{ path }}{{ modifyQueryString({ minproof: null }) }}">above {{ appliedFilters.minProof }} proof</a>
+              <a href="{{ path }}{{ modifyQueryString({ minproof: null }) }}">at least {{ appliedFilters.minProof }} proof</a>
             </span>
           {% elseif appliedFilters.maxProof %}
             <span class="list-active-filters__clause">
-              <a href="{{ path }}{{ modifyQueryString({ maxproof: null }) }}">below {{ appliedFilters.maxProof }} proof</a>
+              <a href="{{ path }}{{ modifyQueryString({ maxproof: null }) }}">{{ appliedFilters.maxProof }} proof at most</a>
             </span>
           {% endif %}
 
@@ -61,11 +59,11 @@
             </span>
           {% elseif appliedFilters.minAge %}
             <span class="list-active-filters__clause">
-              <a href="{{ path }}{{ modifyQueryString({ minage: null }) }}">over {{ appliedFilters.minAge }} years old</a>
+              <a href="{{ path }}{{ modifyQueryString({ minage: null }) }}">at least {{ appliedFilters.minAge }} years old</a>
             </span>
           {% elseif appliedFilters.maxAge %}
             <span class="list-active-filters__clause">
-              <a href="{{ path }}{{ modifyQueryString({ maxage: null }) }}">under {{ appliedFilters.maxAge }} years old</a>
+              <a href="{{ path }}{{ modifyQueryString({ maxage: null }) }}">at most {{ appliedFilters.maxAge }} years old</a>
             </span>
           {% endif %}
 
@@ -79,25 +77,25 @@
           {% elseif appliedFilters.minPrice %}
             <span class="list-active-filters__clause">
               that cost
-              <a href="{{ path }}{{ modifyQueryString({ minprice: null }) }}">over ${{ appliedFilters.minPrice }}</a>
+              <a href="{{ path }}{{ modifyQueryString({ minprice: null }) }}">at least ${{ appliedFilters.minPrice }}</a>
             </span>
           {% elseif appliedFilters.maxPrice %}
             <span class="list-active-filters__clause">
               that cost
-              <a href="{{ path }}{{ modifyQueryString({ maxprice: null }) }}">under ${{ appliedFilters.maxPrice }}</a>
+              <a href="{{ path }}{{ modifyQueryString({ maxprice: null }) }}">up to ${{ appliedFilters.maxPrice }}</a>
             </span>
           {% endif %}
 
           {% if appliedFilters.sort %}
             {% if appliedFilters|length > 3 %}
-              , all
+              <span class="unkerned-punctuation">,</span> all
             {% endif %}
             in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
           {% endif %}
-          .
+          <span class="unkerned-punctuation">.</span>
 
           {% if appliedFilters|length > 1 %}
-            You can also <a href="{{ path }}">remove all these filters</a>.
+            <a href="{{ path }}">Show everything</a> again?
           {% endif %}
 
         {% else %}
