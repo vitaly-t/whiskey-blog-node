@@ -94,6 +94,11 @@
             {% endif %}
             in order of <a href="{{ path }}{{ modifyQueryString({ sort: null }) }}">{{ appliedFilters.sort }}</a>
           {% endif %}
+          .
+
+          {% if appliedFilters|length > 1 %}
+            You can also <a href="{{ path }}">remove all these filters</a>.
+          {% endif %}
 
         {% else %}
           Showing all whiskey reviews
