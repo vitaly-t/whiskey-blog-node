@@ -2,10 +2,14 @@ const express = require('express'),
       router = express.Router(),
       Post = require('../models/post/post');
 
-// return 100 recent posts
+// show recent posts
 router.get('/', function (req, res, next) {
   Post.list()
-    .then(posts => res.json(posts))
+    .then(posts => {
+      return res.render('../views/posts/list.twig', {
+        posts: posts
+      });
+    })
     .catch(e => next());
 });
 

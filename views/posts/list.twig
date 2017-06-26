@@ -1,0 +1,30 @@
+{% extends "../_layout.twig" %}
+
+{% block title %}Articles{% endblock %}
+
+{% block layoutClass %}list{% endblock %}
+
+{% block content %}
+  <section class="content" role="main">
+
+    <h1 class="page-title">
+      <span class="page-title__container">Articles</span>
+    </h1>
+
+    <ul class="article-list" id="article-list">
+      {% for post in posts %}
+        <li class="article-list__item">
+          <a href="/articles/{{ post.slug }}" class="article-card">
+            <div class="article-card__image" style="background-image: url('{{ post.list_image }}')"></div>
+            <h2 class="article-card__title">
+              {{ post.title }}
+              <span class="article-card__subtitle">{{ post.subtitle }}</span>
+            </h2>
+            <p class="article-card__summary">{{ post.summary }}</p>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+
+  </section>
+{% endblock %}
