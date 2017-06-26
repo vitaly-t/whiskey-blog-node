@@ -25,15 +25,11 @@ router.get('/', auth.requireSession, function (req, res, next) {
     })
     .then(results => {
       // todo: move to template
-      const reviewList = results[0].map(item => `<li><a href="/reviews/${item.slug}">${item.title}</a></li>`),
-            postList = results[1].map(item => `<li><a href="/posts/${item.slug}">${item.title}</a></li>`);
-      return res.send(`
-        <h1>Welcome, ${loggedInUser.name}</h1>
-        <h2>Your recent reviews</h2>
-        <ul>${reviewList.join('')}</ul>
-        <h2>Your recent posts</h2>
-        <ul>${postList.join('')}</ul>
-      `);
+      return res.render('../views/admin/index.twig', {
+        reviews: results[0],
+        posts: results[1],
+        user: loggedInUser
+      });
     })
     .catch(next);
 });

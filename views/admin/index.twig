@@ -1,0 +1,75 @@
+{% extends "../_layout-admin.twig" %}
+
+{% block title %}Content{% endblock %}
+
+{% block layoutClass %}admin{% endblock %}
+
+{% block content %}
+  <section class="content" role="main">
+
+    <h1 class="page-title">
+      <span class="page-title__container">Admin</span>
+    </h1>
+
+    <div class="grid">
+      <div class="grid__unit grid__unit--1-2-m">
+        <h2 class="admin-heading">My Reviews</h2>
+        <div class="admin-actions">
+          <a href="#0">See all</a>
+          <a href="#0">Create new</a>
+        </div>
+        <ul class="admin-list">
+          {% for review in reviews %}
+            <li class="admin-list__item">
+              <a href="/admin/review/{{ review.slug }}" class="admin-list__name">
+                <span class="admin-list__status admin-list__status--published">Published:</span>
+                <span class="admin-list__title">{{ review.title }}</span>
+                {% if review.subtitle %}
+                  <span class="admin-list__subtitle">{{ review.subtitle }}</span>
+                {% endif %}
+              </a>
+              <p class="admin-list__date">Created {{ review.created_at }}, published {{ review.published_at }}</p>
+              {% if review.summary %}
+                <p class="admin-list__description">{{ review.summary }}</p>
+              {% endif %}
+              <p class="admin-list__actions">
+                <a href="/reviews/{{ review.slug }}">View</a>
+                <a href="/admin/review/{{ review.slug }}">Edit</a>
+                <a href="#0">Unpublish</a>
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="grid__unit grid__unit--1-2-m">
+        <h2 class="admin-heading">My Posts</h2>
+        <div class="admin-actions">
+          <a href="#0">See all</a>
+          <a href="#0">Create new</a>
+        </div>
+        <ul class="admin-list">
+          {% for post in posts %}
+            <li class="admin-list__item">
+              <a href="/admin/post/{{ post.slug }}" class="admin-list__name">
+                <span class="admin-list__status admin-list__status--published">Published:</span>
+                <span class="admin-list__title">{{ post.title }}</span>
+                {% if post.subtitle %}
+                  <span class="admin-list__subtitle">{{ post.subtitle }}</span>
+                {% endif %}
+              </a>
+              <p class="admin-list__date">Created {{ post.created_at }}, published {{ post.published_at }}</p>
+              {% if post.summary %}
+                <p class="admin-list__description">{{ post.summary }}</p>
+              {% endif %}
+              <p class="admin-list__actions">
+                <a href="/articles/{{ post.slug }}">View</a>
+                <a href="/admin/post/{{ post.slug }}">Edit</a>
+                <a href="#0">Unpublish</a>
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+{% endblock %}
