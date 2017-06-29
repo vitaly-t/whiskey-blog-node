@@ -32,7 +32,7 @@ router.get('/', function (req, res, next) {
 
 // 404 handler
 router.use(function (req, res, next) {
-  res.status(404).send('404');
+  return res.status(404).render('../views/error/404.twig');
 });
 
 // general error handler
@@ -40,14 +40,19 @@ router.use(function (err, req, res, next) {
   if (res.headersSent) {
     return next(err);
   }
-  const statusCode = err.status || 500,
-        message = err.message || 'Something went wrong';
+  let statusCode = err.status || 500,
+      message = err.message || 'Something went wrong';
+
+  res.status(statusCode)
 
   if (statusCode === 401) {
-    res.status(statusCode).send(`<h1>Can't let you do that, StarFox</h1><p><a href="/login">Sign in</a></p>`);
-  } else {
-    res.status(statusCode).send(`<h1>${statusCode}</h1><p>${message}</p>`);
+    message = "Can't let you do that, Fox";
   }
+
+  return res.render('../views/error/general.twig', {
+    statusCode: statusCode,
+    message: message
+  });
 });
 
 module.exports = router;
