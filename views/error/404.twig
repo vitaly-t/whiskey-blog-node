@@ -15,7 +15,20 @@
     </h1>
 
     <div class="text-content page-width">
-      <p>Try searching?</p>
+      <p>I know! I'll distract you with this random review:</p>
+
+      <ul class="article-list" id="article-list">
+        <li class="article-list__item">
+          <a href="/reviews/{{ review.slug }}" class="article-card">
+            <div class="article-card__image" style="background-image: url('{{ review.list_image }}')"></div>
+            <h2 class="article-card__title">
+              {{ review.title }}
+              <span class="article-card__subtitle">{{ review.subtitle }}</span>
+            </h2>
+            <p class="article-card__summary">{{ review.summary }}</p>
+          </a>
+        </li>
+      </ul>
     </div>
 
   </section>

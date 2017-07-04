@@ -32,7 +32,16 @@ router.get('/', function (req, res, next) {
 
 // 404 handler
 router.use(function (req, res, next) {
-  return res.status(404).render('../views/error/404.twig');
+  Review.list({
+      limit: 1,
+      orderBy: 'random'
+    })
+    .then(reviews => {
+      return res.status(404).render('../views/error/404.twig', {
+        review: reviews[0]
+      });
+    })
+    .catch(next);
 });
 
 // general error handler

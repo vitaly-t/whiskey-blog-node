@@ -344,7 +344,13 @@ exports.list = function (options={}) {
     cmd += where(params, 'filters');
   }
 
-  cmd += ' ORDER BY $(orderBy~) $(order^) LIMIT $(limit) OFFSET $(offset)';
+  if (params.orderBy === 'random') {
+    cmd += ' ORDER BY random()';
+  } else {
+    cmd += ' ORDER BY $(orderBy~) $(order^)';
+  }
+
+  cmd += ' LIMIT $(limit) OFFSET $(offset)';
 
   return db.any(cmd, params);
 };
