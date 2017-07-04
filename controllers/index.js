@@ -32,16 +32,7 @@ router.get('/', function (req, res, next) {
 
 // 404 handler
 router.use(function (req, res, next) {
-  Review.list({
-      limit: 1,
-      orderBy: 'random'
-    })
-    .then(reviews => {
-      return res.status(404).render('../views/error/404.twig', {
-        review: reviews[0]
-      });
-    })
-    .catch(next);
+  next({ status: 404, message: `We couldn't find "${req.path.substr(1)}"` });
 });
 
 // general error handler
@@ -58,10 +49,18 @@ router.use(function (err, req, res, next) {
     message = "Can't let you do that, Fox";
   }
 
-  return res.render('../views/error/general.twig', {
-    statusCode: statusCode,
-    message: message
-  });
+  Review.list({
+      limit: 1,
+      orderBy: 'random'
+    })
+    .then(reviews => {
+      return res.status(404).render('../views/error/error.twig', {
+        review: reviews[0],
+        statusCode: statusCode,
+        message: message
+      });
+    })
+    .catch(next);
 });
 
 module.exports = router;
