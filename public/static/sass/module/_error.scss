@@ -1,0 +1,119 @@
+/* ---------- =error viz ---------- */
+
+$whiskey-color: #f3801f;
+
+.error-viz {
+  @extend .group;
+  position: relative;
+  top: $line;
+  &__glass {
+    display: block;
+    max-width: 100px;
+    float: right;
+    position: relative;
+    z-index: 2;
+  }
+  &__puddle {
+    width: 2%;
+    height: 2px;
+    position: absolute;
+    right: 65px;
+    bottom: 0;
+    background: $whiskey-color;
+    z-index: 1;
+    animation: expand-puddle 90s ease-out 1.2s forwards;
+  }
+  &__glass-drips, &__edge-drips {
+    width: 4px;
+    height: 6px;
+    position: absolute;
+    right: 70px;
+    top: 36px;
+    border-radius: 100%;
+    background: $whiskey-color;
+    animation: drip-from-glass 3s linear infinite;
+  }
+  &__edge-drips {
+    top: 100%;
+    right: 100%;
+    margin-top: -2px;
+    animation: drip-from-edge 8s linear 90s infinite backwards;
+    &--right {
+      right: auto;
+      left: 100%;
+      animation: drip-from-edge 7s linear 28s infinite backwards;
+    }
+  }
+
+  @media #{$min-m} {
+    top: $line*1.5;
+  }
+}
+
+@keyframes expand-puddle {
+  0% {
+    right: 65px;
+    width: 2%;
+  }
+  30% {
+    right: 0;
+  }
+  100% {
+    right: 0;
+    width: 100%;
+  }
+}
+
+@keyframes drip-from-glass {
+  0% {
+    width: 0;
+    height: 0;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  35% {
+    width: 4px;
+    height: 6px;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  38% {
+    transform: translateY(11px);
+    opacity: 1;
+  }
+  38.1% {
+    transform: translateY(11px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(11px);
+    opacity: 0;
+  }
+}
+
+@keyframes drip-from-edge {
+  0% {
+    width: 0;
+    height: 0;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  35% {
+    width: 4px;
+    height: 6px;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  39% {
+    transform: translateY($line*3);
+    opacity: 1;
+  }
+  39.1% {
+    transform: translateY($line*3);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY($line*3);
+    opacity: 0;
+  }
+}
