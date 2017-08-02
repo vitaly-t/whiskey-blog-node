@@ -10,9 +10,14 @@ Thumbs.db
 # sass caches
 .sass-cache
 
-# processed css
-*.css
-*.css.map
+# placeholder static build
+_static-build/**
+
+# processed static assets
+public/static/dist/**
+
+# any uploaded assets
+public/uploads/**
 
 # processed js
 scripts.min.js
