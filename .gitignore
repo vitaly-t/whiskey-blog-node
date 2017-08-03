@@ -14,7 +14,9 @@ Thumbs.db
 _static-build/**
 
 # processed static assets
+public/static/src/style/**
 public/static/dist/**
+public/static/maps/**
 
 # any uploaded assets
 public/uploads/**
