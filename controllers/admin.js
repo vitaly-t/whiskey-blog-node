@@ -34,4 +34,22 @@ router.get('/', auth.requireSession, function (req, res, next) {
     .catch(next);
 });
 
+
+// list all reviews
+router.get('/reviews', auth.requireSession, function (req, res, next) {
+  return res.send('list of reviews');
+});
+
+
+// new review
+router.get('/reviews/new', auth.requireSession, function (req, res, next) {
+  return res.send('new review authoring screen');
+});
+
+
+// edit existing review
+router.get('/reviews/:id', auth.requireSession, function (req, res, next) {
+  return res.send('editing review ' + req.params.id);
+})
+
 module.exports = router;
