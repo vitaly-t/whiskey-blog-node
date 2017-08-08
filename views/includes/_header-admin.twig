@@ -13,4 +13,9 @@
             <li class="header-nav__item"><a href="/admin/files">Files</a></li>
         </ul>
     </nav>
+    <div class="header-user">
+        <span class="header-user__message">Welcome,</span>
+        <span class="header-user__name">{{ currentUser.name }}</span>.
+        <a href="/logout" class="header-user__action">Sign out?</a>
+    </div>
 </header>

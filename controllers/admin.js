@@ -21,8 +21,7 @@ router.get('/', auth.requireSession, auth.getCurrentUser, function (req, res, ne
       // todo: move to template
       return res.render('../views/admin/index.twig', {
         reviews: results[0],
-        posts: results[1],
-        user: res.locals.currentUser
+        posts: results[1]
       });
     })
     .catch(next);

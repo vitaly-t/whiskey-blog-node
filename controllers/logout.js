@@ -6,7 +6,7 @@ const Twig = require('twig'),
 
 
 // log the current user out and redirect them to the homepage
-router.get('/', auth.requireGuest, function (req, res, next) {
+router.get('/', function (req, res, next) {
   req.session.destroy(function (err) {
     if (err) {
       return next(err);
