@@ -15,13 +15,13 @@
       <div class="grid__unit grid__unit--1-2-m">
         <h2 class="admin-heading">My Reviews</h2>
         <div class="admin-actions">
-          <a href="#0">See all</a>
-          <a href="#0">Create new</a>
+          <a href="/admin/reviews">See all</a>
+          <a href="/admin/reviews/new">Create new</a>
         </div>
         <ul class="admin-list">
           {% for review in reviews %}
             <li class="admin-list__item">
-              <a href="/admin/review/{{ review.slug }}" class="admin-list__name">
+              <a href="/admin/reviews/{{ review.slug }}" class="admin-list__name">
                 <span class="admin-list__status admin-list__status--published">Published:</span>
                 <span class="admin-list__title">{{ review.title }}</span>
                 {% if review.subtitle %}
@@ -34,7 +34,7 @@
               {% endif %}
               <p class="admin-list__actions">
                 <a href="/reviews/{{ review.slug }}">View</a>
-                <a href="/admin/review/{{ review.slug }}">Edit</a>
+                <a href="/admin/reviews/{{ review.slug }}">Edit</a>
                 <a href="#0">Unpublish</a>
               </p>
             </li>
@@ -44,13 +44,13 @@
       <div class="grid__unit grid__unit--1-2-m">
         <h2 class="admin-heading">My Posts</h2>
         <div class="admin-actions">
-          <a href="#0">See all</a>
-          <a href="#0">Create new</a>
+          <a href="/admin/posts">See all</a>
+          <a href="/admin/posts/new">Create new</a>
         </div>
         <ul class="admin-list">
           {% for post in posts %}
             <li class="admin-list__item">
-              <a href="/admin/post/{{ post.slug }}" class="admin-list__name">
+              <a href="/admin/posts/{{ post.slug }}" class="admin-list__name">
                 <span class="admin-list__status admin-list__status--published">Published:</span>
                 <span class="admin-list__title">{{ post.title }}</span>
                 {% if post.subtitle %}
@@ -63,7 +63,7 @@
               {% endif %}
               <p class="admin-list__actions">
                 <a href="/articles/{{ post.slug }}">View</a>
-                <a href="/admin/post/{{ post.slug }}">Edit</a>
+                <a href="/admin/posts/{{ post.slug }}">Edit</a>
                 <a href="#0">Unpublish</a>
               </p>
             </li>
