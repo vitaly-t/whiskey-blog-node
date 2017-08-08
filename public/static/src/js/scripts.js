@@ -397,6 +397,70 @@ var TDW = (function (window, document) {
     })();
 
 
+    /* forms
+     * =====
+     *
+     * several small form enhancements
+     */
+
+    var forms = (function () {
+
+        // allow visual focus and selection indicators of input labels
+        var focusLabels = function () {
+            _.forEach(document.querySelectorAll('label[for]'), function (label) {
+                var input = document.getElementById(label.getAttribute('for'));
+                if (input) {
+                    input.addEventListener('focus', function (ev) {
+                        label.classList.add('is-focused');
+                    });
+                    input.addEventListener('blur', function (ev) {
+                        label.classList.remove('is-focused');
+                    });
+                    if (input.type.toLowerCase() === 'radio' || input.type.toLowerCase() === 'checkbox') {
+                        input.addEventListener('change', function (ev) {
+                            if (input.checked) {
+                                label.classList.add('is-selected');
+                            } else {
+                                label.classList.remove('is-selected');
+                            }
+                        });
+                    }
+                    // trigger 'change' event manually in order to populate highlight states on page load
+                    if ("createEvent" in document) {
+                        var ev = document.createEvent("HTMLEvents");
+                        ev.initEvent("change", false, true);
+                        input.dispatchEvent(ev);
+                    } else {
+                        input.fireEvent("onchange");
+                    }
+                }
+            });
+        };
+
+        // visualize automatic slug generation
+        var generateSlugs = function () {
+            _.forEach(document.querySelectorAll('[data-generate-slug-from]'), function (slugInput) {
+                var sources = document.querySelectorAll(slugInput.getAttribute('data-generate-slug-from'));
+                console.log(slugInput, sources);
+                _.forEach(sources, function (source) {
+                    source.addEventListener('input', function (ev) {
+                        var plaintext = '';
+                        _.forEach(sources, function (source) {
+                            plaintext += source.value + ' ';
+                        });
+                        slugInput.setAttribute('placeholder', plaintext.trim().toLowerCase().replace(/[^a-z0-9]/g, '-'));
+                    });
+                });
+            });
+        };
+
+        return {
+            focusLabels: focusLabels,
+            generateSlugs: generateSlugs
+        };
+    })();
+
+
     /* misc
      * ====
      *
@@ -533,45 +597,12 @@ var TDW = (function (window, document) {
             });
         };
 
-        // allow visual focus and selection indicators of input labels
-        var focusInputLabels = function () {
-            _.forEach(document.querySelectorAll('label[for]'), function (label) {
-                var input = document.getElementById(label.getAttribute('for'));
-                if (input) {
-                    input.addEventListener('focus', function (ev) {
-                        label.classList.add('is-focused');
-                    });
-                    input.addEventListener('blur', function (ev) {
-                        label.classList.remove('is-focused');
-                    });
-                    if (input.type.toLowerCase() === 'radio' || input.type.toLowerCase() === 'checkbox') {
-                        input.addEventListener('change', function (ev) {
-                            if (input.checked) {
-                                label.classList.add('is-selected');
-                            } else {
-                                label.classList.remove('is-selected');
-                            }
-                        });
-                    }
-                    // trigger 'change' event manually in order to populate highlight states on page load
-                    if ("createEvent" in document) {
-                        var ev = document.createEvent("HTMLEvents");
-                        ev.initEvent("change", false, true);
-                        input.dispatchEvent(ev);
-                    } else {
-                        input.fireEvent("onchange");
-                    }
-                }
-            });
-        }
-
         return {
             blendListColors: blendListColors,
             nudgeArticleFigures: nudgeArticleFigures,
             createTableOfContents: createTableOfContents,
             createFigureMarkup: createFigureMarkup,
-            enhanceFilterSentences: enhanceFilterSentences,
-            focusInputLabels: focusInputLabels
+            enhanceFilterSentences: enhanceFilterSentences
         };
     })();
 
@@ -598,7 +629,9 @@ var TDW = (function (window, document) {
         misc.createFigureMarkup();
         misc.nudgeArticleFigures();
         misc.blendListColors();
-        misc.focusInputLabels();
+
+        forms.focusLabels();
+        forms.generateSlugs();
 
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');
