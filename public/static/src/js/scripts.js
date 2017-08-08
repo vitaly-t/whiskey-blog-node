@@ -439,18 +439,26 @@ var TDW = (function (window, document) {
 
         // visualize automatic slug generation
         var generateSlugs = function () {
+            function slugify(sources) {
+                var plaintext = '';
+                _.forEach(sources, function (source) {
+                    plaintext += source.value + ' ';
+                });
+                return plaintext.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
+            }
+
             _.forEach(document.querySelectorAll('[data-generate-slug-from]'), function (slugInput) {
                 var sources = document.querySelectorAll(slugInput.getAttribute('data-generate-slug-from'));
-                console.log(slugInput, sources);
+
+                // on source change
                 _.forEach(sources, function (source) {
                     source.addEventListener('input', function (ev) {
-                        var plaintext = '';
-                        _.forEach(sources, function (source) {
-                            plaintext += source.value + ' ';
-                        });
-                        slugInput.setAttribute('placeholder', plaintext.trim().toLowerCase().replace(/[^a-z0-9]/g, '-'));
+                        slugInput.setAttribute('placeholder', slugify(sources));
                     });
                 });
+
+                // on load
+                slugInput.setAttribute('placeholder', slugify(sources));
             });
         };
 
