@@ -2,7 +2,11 @@ const express = require('express'),
       router = express.Router(),
       auth = require('../middleware/auth'),
       Review = require('../models/review/review'),
-      Post = require('../models/post/post');
+      Post = require('../models/post/post'),
+      Distillery = require('../models/distillery/distillery'),
+      DrinkType = require('../models/drink-type/drink-type'),
+      Rarity = require('../models/rarity/rarity'),
+      Region = require('../models/region/region');
 
 
 // admin landing page, showing actions and user's items
@@ -37,7 +41,21 @@ router.get('/reviews', auth.requireSession, auth.getCurrentUser, function (req, 
 
 // new review
 router.get('/reviews/new', auth.requireSession, auth.getCurrentUser, function (req, res, next) {
-  return res.send('new review authoring screen');
+  return Promise.all([
+      Distillery.list(),
+      DrinkType.list(),
+      Rarity.list(),
+      Region.list()
+    ])
+    .then(results => {
+      return res.render('../views/admin/review.twig', {
+        distilleries: results[0],
+        drinkTypes: results[1],
+        rarities: results[2],
+        regions: results[3]
+      });
+    })
+    .catch(next);
 });
 
 
