@@ -42,6 +42,8 @@ router.get('/reviews', auth.requireSession, auth.getCurrentUser, function (req, 
 // new review
 router.get('/reviews/new', auth.requireSession, auth.getCurrentUser, function (req, res, next) {
   return Promise.all([
+      Review.list({ orderBy: 'title', order: 'ASC' }),
+      Post.list({ orderBy: 'title', order: 'ASC' }),
       Distillery.list(),
       DrinkType.list(),
       Rarity.list(),
@@ -49,10 +51,12 @@ router.get('/reviews/new', auth.requireSession, auth.getCurrentUser, function (r
     ])
     .then(results => {
       return res.render('../views/admin/review.twig', {
-        distilleries: results[0],
-        drinkTypes: results[1],
-        rarities: results[2],
-        regions: results[3]
+        reviews: results[0],
+        posts: results[1],
+        distilleries: results[2],
+        drinkTypes: results[3],
+        rarities: results[4],
+        regions: results[5]
       });
     })
     .catch(next);

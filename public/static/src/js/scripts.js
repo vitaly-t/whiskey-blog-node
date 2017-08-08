@@ -505,7 +505,7 @@ var TDW = (function (window, document) {
         };
 
         // make filter summary sentences more natural-sounding
-        function enhanceFilterSentences() {
+        var enhanceFilterSentences = function () {
             var comma = document.createElement('span'),
                 and = document.createTextNode(' and ');
             comma.textContent = ', ';
@@ -531,6 +531,38 @@ var TDW = (function (window, document) {
                     clauses[1].insertBefore(and.cloneNode(true), clauses[1].firstChild);
                 }
             });
+        };
+
+        // allow visual focus and selection indicators of input labels
+        var focusInputLabels = function () {
+            _.forEach(document.querySelectorAll('label[for]'), function (label) {
+                var input = document.getElementById(label.getAttribute('for'));
+                if (input) {
+                    input.addEventListener('focus', function (ev) {
+                        label.classList.add('is-focused');
+                    });
+                    input.addEventListener('blur', function (ev) {
+                        label.classList.remove('is-focused');
+                    });
+                    if (input.type.toLowerCase() === 'radio' || input.type.toLowerCase() === 'checkbox') {
+                        input.addEventListener('change', function (ev) {
+                            if (input.checked) {
+                                label.classList.add('is-selected');
+                            } else {
+                                label.classList.remove('is-selected');
+                            }
+                        });
+                    }
+                    // trigger 'change' event manually in order to populate highlight states on page load
+                    if ("createEvent" in document) {
+                        var ev = document.createEvent("HTMLEvents");
+                        ev.initEvent("change", false, true);
+                        input.dispatchEvent(ev);
+                    } else {
+                        input.fireEvent("onchange");
+                    }
+                }
+            });
         }
 
         return {
@@ -538,7 +570,8 @@ var TDW = (function (window, document) {
             nudgeArticleFigures: nudgeArticleFigures,
             createTableOfContents: createTableOfContents,
             createFigureMarkup: createFigureMarkup,
-            enhanceFilterSentences: enhanceFilterSentences
+            enhanceFilterSentences: enhanceFilterSentences,
+            focusInputLabels: focusInputLabels
         };
     })();
 
@@ -565,6 +598,7 @@ var TDW = (function (window, document) {
         misc.createFigureMarkup();
         misc.nudgeArticleFigures();
         misc.blendListColors();
+        misc.focusInputLabels();
 
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');

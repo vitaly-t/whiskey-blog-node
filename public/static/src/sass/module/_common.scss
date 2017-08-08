@@ -9,7 +9,7 @@ a {
   color: $primary;
 }
 a, button {
-  transition: color 0.15s ease-out, opacity 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out, opacity 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 .text-link {
   box-shadow: 0 3px 0 $primary;
@@ -44,6 +44,22 @@ a, button {
 }
 .margin-top-small {
   margin-top: $line/2;
+}
+
+.button {
+  @extend .alternate-typeface;
+
+  display: inline-block;
+  vertical-align: middle;
+  padding: $line/2 $line*2;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 2px;
+  background: $primary;
+  color: $bg;
+  font-weight: 900;
+  &:hover, &:focus {
+    background: lighten($primary, 5%);
+  }
 }
 
 figure {
