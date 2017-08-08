@@ -1,5 +1,99 @@
 /* ----------- =forms ----------- */
 
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding: $line*3/8 $line/2;
+  margin-bottom: $line;
+  border: 1px solid darken($bg-light, 5%);
+  color: $copy;
+  color: transparentize($copy, 0.2);
+  font: #{$milli}/#{$line} $font-stack-primary;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out, opacity 0.15s ease-out;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &:required {
+    border-color: mix($bg-light, $primary-dark, 80%);
+  }
+  &.input-validation-error {
+    border-color: $negative;
+    color: $negative;
+  }
+  &:focus {
+    border-color: $accent;
+    color: $copy;
+  }
+}
+textarea {
+  padding: $line/2;
+  min-height: $line*4;
+  &.textarea-large {
+    min-height: $line*10;
+  }
+}
+input[type="radio"], input[type="checkbox"] {
+  display: inline-block;
+  position: relative;
+  top: -0.1em;
+  label + & {
+    margin-left: $line;
+  }
+}
+
+label {
+  display: block;
+  margin-bottom: $line/4;
+  font-size: $micro;
+  font-weight: 700;
+  color: $copy;
+  opacity: 0.9;
+  transition: color 0.15s ease-out, opacity 0.15s ease-out;
+  input[type="radio"] + &, input[type="checkbox"] + & {
+    display: inline-block;
+    vertical-align: top;
+    font-weight: 400;
+  }
+  &.required {
+    &::after {
+      content: '*';
+      font-weight: 400;
+    }
+    color: $primary-dark;
+  }
+  &.is-selected {
+    color: $accent-dark;
+  }
+  &.is-focused {
+    color: $accent;
+    opacity: 1;
+  }
+}
+
+.side-label {
+  $width: $line*7;
+  @extend .group;
+  margin-bottom: $line;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  @media #{$min-s} {
+    padding-left: $width;
+    label {
+      width: $width;
+      float: left;
+      margin-left: -$width;
+      padding: $line/4 1em 0 0;
+    }
+  }
+}
+
 // range inputs. Thanks to css-tricks for a starting point
 // https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
 
