@@ -169,6 +169,8 @@ exports.validate = function (data, suppressRequired) {
     }
   };
 
+  validation.coerceTypes(data, schema);
+
   return validation.validate(data, schema, suppressRequired);
 }
 

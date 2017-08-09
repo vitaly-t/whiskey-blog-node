@@ -63,12 +63,15 @@ router.get('/reviews/new', auth.requireSession, auth.getCurrentUser, function (r
     })
     .catch(next);
 });
+
+
+// post a new review
 router.post('/reviews/new', auth.requireSession, auth.getCurrentUser, function (req, res, next) {
   let data = Object.assign({}, req.body);
 
-  // cull empties, for the benefit of true validation
   for (let key of Object.keys(data)) {
-    if (!data[key]) {
+    // cull form empties, for the benefit of clean validation
+    if (data[key] === '') {
       delete data[key];
     }
   }
@@ -84,6 +87,7 @@ router.post('/reviews/new', auth.requireSession, auth.getCurrentUser, function (
       console.log(err);
       return res.redirect('/admin/reviews/new');
     });
+
 });
 
 
