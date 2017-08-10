@@ -58,7 +58,7 @@
         <ul class="admin-list">
           {% for post in posts %}
             <li class="admin-list__item">
-              <a href="/admin/post/{{ post.slug }}" class="admin-list__name">
+              <a href="/admin/posts/{{ post.slug }}" class="admin-list__name">
                 {% if post.is_published %}
                   <span class="admin-list__status admin-list__status--published">Published:</span>
                 {% else %}
@@ -75,8 +75,12 @@
               {% endif %}
               <p class="admin-list__actions">
                 <a href="/articles/{{ post.slug }}">View</a>
-                <a href="/admin/post/{{ post.slug }}">Edit</a>
-                <a href="#0">Unpublish</a>
+                {% if post.is_published %}
+                  <a href="/admin/posts/unpublish/{{ post.id }}">Unpublish</a>
+                {% else %}
+                  <a href="/admin/posts/publish/{{ post.id }}">Publish</a>
+                {% endif %}
+                <a href="#0">Delete</a>
               </p>
             </li>
           {% endfor %}

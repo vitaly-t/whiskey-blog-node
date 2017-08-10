@@ -76,4 +76,24 @@ router.get('/reviews/unpublish/:id', auth.requireSession, function (req, res, ne
 });
 
 
+// publish a post
+router.get('/posts/publish/:id', auth.requireSession, function (req, res, next) {
+  return Post.alter(parseInt(req.params.id, 10), { is_published: true })
+    .then(post => {
+      return res.redirect('/admin');
+    })
+    .catch(next);
+});
+
+
+// unpublish a post
+router.get('/posts/unpublish/:id', auth.requireSession, function (req, res, next) {
+  return Post.alter(parseInt(req.params.id, 10), { is_published: false })
+    .then(post => {
+      return res.redirect('/admin');
+    })
+    .catch(next);
+});
+
+
 module.exports = router;
