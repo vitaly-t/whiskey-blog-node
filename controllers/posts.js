@@ -4,7 +4,15 @@ const express = require('express'),
 
 // show recent posts
 router.get('/', function (req, res, next) {
-  Post.list()
+  Post.list({
+      // only get published items
+      filters: [
+        {
+          field: 'is_published',
+          value: true
+        }
+      ]
+    })
     .then(posts => {
       return res.render('../views/posts/list.twig', {
         posts: posts
