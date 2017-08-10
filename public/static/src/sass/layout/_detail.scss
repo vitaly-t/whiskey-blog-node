@@ -117,6 +117,18 @@
   display: none;
 }
 
+.draft-notice {
+  @extend .alternate-typeface;
+  padding: $line;
+  margin: 0 (-$line) $line;
+  font-weight: 700;
+  color: $negative;
+  background: $bg-light;
+  p {
+    margin-bottom: 0;
+  }
+}
+
 
 @media #{$max-s} {
   // arrange contents links vertically, and space them a bit
@@ -180,6 +192,10 @@
   .post-content {
     margin: $line*1.75 0 0;
   }
+  .draft-notice {
+    margin-left: -$line*1.5;
+    margin-right: -$line*1.5;
+  }
 }
 
 
@@ -219,6 +235,9 @@
     right: 0;
     bottom: 0;
     left: $page-width;
+  }
+  .draft-notice {
+    text-align: center;
   }
 }
 

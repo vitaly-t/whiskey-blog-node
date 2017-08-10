@@ -1,5 +1,6 @@
 const express = require('express'),
       router = express.Router(),
+      auth = require('../middleware/auth'),
       Post = require('../models/post/post');
 
 // show recent posts
@@ -22,12 +23,19 @@ router.get('/', function (req, res, next) {
 });
 
 // get a post by url slug
-router.get('/:slug', function (req, res, next) {
+router.get('/:slug', auth.getCurrentUser, function (req, res, next) {
   Post.getBySlug(req.params.slug)
     .then(post => {
-      return res.render('../views/posts/detail.twig', {
-        post: post
-      });
+      if (post.is_published || res.locals.currentUser) {
+        return res.render('../views/posts/detail.twig', {
+          post: post
+        });
+      } else {
+        next({
+          status: 404,
+          message: 'Not found'
+        });
+      }
     })
     .catch(e => next());
 });

@@ -1,5 +1,6 @@
 const express = require('express'),
       router = express.Router(),
+      auth = require('../middleware/auth'),
       Review = require('../models/review/review'),
       DrinkType = require('../models/drink-type/drink-type'),
       Rarity = require('../models/rarity/rarity'),
@@ -181,13 +182,19 @@ router.get('/', function (req, res, next) {
 
 
 // get a review by url slug
-router.get('/:slug', function (req, res, next) {
+router.get('/:slug', auth.getCurrentUser, function (req, res, next) {
   Review.getBySlug(req.params.slug)
     .then(review => {
-      // return res.render('../views/reviews/detail.twig', {
-      //   review: review
-      // });
-      return res.json(review);
+      if (review.is_published || res.locals.currentUser) {
+        return res.render('../views/reviews/detail.twig', {
+          review: review
+        });
+      } else {
+        next({
+          status: 404,
+          message: 'Not found'
+        });
+      }
     })
     .catch(next);
 });

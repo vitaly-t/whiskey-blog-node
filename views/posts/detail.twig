@@ -24,6 +24,12 @@
     </div>
 
     <div class="text-copy margin">
+      {% if not post.is_published %}
+        <div class="draft-notice">
+          <p>Unpublished draft</p>
+          <p><a href="/admin/posts/publish/{{ post.id }}">Publish it?</a></p>
+        </div>
+      {% endif %}
       {% markdown %}
         {{ post.body }}
       {% endmarkdown %}
