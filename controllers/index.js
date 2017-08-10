@@ -21,7 +21,26 @@ router.use('/admin', require('./admin'));
 
 // homepage route
 router.get('/', function (req, res, next) {
-  Promise.all([ Review.list({ limit: 5 }), Post.list({ limit: 5 }) ])
+  Promise.all([
+      Review.list({
+        limit: 5,
+        filters: [
+          {
+            field: 'is_published',
+            value: true
+          }
+        ]
+      }),
+      Post.list({
+        limit: 5,
+        filters: [
+          {
+            field: 'is_published',
+            value: true
+          }
+        ]
+      })
+    ])
     .then(results => {
       return res.render('../views/home/index.twig', {
         items: results[0].concat(results[1]).sort((a, b) => b.published_at.getTime() - a.published_at.getTime())

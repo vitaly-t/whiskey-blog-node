@@ -22,7 +22,11 @@
           {% for review in reviews %}
             <li class="admin-list__item">
               <a href="/admin/review/{{ review.slug }}" class="admin-list__name">
-                <span class="admin-list__status admin-list__status--published">Published:</span>
+                {% if review.is_published %}
+                  <span class="admin-list__status admin-list__status--published">Published:</span>
+                {% else %}
+                  <span class="admin-list__status admin-list__status--unpublished">Unpublished:</span>
+                {% endif %}
                 <span class="admin-list__title">{{ review.title }}</span>
                 {% if review.subtitle %}
                   <span class="admin-list__subtitle">{{ review.subtitle }}</span>
@@ -34,7 +38,11 @@
               {% endif %}
               <p class="admin-list__actions">
                 <a href="/reviews/{{ review.slug }}">View</a>
-                <a href="#0">Unpublish</a>
+                {% if review.is_published %}
+                  <a href="/admin/reviews/unpublish/{{ review.id }}">Unpublish</a>
+                {% else %}
+                  <a href="/admin/reviews/publish/{{ review.id }}">Publish</a>
+                {% endif %}
                 <a href="/admin/reviews/delete/{{ review.id }}">Delete</a>
               </p>
             </li>
@@ -51,7 +59,11 @@
           {% for post in posts %}
             <li class="admin-list__item">
               <a href="/admin/post/{{ post.slug }}" class="admin-list__name">
-                <span class="admin-list__status admin-list__status--published">Published:</span>
+                {% if post.is_published %}
+                  <span class="admin-list__status admin-list__status--published">Published:</span>
+                {% else %}
+                  <span class="admin-list__status admin-list__status--unpublished">Unpublished:</span>
+                {% endif %}
                 <span class="admin-list__title">{{ post.title }}</span>
                 {% if post.subtitle %}
                   <span class="admin-list__subtitle">{{ post.subtitle }}</span>

@@ -14,6 +14,12 @@ router.get('/', function (req, res, next) {
   // make query params available in template functions
   res.locals.query = req.query;
 
+  // only get published items
+  facets.filters.push({
+    field: 'is_published',
+    value: true
+  });
+
   // sorting
   if (req.query.sort) {
     switch (res.locals.query.sort) {

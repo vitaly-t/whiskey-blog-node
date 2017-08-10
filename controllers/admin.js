@@ -56,4 +56,24 @@ router.get('/reviews/delete/:id', auth.requireSession, function (req, res, next)
 });
 
 
+// publish a review
+router.get('/reviews/publish/:id', auth.requireSession, function (req, res, next) {
+  return Review.alter(parseInt(req.params.id, 10), { is_published: true })
+    .then(review => {
+      return res.redirect('/admin');
+    })
+    .catch(next);
+});
+
+
+// unpublish a review
+router.get('/reviews/unpublish/:id', auth.requireSession, function (req, res, next) {
+  return Review.alter(parseInt(req.params.id, 10), { is_published: false })
+    .then(review => {
+      return res.redirect('/admin');
+    })
+    .catch(next);
+});
+
+
 module.exports = router;
