@@ -8,6 +8,7 @@ SELECT json_build_object(
   'subtitle', reviews.subtitle,
   'slug', reviews.slug,
   'created_at', reviews.created_at,
+  'is_published', reviews.is_published,
   'published_at', reviews.published_at,
   'summary', reviews.summary,
   'body', reviews.body,

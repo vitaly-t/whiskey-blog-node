@@ -8,6 +8,7 @@ SELECT json_build_object(
   'subtitle', posts.subtitle,
   'slug', posts.slug,
   'created_at', posts.created_at,
+  'is_published', posts.is_published,
   'published_at', posts.published_at,
   'summary', posts.summary,
   'body', posts.body,

@@ -71,6 +71,7 @@ Distillery.create({ name: 'Buffalo Trace', city: 'Frankfort', state: 'Kentucky' 
 // posts
     return Post.create({
       title: 'How to Read Labels',
+      is_published: true,
       author: content.users[0].id,
       summary: "It may sound boring, but learning to read labels with an eye for detail will pay dividends",
       body: `Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -92,6 +93,7 @@ Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possi
   .then(post => {
     return Post.create({
       title: 'An American Whiskey Starter Kit',
+      is_published: true,
       author: content.users[0].id,
       summary: "A diverse sampling of American whiskeys to get you started",
       body: `Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -116,6 +118,7 @@ Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possi
     return Review.create({
       title: 'Elijah Craig',
       subtitle: 'Small Batch Bourbon',
+      is_published: true,
       author: content.users[0].id,
       summary: "Ol' somewhat-less-reliable",
       body: `Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -151,6 +154,7 @@ Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possi
     return Review.create({
       title: 'Rittenhouse',
       subtitle: '25-year Rye',
+      is_published: true,
       author: content.users[0].id,
       summary: "A benchmark rye",
       body: `
@@ -214,6 +218,7 @@ Dolore nihil libero voluptas, repellat pariatur sed quidem et animi, ipsa expedi
   .then(review => {
     return Review.create({
       title: 'Stagg Jr.',
+      is_published: true,
       author: content.users[0].id,
       summary: "A short bottle with a tall order",
       body: `Lorem ipsum dolor sit amet, consectetur adipisicing elit.

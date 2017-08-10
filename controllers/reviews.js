@@ -178,9 +178,10 @@ router.get('/', function (req, res, next) {
 router.get('/:slug', function (req, res, next) {
   Review.getBySlug(req.params.slug)
     .then(review => {
-      return res.render('../views/reviews/detail.twig', {
-        review: review
-      });
+      // return res.render('../views/reviews/detail.twig', {
+      //   review: review
+      // });
+      return res.json(review);
     })
     .catch(next);
 });

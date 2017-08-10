@@ -50,6 +50,9 @@ exports.validate = function (data, suppressRequired) {
       maxLength: 128,
       regex: /^[a-zA-Z][a-zA-Z0-9\-]*$/
     },
+    is_published: {
+      types: ['boolean']
+    },
     published_at: {
       types: ['date']
     },
@@ -125,6 +128,7 @@ exports.create = function (data) {
       slug: function () {
         return slugFromString(this.title + ' ' + (this.subtitle || ''));
       },
+      is_published: false,
       published_at: new Date(),
       author: null,
       summary: null,
