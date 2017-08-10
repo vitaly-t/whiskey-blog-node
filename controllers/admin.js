@@ -43,6 +43,17 @@ router.get('/reviews/new', auth.requireSession, auth.getCurrentUser, function (r
 // edit existing review
 router.get('/reviews/:id', auth.requireSession, auth.getCurrentUser, function (req, res, next) {
   return res.send('editing review ' + req.params.id);
-})
+});
+
+
+// delete a review
+router.get('/reviews/delete/:id', auth.requireSession, function (req, res, next) {
+  return Review.delete(parseInt(req.params.id, 10))
+    .then(() => {
+      return res.redirect('/admin');
+    })
+    .catch(next);
+});
+
 
 module.exports = router;

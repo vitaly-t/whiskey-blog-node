@@ -34,8 +34,8 @@
               {% endif %}
               <p class="admin-list__actions">
                 <a href="/reviews/{{ review.slug }}">View</a>
-                <a href="/admin/review/{{ review.slug }}">Edit</a>
                 <a href="#0">Unpublish</a>
+                <a href="/admin/reviews/delete/{{ review.id }}">Delete</a>
               </p>
             </li>
           {% endfor %}
