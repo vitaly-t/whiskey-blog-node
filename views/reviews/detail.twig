@@ -76,9 +76,7 @@
     </div>
 
     <div class="text-copy margin">
-      {% markdown %}
-        {{ review.body }}
-      {% endmarkdown %}
+      {% markdown %}{{ review.body }}{% endmarkdown %}
     </div>
 
     {% if review.related_reviews or review.related_posts %}

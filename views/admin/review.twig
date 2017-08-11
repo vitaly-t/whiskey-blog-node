@@ -40,8 +40,10 @@
           <p class="note">This will appear on list cards</p>
 
           <label for="body">Body</label>
-          <textarea name="body" id="body" class="textarea-large" required="required"></textarea>
+          <textarea name="body" id="body" class="textarea-large markdown-entry" required="required" data-markdown-preview="markdown-preview"></textarea>
           <p class="note">Markdown is supported</p>
+
+          <div class="markdown-preview" id="markdown-preview"></div>
 
           <label for="rating">Rating</label>
           <input type="number" name="rating" id="rating" />

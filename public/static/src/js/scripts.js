@@ -462,9 +462,34 @@ var TDW = (function (window, document) {
             });
         };
 
+        // generate automatic markdown previews
+        var generateMarkdownPreviews = function () {
+            function getPreview(markdown, target) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        target.innerHTML = xhr.responseText;
+                        misc.createTableOfContents();
+                        misc.nudgeArticleFigures();
+                    }
+                };
+                xhr.open('POST', '/utility/markdown', true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send('markdownContent=' + markdown);
+            }
+
+            _.forEach(document.querySelectorAll('textarea[data-markdown-preview]'), function (source) {
+                var target = document.getElementById(source.getAttribute('data-markdown-preview'));
+                source.addEventListener('input', _.debounce(function (ev) {
+                    getPreview(ev.target.value, target);
+                }, 1000));
+            });
+        };
+
         return {
             focusLabels: focusLabels,
-            generateSlugs: generateSlugs
+            generateSlugs: generateSlugs,
+            generateMarkdownPreviews: generateMarkdownPreviews
         };
     })();
 
@@ -640,6 +665,7 @@ var TDW = (function (window, document) {
 
         forms.focusLabels();
         forms.generateSlugs();
+        forms.generateMarkdownPreviews();
 
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');

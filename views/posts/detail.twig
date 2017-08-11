@@ -24,9 +24,7 @@
     </div>
 
     <div class="text-copy margin">
-      {% markdown %}
-        {{ post.body }}
-      {% endmarkdown %}
+      {% markdown %}{{ post.body }}{% endmarkdown %}
     </div>
 
     {% if post.related_reviews or post.related_posts %}
