@@ -1,6 +1,6 @@
 {% extends "../_layout-admin.twig" %}
 
-{% block title %}Edit a Review{% endblock %}
+{% block title %}Editing a Review{% endblock %}
 
 {% block layoutClass %}admin{% endblock %}
 
@@ -14,40 +14,39 @@
     <form method="POST">
 
       <div class="page-width">
+        <input type="text" name="title" id="title" required="required" class="title-input" placeholder="Title" autofocus="autofocus" />
 
-        <fieldset>
-          <legend>Review Information</legend>
+        <input type="text" name="subtitle" id="subtitle" class="subtitle-input" placeholder="Subtitle" />
 
-          <label for="title">Title</label>
-          <input type="text" name="title" id="title" required="required" />
+        <label for="slug">Slug (URL Snippet)</label>
+        <span class="slug-input__prefix">/reviews/</span>
+        <input type="text" name="slug" id="slug" class="slug-input" data-generate-slug-from="#title, #subtitle" />
 
-          <label for="subtitle">Subtitle</label>
-          <input type="text" name="subtitle" id="subtitle" />
+        <div class="grid grid--compact">
+          <div class="grid__unit grid__unit--1-2-m">
+            <label for="published_at">Publish Date</label>
+            <input type="date" name="published_at" id="published_at" />
+            <p class="note">Leave blank to publish immediately</p>
+          </div>
+          <div class="grid__unit grid__unit--1-2-m">
+            <label for="rating">Rating</label>
+            <input type="number" name="rating" id="rating" />
+            <p class="note">This is only used for sorting purposes and is not shown</p>
+          </div>
+        </div>
+      </div>
 
-          <label for="slug">Slug</label>
-          <input type="text" name="slug" id="slug" data-generate-slug-from="#title, #subtitle" />
-
-          <label for="published_at">Publish Date</label>
-          <input type="date" name="published_at" id="published_at" />
-          <p class="note">Leave blank to publish immediately</p>
-        </fieldset>
-
+      <div class="authoring-screen">
         <fieldset>
           <legend>Review Content</legend>
-
-          <label for="summary">Summary</label>
-          <textarea name="summary" id="summary"></textarea>
-          <p class="note">This will appear on list cards</p>
 
           <label for="body">Body</label>
           <textarea name="body" id="body" class="textarea-large markdown-entry" required="required" data-markdown-preview="markdown-preview"></textarea>
           <p class="note">Markdown is supported</p>
 
-          <div class="markdown-preview" id="markdown-preview"></div>
-
-          <label for="rating">Rating</label>
-          <input type="number" name="rating" id="rating" />
-          <p class="note">This is only used for sorting purposes and is not shown</p>
+          <label for="summary">Summary</label>
+          <textarea name="summary" id="summary"></textarea>
+          <p class="note">This will appear on list cards</p>
         </fieldset>
 
         <fieldset>
@@ -73,80 +72,121 @@
         <fieldset>
           <legend>Drink Specifications</legend>
 
-          <label for="distillery">Distillery</label>
-          <select name="distillery" id="distillery">
-            {% for distillery in distilleries %}
-              <option value="{{ distillery.id }}">{{ distillery.name }}</option>
-            {% endfor %}
-          </select>
+          <div class="grid grid--compact">
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="distillery">Distillery</label>
+              <select name="distillery" id="distillery">
+                {% for distillery in distilleries %}
+                  <option value="{{ distillery.id }}">{{ distillery.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-          <label for="drink_type">Type</label>
-          <select name="drink_type" id="drink_type">
-            {% for drinkType in drinkTypes %}
-              <option value="{{ drinkType.id }}">{{ drinkType.singular }}</option>
-            {% endfor %}
-          </select>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="region">Region</label>
+              <select name="region" id="region">
+                {% for region in regions %}
+                  <option value="{{ region.id }}">{{ region.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-          <label for="rarity">Rarity</label>
-          <select name="rarity" id="rarity">
-            {% for rarity in rarities %}
-              <option value="{{ rarity.id }}">{{ rarity.name }}</option>
-            {% endfor %}
-          </select>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="drink_type">Type</label>
+              <select name="drink_type" id="drink_type">
+                {% for drinkType in drinkTypes %}
+                  <option value="{{ drinkType.id }}">{{ drinkType.singular }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-          <label for="region">Region</label>
-          <select name="region" id="region">
-            {% for region in regions %}
-              <option value="{{ region.id }}">{{ region.name }}</option>
-            {% endfor %}
-          </select>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="rarity">Rarity</label>
+              <select name="rarity" id="rarity">
+                {% for rarity in rarities %}
+                  <option value="{{ rarity.id }}">{{ rarity.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-          <label for="proof_min">Lowest Proof</label>
-          <input type="number" name="proof_min" id="proof_min" min="80" max="200" />
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="proof_min">Lowest Proof</label>
+              <input type="number" name="proof_min" id="proof_min" min="80" max="200" />
+            </div>
 
-          <label for="proof_max">Highest Proof</label>
-          <input type="number" name="proof_max" id="proof_max" min="80" max="200" />
-          <p class="note">If proof does not vary, these should be the same</p>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="proof_max">Highest Proof</label>
+              <input type="number" name="proof_max" id="proof_max" min="80" max="200" />
+              <p class="note">If proof does not vary, these should be the same</p>
+            </div>
 
-          <label for="age_min">Low Age</label>
-          <input type="number" name="age_min" id="age_min" min="0" max="100" />
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="age_min">Low Age</label>
+              <input type="number" name="age_min" id="age_min" min="0" max="100" />
+            </div>
 
-          <label for="age_max">High Age</label>
-          <input type="number" name="age_max" id="age_max" min="0" max="100" />
-          <p class="note">If age does not vary, these should be the same</p>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="age_max">High Age</label>
+              <input type="number" name="age_max" id="age_max" min="0" max="100" />
+              <p class="note">If age does not vary, these should be the same</p>
+            </div>
 
-          <label for="manufacturer_price">Manufacturer Price</label>
-          <input type="number" name="manufacturer_price" id="manufacturer_price" min="0" />
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="manufacturer_price">Manufacturer Price</label>
+              <input type="number" name="manufacturer_price" id="manufacturer_price" min="0" />
+            </div>
 
-          <label for="realistic_price">Realistic Price</label>
-          <input type="text" name="realistic_price" id="realistic_price" />
-          <p class="note">This does not have to be a number</p>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="realistic_price">Realistic Price</label>
+              <input type="text" name="realistic_price" id="realistic_price" />
+              <p class="note">This does not have to be a number</p>
+            </div>
 
-          <label for="mashbill_description">Mashbill Description</label>
-          <input type="text" name="mashbill_description" id="mashbill_description" />
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="mashbill_description">Mashbill Description</label>
+              <input type="text" name="mashbill_description" id="mashbill_description" />
+            </div>
 
-          <label for="mashbill_recipe">Mashbill Recipe</label>
-          <input type="text" name="mashbill_recipe" id="mashbill_recipe" />
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="mashbill_recipe">Mashbill Recipe</label>
+              <input type="text" name="mashbill_recipe" id="mashbill_recipe" />
+            </div>
+          </div>
+
         </fieldset>
 
         <fieldset>
           <legend>Related</legend>
 
-          <label for="related_reviews">Related Reviews</label>
-          <select name="related_reviews" id="related_reviews" multiple="multiple">
-            {% for review in reviews %}
-              <option value="{{ review.id }}">{{ review.title }} {{ review.subtitle }}</option>
-            {% endfor %}
-          </select>
+          <div class="grid grid--compact">
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="related_reviews">Related Reviews</label>
+              <select name="related_reviews" id="related_reviews" multiple="multiple">
+                {% for review in reviews %}
+                  <option value="{{ review.id }}">{{ review.title }} {{ review.subtitle }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-          <label for="related_posts">Related Articles</label>
-          <select name="related_posts" id="related_posts" multiple="multiple">
-            {% for post in posts %}
-              <option value="{{ post.id }}">{{ post.title }} {{ post.subtitle }}</option>
-            {% endfor %}
-          </select>
+            <div class="grid__unit grid__unit--1-2-m">
+              <label for="related_posts">Related Articles</label>
+              <select name="related_posts" id="related_posts" multiple="multiple">
+                {% for post in posts %}
+                  <option value="{{ post.id }}">{{ post.title }} {{ post.subtitle }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
         </fieldset>
 
+      </div>
+
+      <div class="authoring-preview">
+        <div class="markdown-preview" id="markdown-preview"></div>
+      </div>
+
+      <div class="align-center" style="clear: both;">
         <button type="submit" class="button">Save</button>
       </div>
 

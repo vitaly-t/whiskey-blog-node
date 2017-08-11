@@ -480,9 +480,15 @@ var TDW = (function (window, document) {
 
             _.forEach(document.querySelectorAll('textarea[data-markdown-preview]'), function (source) {
                 var target = document.getElementById(source.getAttribute('data-markdown-preview'));
+
+                // initial load
+                getPreview(source.value, target);
+
+                // debounced listener
                 source.addEventListener('input', _.debounce(function (ev) {
                     getPreview(ev.target.value, target);
-                }, 1000));
+                }, 500));
+
             });
         };
 
