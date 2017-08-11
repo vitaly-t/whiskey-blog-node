@@ -251,7 +251,7 @@ Explicabo voluptate reiciendis sit necessitatibus sapiente eaque incidunt, possi
     });
   })
   .then(review => {
-    console.log('done');
+    console.log('Test data added');
     process.exit(0);
   })
   .catch(e => {

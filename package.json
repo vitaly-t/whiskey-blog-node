@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha",
     "migrate": "migrate up",
-    "build": "npm install && npm run migrate && gulp"
+    "build": "npm install && npm run migrate && gulp",
+    "testdata": "migrate down && migrate up && node models/_test-data.js"
   },
   "repository": {
     "type": "git",
