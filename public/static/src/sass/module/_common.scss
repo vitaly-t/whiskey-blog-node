@@ -74,6 +74,10 @@ a, button {
     font-size: $micro;
     padding: $line/4 $line*3/4;
   }
+  &--large {
+    display: block;
+    width: 100%;
+  }
 }
 
 figure {

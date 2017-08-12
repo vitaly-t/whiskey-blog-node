@@ -1,7 +1,27 @@
-<h1>Login Page!</h1>
+{% extends "../_layout.twig" %}
 
-<form method="POST" action="/login">
-  <input type="text" name="username" placeholder="Username" />
-  <input type="password" name="password" placeholder="Password" />
-  <button type="submit">Go</button>
-</form>
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+  <section class="content" role="main">
+
+    <h1 class="page-title">
+      <span class="page-title__container">Sign In</span>
+    </h1>
+
+    <form method="POST" action="/login" class="login-form page-width">
+
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" autofocus="autofocus" required="required" />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Password" required="required" />
+
+      <button type="submit" class="button button--large">Go</button>
+
+      <a href="#0" class="forgot-password" data-toggle-target="next">Forgot your login info?</a>
+      <p class="forgot-password__answer">Sucks to be you.</p>
+    </form>
+
+  </section>
+{% endblock %}
