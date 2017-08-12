@@ -18,6 +18,7 @@ router.use('/logout', require('./logout'));
 router.use('/articles', require('./posts'));
 router.use('/reviews', require('./reviews'));
 router.use('/admin', require('./admin'));
+router.use('/utility', require('./utility'));
 
 // homepage route
 router.get('/', function (req, res, next) {

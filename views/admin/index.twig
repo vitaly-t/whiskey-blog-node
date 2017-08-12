@@ -15,13 +15,13 @@
       <div class="grid__unit grid__unit--1-2-m">
         <h2 class="admin-heading">My Reviews</h2>
         <div class="admin-actions">
-          <a href="#0">See all</a>
-          <a href="#0">Create new</a>
+          <a href="/admin/reviews">See all</a>
+          <a href="/admin/reviews/new">Create new</a>
         </div>
         <ul class="admin-list">
           {% for review in reviews %}
             <li class="admin-list__item">
-              <a href="/admin/review/{{ review.slug }}" class="admin-list__name">
+              <a href="/admin/reviews/{{ review.slug }}" class="admin-list__name">
                 {% if review.is_published %}
                   <span class="admin-list__status admin-list__status--published">Published:</span>
                 {% else %}
@@ -52,8 +52,8 @@
       <div class="grid__unit grid__unit--1-2-m">
         <h2 class="admin-heading">My Posts</h2>
         <div class="admin-actions">
-          <a href="#0">See all</a>
-          <a href="#0">Create new</a>
+          <a href="/admin/posts">See all</a>
+          <a href="/admin/posts/new">Create new</a>
         </div>
         <ul class="admin-list">
           {% for post in posts %}

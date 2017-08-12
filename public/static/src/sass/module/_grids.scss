@@ -96,10 +96,16 @@ $unit-1-12: 8.33%;
 @media #{$min-m} {
   .grid {
     margin-right: -$line*2;
+    &--compact {
+      margin-right: -$line;
+    }
   }
 
   .grid__unit {
     padding: 0 $line*2 $line*2 0;
+    .grid--compact > & {
+      padding: 0 $line $line 0;
+    }
   }
 
   .grid__unit--1-2-m { width: 50%; }

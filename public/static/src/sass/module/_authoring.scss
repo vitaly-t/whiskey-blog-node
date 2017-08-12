@@ -1,0 +1,67 @@
+/* ---------- =authoring / =writing screens ---------- */
+
+input.title-input, input.subtitle-input, input.slug-input {
+  padding: 0;
+  border-width: 0 0 2px;
+  border-color: transparentize($copy, 0.9) !important;
+  background: transparent;
+  &:focus {
+    border-color: $accent !important;
+  }
+}
+input.title-input {
+  font-size: $peta;
+  font-weight: 700;
+  line-height: $line*2;
+  color: $copy;
+}
+input.subtitle-input {
+  font-family: $font-stack-primary;
+  font-size: $mega;
+  line-height: $line*1.5;
+  font-style: italic;
+}
+.slug-input__prefix {
+  @extend .alternate-typeface;
+  float: left;
+}
+input.slug-input {
+  width: auto;
+  width: calc(100% - 5em);
+  padding-left: 0.2em;
+  font-size: $text;
+}
+
+.markdown-preview {
+  margin: $line*3/4 0 $line*2;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  &::before {
+    @extend .alternate-typeface;
+    content: 'Preview';
+    position: absolute;
+    left: $line;
+    top: $line/2;
+    font-size: $giga;
+    font-weight: 700;
+    opacity: 0.2;
+  }
+  .text-copy {
+    margin: 0;
+    padding: $line*2 $line;
+  }
+}
+
+
+@media #{$min-l} {
+  .authoring-screen {
+    width: 50%;
+    width: calc(50% - #{$line});
+    float: left;
+  }
+  .authoring-preview {
+    padding-left: $line*2;
+    overflow: hidden;
+  }
+}

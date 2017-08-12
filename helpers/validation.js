@@ -153,3 +153,51 @@ function validateTypes(candidate, expectedTypes) {
   }
   return result;
 }
+
+
+/*
+ * coerceTypes: changes strings (e.g. from a form submission) into
+ * types that we can validate
+ *
+ * transforms the passed object
+ *
+ * data (object): the data to manipulate
+ * schema (object): schema object defining fields and their constraints
+ */
+
+exports.coerceTypes = function (data, schema) {
+  for (const key of Object.keys(data)) {
+    const field = data[key];
+    let tmp;
+
+    if (!schema.hasOwnProperty(key)) {
+      continue;
+    }
+
+    // numbers
+    if (schema[key].types.includes('number')) {
+      if (schema[key].hasOwnProperty('step') && schema[key].step === 1) {
+        tmp = parseInt(field, 10);
+      } else {
+        tmp = parseFloat(field);
+      }
+      if (!isNaN(tmp)) {
+        data[key] = tmp;
+      }
+
+    // arrays
+    } else if (schema[key].types.includes('array')) {
+      if (data[key].constructor !== Array) {
+        data[key] = [].slice.call(data[key]);
+      }
+
+      // arrays of numbers
+      if (schema[key].elementTypes.includes('number')) {
+        data[key] = data[key].map(el => {
+          let tmp = parseInt(el, 10);
+          return isNaN(tmp) ? el : tmp;
+        });
+      }
+    }
+  }
+};

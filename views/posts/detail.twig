@@ -30,9 +30,7 @@
           <p><a href="/admin/posts/publish/{{ post.id }}">Publish it?</a></p>
         </div>
       {% endif %}
-      {% markdown %}
-        {{ post.body }}
-      {% endmarkdown %}
+      {% markdown %}{{ post.body }}{% endmarkdown %}
     </div>
 
     {% if post.related_reviews or post.related_posts %}

@@ -1,5 +1,224 @@
 /* ----------- =forms ----------- */
 
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+textarea,
+select {
+  @extend .alternate-typeface;
+  display: block;
+  width: 100%;
+  padding: $line*3/8 $line/2;
+  margin-bottom: $line;
+  border: 1px solid darken($bg-light, 5%);
+  font-size: $micro;
+  line-height: $line;
+  color: $copy;
+  color: transparentize($copy, 0.2);
+  background: rgba(255,255,255,0.6);
+  transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out, opacity 0.15s ease-out;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &:required {
+    border-color: mix($bg-light, $primary-dark, 80%);
+  }
+  &.input-validation-error {
+    border-color: $negative;
+    color: $negative;
+  }
+  &:focus {
+    border-color: $accent;
+    color: $copy;
+  }
+}
+textarea {
+  max-width: 100%;
+  padding: $line/2;
+  min-height: $line*4;
+  &.textarea-large {
+    min-height: $line*10;
+  }
+}
+input[type="radio"], input[type="checkbox"] {
+  display: inline-block;
+  position: relative;
+  top: -0.1em;
+  label + & {
+    margin-left: $line;
+  }
+}
+
+label {
+  @extend .alternate-typeface;
+
+  display: block;
+  margin-bottom: $line/4;
+  font-size: $micro;
+  font-weight: 900;
+  color: $accent-dark;
+  opacity: 0.9;
+  transition: color 0.15s ease-out, opacity 0.15s ease-out;
+  input[type="radio"] + &, input[type="checkbox"] + & {
+    display: inline-block;
+    vertical-align: top;
+    font-weight: 400;
+  }
+  &.required {
+    &::after {
+      content: '*';
+      font-weight: 400;
+    }
+    color: $primary-dark;
+  }
+  &.is-selected {
+    color: $accent-dark;
+  }
+  &.is-focused {
+    color: $accent;
+    opacity: 1;
+  }
+}
+
+.side-label {
+  $width: $line*7;
+  @extend .group;
+  margin-bottom: $line;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  @media #{$min-s} {
+    padding-left: $width;
+    label {
+      width: $width;
+      float: left;
+      margin-left: -$width;
+      padding: $line/4 1em 0 0;
+    }
+  }
+}
+
+fieldset {
+  padding: $line;
+  border-color: $bg-light;
+  margin-bottom: $line*2;
+  @media #{$max-s} {
+    margin-left: -$line/2;
+    margin-right: -$line/2;
+    padding-left: $line/2;
+    padding-right: $line/2;
+  }
+}
+legend {
+  @extend .alternate-typeface;
+  padding: 0 $line/4;
+  margin-left: -$line/4;
+  font-weight: 400;
+  font-size: $giga;
+  line-height: $line*1.5;
+  color: $copy;
+  opacity: 0.4;
+}
+
+.textarea-size-reference {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+// enhanced multi-select inputs
+select[multiple].is-enhanced {
+  visibility: hidden;
+  height: 1px;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.multi-select {
+  margin-bottom: $line;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &__actives {
+    margin-bottom: $line/2;
+  }
+  &__active {
+    display: none;
+    width: 100%;
+    padding: $line/4 $line;
+    border: 1px solid $bg-light;
+    background: rgba(255,255,255,0.5) url('../images/icon-x.svg') no-repeat 90% 50%;
+    background-position: calc(100% - #{$line}) 50%;
+    background-size: $line/2 $line/2;
+    text-align: left;
+    & + & {
+      margin-top: $line/4;
+    }
+    &.is-active {
+      display: block;
+    }
+  }
+  &__modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: $line;
+    background: rgba(0,0,0,0.9);
+    z-index: 20;
+    &.is-active {
+      display: block;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  &__options {
+    width: 100%;
+    max-width: $line*20;
+    max-height: 80%;
+    overflow-y: auto;
+    background: $bg;
+  }
+  &__option {
+    display: block;
+    width: 100%;
+    padding: $line/4 $line;
+    & + & {
+      border-top: 1px solid $bg-light;
+    }
+    &.is-selected {
+      background: $accent;
+      color: #fff;
+    }
+  }
+  &__close {
+    width: 100%;
+    max-width: $line*20;
+    border-top: 1px solid $bg;
+  }
+  &__none {
+    font-style: italic;
+    font-size: $micro;
+    line-height: $line*1.5 + 2px;
+    opacity: 0.8;
+  }
+  &__active.is-active ~ &__none {
+    display: none;
+  }
+}
+
+
 // range inputs. Thanks to css-tricks for a starting point
 // https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
 

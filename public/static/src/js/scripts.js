@@ -397,6 +397,229 @@ var TDW = (function (window, document) {
     })();
 
 
+    /* forms
+     * =====
+     *
+     * several small form enhancements
+     */
+
+    var forms = (function () {
+
+        // allow visual focus and selection indicators of input labels
+        var focusLabels = function () {
+            _.forEach(document.querySelectorAll('label[for]'), function (label) {
+                var input = document.getElementById(label.getAttribute('for'));
+                if (input) {
+                    input.addEventListener('focus', function (ev) {
+                        label.classList.add('is-focused');
+                    });
+                    input.addEventListener('blur', function (ev) {
+                        label.classList.remove('is-focused');
+                    });
+                    if (input.type.toLowerCase() === 'radio' || input.type.toLowerCase() === 'checkbox') {
+                        input.addEventListener('change', function (ev) {
+                            if (input.checked) {
+                                label.classList.add('is-selected');
+                            } else {
+                                label.classList.remove('is-selected');
+                            }
+                        });
+                    }
+                    // trigger 'change' event manually in order to populate highlight states on page load
+                    if ("createEvent" in document) {
+                        var ev = document.createEvent("HTMLEvents");
+                        ev.initEvent("change", false, true);
+                        input.dispatchEvent(ev);
+                    } else {
+                        input.fireEvent("onchange");
+                    }
+                }
+            });
+        };
+
+        // visualize automatic slug generation
+        var generateSlugs = function () {
+            function slugify(sources) {
+                var plaintext = '';
+                _.forEach(sources, function (source) {
+                    plaintext += source.value + ' ';
+                });
+                return plaintext.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
+            }
+
+            _.forEach(document.querySelectorAll('[data-generate-slug-from]'), function (slugInput) {
+                var sources = document.querySelectorAll(slugInput.getAttribute('data-generate-slug-from'));
+
+                // on source change
+                _.forEach(sources, function (source) {
+                    source.addEventListener('input', function (ev) {
+                        slugInput.setAttribute('placeholder', slugify(sources));
+                    });
+                });
+
+                // on load
+                slugInput.setAttribute('placeholder', slugify(sources));
+            });
+        };
+
+        // generate automatic markdown previews
+        var generateMarkdownPreviews = function () {
+            function getPreview(markdown, target) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        target.innerHTML = xhr.responseText;
+                        misc.createTableOfContents();
+                        misc.nudgeArticleFigures();
+                    }
+                };
+                xhr.open('POST', '/utility/markdown', true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send('markdownContent=' + markdown);
+            }
+
+            _.forEach(document.querySelectorAll('textarea[data-markdown-preview]'), function (source) {
+                var target = document.getElementById(source.getAttribute('data-markdown-preview'));
+
+                // initial load
+                getPreview(source.value, target);
+
+                // debounced listener
+                source.addEventListener('input', _.debounce(function (ev) {
+                    getPreview(ev.target.value, target);
+                }, 500));
+
+            });
+        };
+
+        // resizing textareas
+        var resizeTextareas = function () {
+            function copyStyles(source, target) {
+                var styles = window.getComputedStyle(source, null),
+                    relevantStyles = ['width', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontKerning', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'whiteSpace', 'hyphens'];
+
+                _.forEach(relevantStyles, function (style) {
+                    target.style[style] = styles[style];
+                });
+            }
+
+            function mirrorSize(textarea, ref) {
+                ref.textContent = textarea.value + '\u00a0';  // nbsp to size new lines correctly
+                textarea.style.minHeight = ref.clientHeight + 'px';
+            }
+
+            _.forEach(document.getElementsByTagName('textarea'), function (textarea) {
+                var ref = document.createElement('div');
+                ref.className = 'textarea-size-reference';
+
+                copyStyles(textarea, ref);
+                window.setTimeout(function () {
+                    mirrorSize(textarea, ref);
+                }, 0);
+
+                textarea.addEventListener('input', function (ev) {
+                    mirrorSize(textarea, ref);
+                });
+                window.addEventListener('resize', _.debounce(function () {
+                    copyStyles(textarea, ref);
+                    mirrorSize(textarea, ref);
+                }, 200));
+
+                document.body.appendChild(ref);
+            });
+        };
+
+        // enhance multi-select inputs with dedicated UI
+        var enhanceMultiSelects = function () {
+            var scaffold = '' +
+                    '<div class="multi-select__actives">' +
+                    '</div>' +
+                    '<button type="button" class="button button--small multi-select__add" data-toggle-target="next">Add</button>' +
+                    '<div class="multi-select__modal">' +
+                        '<div class="multi-select__options">' +
+                        '</div>' +
+                        '<button type="button" class="button button--small multi-select__close" data-toggle-target="parent">Done</button>' +
+                    '</div>',
+                selectedElTemplate = document.createElement('button'),
+                optionElTemplate = document.createElement('button'),
+                noSelectionTemplate = document.createElement('p');
+
+            selectedElTemplate.setAttribute('type', 'button');
+            selectedElTemplate.className = 'multi-select__active';
+
+            optionElTemplate.setAttribute('type', 'button');
+            optionElTemplate.className = 'multi-select__option';
+
+            noSelectionTemplate.className = 'multi-select__none';
+            noSelectionTemplate.textContent = 'None selected';
+
+            _.forEach(document.querySelectorAll('select[multiple]'), function (select) {
+                var options = select.children,
+                    container = document.createElement('div'),
+                    activesContainer, optionsContainer;
+
+                container.className = 'multi-select';
+
+                // stamp our scaffold markup
+                container.innerHTML = scaffold;
+                select.parentNode.insertBefore(container, select);
+
+                activesContainer = container.querySelector('.multi-select__actives');
+                optionsContainer = container.querySelector('.multi-select__options');
+
+                // create representations of each option in the list
+                _.forEach(options, function (option) {
+                    var optionEl = optionElTemplate.cloneNode(true),
+                        selectedEl = selectedElTemplate.cloneNode(true);
+
+                    optionEl.textContent = option.textContent;
+                    selectedEl.textContent = option.textContent;
+
+                    // reflect initial state on page load
+                    if (option.selected) {
+                        optionEl.classList.add('is-selected');
+                        selectedEl.classList.add('is-active');
+                    }
+
+                    optionsContainer.appendChild(optionEl);
+                    activesContainer.appendChild(selectedEl);
+
+                    // clicking an option in the options list toggles selection
+                    optionEl.addEventListener('click', function (ev) {
+                        this.classList.toggle('is-selected');
+                        if (this.classList.contains('is-selected')) {
+                            selectedEl.classList.add('is-active');
+                            option.selected = true;
+                        } else {
+                            selectedEl.classList.remove('is-active');
+                            option.selected = false;
+                        }
+                    });
+
+                    // clicking a selected tag de-selects it
+                    selectedEl.addEventListener('click', function (ev) {
+                        this.classList.remove('is-active');
+                        optionEl.classList.remove('is-selected');
+                        option.selected = false;
+                    });
+                });
+
+                activesContainer.appendChild(noSelectionTemplate.cloneNode(true));
+
+                select.classList.add('is-enhanced');
+            });
+        };
+
+        return {
+            focusLabels: focusLabels,
+            generateSlugs: generateSlugs,
+            generateMarkdownPreviews: generateMarkdownPreviews,
+            resizeTextareas: resizeTextareas,
+            enhanceMultiSelects: enhanceMultiSelects
+        };
+    })();
+
+
     /* misc
      * ====
      *
@@ -505,7 +728,7 @@ var TDW = (function (window, document) {
         };
 
         // make filter summary sentences more natural-sounding
-        function enhanceFilterSentences() {
+        var enhanceFilterSentences = function () {
             var comma = document.createElement('span'),
                 and = document.createTextNode(' and ');
             comma.textContent = ', ';
@@ -531,7 +754,7 @@ var TDW = (function (window, document) {
                     clauses[1].insertBefore(and.cloneNode(true), clauses[1].firstChild);
                 }
             });
-        }
+        };
 
         return {
             blendListColors: blendListColors,
@@ -554,6 +777,8 @@ var TDW = (function (window, document) {
             forceHeight: false
         });
 
+        forms.enhanceMultiSelects();
+
         toggles.init();
         sharedHeights.init();
         ranges.registerLabels();
@@ -565,6 +790,11 @@ var TDW = (function (window, document) {
         misc.createFigureMarkup();
         misc.nudgeArticleFigures();
         misc.blendListColors();
+
+        forms.focusLabels();
+        forms.resizeTextareas();
+        forms.generateSlugs();
+        forms.generateMarkdownPreviews();
 
         document.documentElement.classList.remove('no-js');
         document.documentElement.classList.add('js');

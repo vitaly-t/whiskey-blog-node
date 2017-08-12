@@ -53,6 +53,16 @@ h5 {
   margin-left: -0.3em;
 }
 
+.note {
+  font-size: $micro;
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.7;
+  input + &, textarea + & {
+    margin-top: -$line*3/4;
+  }
+}
+
 
 @media #{$min-m} {
   h1 {
