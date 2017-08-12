@@ -543,13 +543,17 @@ var TDW = (function (window, document) {
                     '</div>' +
                 '</div>',
                 selectedElTemplate = document.createElement('button'),
-                optionElTemplate = document.createElement('button');
+                optionElTemplate = document.createElement('button'),
+                noSelectionTemplate = document.createElement('p');
 
             selectedElTemplate.setAttribute('type', 'button');
             selectedElTemplate.className = 'multi-select__active';
 
             optionElTemplate.setAttribute('type', 'button');
             optionElTemplate.className = 'multi-select__option';
+
+            noSelectionTemplate.className = 'multi-select__none';
+            noSelectionTemplate.textContent = 'None selected';
 
             _.forEach(document.querySelectorAll('select[multiple]'), function (select) {
                 var options = select.children,
@@ -599,6 +603,8 @@ var TDW = (function (window, document) {
                         option.selected = false;
                     });
                 });
+
+                activesContainer.appendChild(noSelectionTemplate.cloneNode(true));
 
                 select.classList.add('is-enhanced');
             });
