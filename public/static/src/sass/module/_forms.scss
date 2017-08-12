@@ -142,6 +142,10 @@ select[multiple].is-enhanced {
   padding: 0;
 }
 .multi-select {
+  margin-bottom: $line;
+  &:last-child {
+    margin-bottom: 0;
+  }
   &__actives {
     margin-bottom: $line/2;
   }

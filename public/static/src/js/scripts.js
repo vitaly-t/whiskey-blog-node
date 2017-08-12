@@ -532,7 +532,6 @@ var TDW = (function (window, document) {
         // enhance multi-select inputs with dedicated UI
         var enhanceMultiSelects = function () {
             var scaffold = '' +
-                '<div class="multi-select">' +
                     '<div class="multi-select__actives">' +
                     '</div>' +
                     '<button type="button" class="button button--small multi-select__add" data-toggle-target="next">Add</button>' +
@@ -540,8 +539,7 @@ var TDW = (function (window, document) {
                         '<div class="multi-select__options">' +
                         '</div>' +
                         '<button type="button" class="button button--small multi-select__close" data-toggle-target="parent">Done</button>' +
-                    '</div>' +
-                '</div>',
+                    '</div>',
                 selectedElTemplate = document.createElement('button'),
                 optionElTemplate = document.createElement('button'),
                 noSelectionTemplate = document.createElement('p');
@@ -559,6 +557,8 @@ var TDW = (function (window, document) {
                 var options = select.children,
                     container = document.createElement('div'),
                     activesContainer, optionsContainer;
+
+                container.className = 'multi-select';
 
                 // stamp our scaffold markup
                 container.innerHTML = scaffold;
