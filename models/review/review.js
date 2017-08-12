@@ -249,20 +249,23 @@ exports.create = function (data) {
  */
 
 function createRelated(origin, reviews, posts) {
-
-  // first, wipe out existing (avoiding update checks for now)
-  return db.none(sqlDeleteRelatedReviews, origin)
-    .then(() => db.none(sqlDeleteRelatedPosts, origin))
-    .then(() => {
-      let ops = [];
-      if (reviews) {
-        ops.concat(reviews.map(review => db.none(sqlCreateRelatedReview, [origin, review])));
-      }
-      if (posts) {
-        ops.concat(posts.map(post => db.none(sqlCreateRelatedPost, [origin, post])));
-      }
-      return Promise.all(ops);
-    });
+  return db.tx('create-related', t => {
+        const queries = [
+              t.none(sqlDeleteRelatedReviews, origin),
+              t.none(sqlDeleteRelatedPosts, origin)
+        ];
+        if (reviews) {
+              reviews.forEach(r => {
+                    queries.push(t.none(sqlCreateRelatedReview, [origin, review]));
+              });
+        }
+        if (posts) {
+              posts.forEach(p => {
+                    queries.push(t.none(sqlCreateRelatedPost, [origin, post]));
+              });
+        }        
+        return t.batch(queries);
+  });
 };
 
 
