@@ -123,6 +123,16 @@ legend {
   opacity: 0.4;
 }
 
+.textarea-size-reference {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
 
 // range inputs. Thanks to css-tricks for a starting point
 // https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/

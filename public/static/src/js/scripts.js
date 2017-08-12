@@ -492,10 +492,48 @@ var TDW = (function (window, document) {
             });
         };
 
+        // resizing textareas
+        var resizeTextareas = function () {
+            function copyStyles(source, target) {
+                var styles = window.getComputedStyle(source, null),
+                    relevantStyles = ['width', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontKerning', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'whiteSpace', 'hyphens'];
+
+                _.forEach(relevantStyles, function (style) {
+                    target.style[style] = styles[style];
+                });
+            }
+
+            function mirrorSize(textarea, ref) {
+                ref.textContent = textarea.value + '\u00a0';  // nbsp to size new lines correctly
+                textarea.style.minHeight = ref.clientHeight + 'px';
+            }
+
+            _.forEach(document.getElementsByTagName('textarea'), function (textarea) {
+                var ref = document.createElement('div');
+                ref.className = 'textarea-size-reference';
+
+                copyStyles(textarea, ref);
+                window.setTimeout(function () {
+                    mirrorSize(textarea, ref);
+                }, 0);
+
+                textarea.addEventListener('input', function (ev) {
+                    mirrorSize(textarea, ref);
+                });
+                window.addEventListener('resize', _.debounce(function () {
+                    copyStyles(textarea, ref);
+                    mirrorSize(textarea, ref);
+                }, 200));
+
+                document.body.appendChild(ref);
+            });
+        };
+
         return {
             focusLabels: focusLabels,
             generateSlugs: generateSlugs,
-            generateMarkdownPreviews: generateMarkdownPreviews
+            generateMarkdownPreviews: generateMarkdownPreviews,
+            resizeTextareas: resizeTextareas
         };
     })();
 
@@ -670,6 +708,7 @@ var TDW = (function (window, document) {
         misc.blendListColors();
 
         forms.focusLabels();
+        forms.resizeTextareas();
         forms.generateSlugs();
         forms.generateMarkdownPreviews();
 

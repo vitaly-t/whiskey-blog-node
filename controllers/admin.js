@@ -42,7 +42,7 @@ router.get('/reviews', auth.requireSession, auth.getCurrentUser, function (req, 
 
 
 // new review
-router.get('/reviews/new', auth.requireSession, auth.getCurrentUser, function (req, res, next) {
+router.get('/reviews/new', auth.getCurrentUser, function (req, res, next) {
   return Promise.all([
       Review.list({ orderBy: 'title', order: 'ASC' }),
       Post.list({ orderBy: 'title', order: 'ASC' }),
