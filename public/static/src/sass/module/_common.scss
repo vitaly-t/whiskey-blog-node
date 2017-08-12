@@ -70,6 +70,10 @@ a, button {
   &:hover, &:focus {
     background: lighten($primary, 5%);
   }
+  &--small {
+    font-size: $micro;
+    padding: $line/4 $line*3/4;
+  }
 }
 
 figure {

@@ -133,6 +133,78 @@ legend {
   pointer-events: none;
 }
 
+// enhanced multi-select inputs
+select[multiple].is-enhanced {
+  visibility: hidden;
+  height: 1px;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.multi-select {
+  &__actives {
+    margin-bottom: $line;
+  }
+  &__active {
+    display: none;
+    width: 100%;
+    padding: $line/4 $line;
+    border: 1px solid $bg-light;
+    background: rgba(255,255,255,0.5) url('../images/icon-x.svg') no-repeat 90% 50%;
+    background-position: calc(100% - #{$line}) 50%;
+    background-size: $line/2 $line/2;
+    text-align: left;
+    & + & {
+      margin-top: $line/4;
+    }
+    &.is-active {
+      display: block;
+    }
+  }
+  &__modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: $line;
+    background: rgba(0,0,0,0.9);
+    z-index: 20;
+    &.is-active {
+      display: block;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  &__options {
+    width: 100%;
+    max-width: $line*20;
+    max-height: 80%;
+    overflow-y: auto;
+    background: $bg;
+  }
+  &__option {
+    display: block;
+    width: 100%;
+    padding: $line/4 $line;
+    & + & {
+      border-top: 1px solid $bg-light;
+    }
+    &.is-selected {
+      background: $accent;
+      color: #fff;
+    }
+  }
+  &__close {
+    width: 100%;
+    max-width: $line*20;
+    border-top: 1px solid $bg;
+  }
+}
+
 
 // range inputs. Thanks to css-tricks for a starting point
 // https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/

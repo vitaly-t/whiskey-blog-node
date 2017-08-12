@@ -529,11 +529,87 @@ var TDW = (function (window, document) {
             });
         };
 
+        // enhance multi-select inputs with dedicated UI
+        var enhanceMultiSelects = function () {
+            var scaffold = '' +
+                '<div class="multi-select">' +
+                    '<div class="multi-select__actives">' +
+                    '</div>' +
+                    '<button type="button" class="button button--small multi-select__add" data-toggle-target="next">Add</button>' +
+                    '<div class="multi-select__modal">' +
+                        '<div class="multi-select__options">' +
+                        '</div>' +
+                        '<button type="button" class="button button--small multi-select__close" data-toggle-target="parent">Done</button>' +
+                    '</div>' +
+                '</div>',
+                selectedElTemplate = document.createElement('button'),
+                optionElTemplate = document.createElement('button');
+
+            selectedElTemplate.setAttribute('type', 'button');
+            selectedElTemplate.className = 'multi-select__active';
+
+            optionElTemplate.setAttribute('type', 'button');
+            optionElTemplate.className = 'multi-select__option';
+
+            _.forEach(document.querySelectorAll('select[multiple]'), function (select) {
+                var options = select.children,
+                    container = document.createElement('div'),
+                    activesContainer, optionsContainer;
+
+                // stamp our scaffold markup
+                container.innerHTML = scaffold;
+                select.parentNode.insertBefore(container, select);
+
+                activesContainer = container.querySelector('.multi-select__actives');
+                optionsContainer = container.querySelector('.multi-select__options');
+
+                // create representations of each option in the list
+                _.forEach(options, function (option) {
+                    var optionEl = optionElTemplate.cloneNode(true),
+                        selectedEl = selectedElTemplate.cloneNode(true);
+
+                    optionEl.textContent = option.textContent;
+                    selectedEl.textContent = option.textContent;
+
+                    // reflect initial state on page load
+                    if (option.selected) {
+                        optionEl.classList.add('is-selected');
+                        selectedEl.classList.add('is-active');
+                    }
+
+                    optionsContainer.appendChild(optionEl);
+                    activesContainer.appendChild(selectedEl);
+
+                    // clicking an option in the options list toggles selection
+                    optionEl.addEventListener('click', function (ev) {
+                        this.classList.toggle('is-selected');
+                        if (this.classList.contains('is-selected')) {
+                            selectedEl.classList.add('is-active');
+                            option.selected = true;
+                        } else {
+                            selectedEl.classList.remove('is-active');
+                            option.selected = false;
+                        }
+                    });
+
+                    // clicking a selected tag de-selects it
+                    selectedEl.addEventListener('click', function (ev) {
+                        this.classList.remove('is-active');
+                        optionEl.classList.remove('is-selected');
+                        option.selected = false;
+                    });
+                });
+
+                select.classList.add('is-enhanced');
+            });
+        };
+
         return {
             focusLabels: focusLabels,
             generateSlugs: generateSlugs,
             generateMarkdownPreviews: generateMarkdownPreviews,
-            resizeTextareas: resizeTextareas
+            resizeTextareas: resizeTextareas,
+            enhanceMultiSelects: enhanceMultiSelects
         };
     })();
 
@@ -694,6 +770,8 @@ var TDW = (function (window, document) {
             mobileCheck: function () { return false; },
             forceHeight: false
         });
+
+        forms.enhanceMultiSelects();
 
         toggles.init();
         sharedHeights.init();
