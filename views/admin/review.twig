@@ -48,7 +48,13 @@
           <textarea name="summary" id="summary"></textarea>
           <p class="note">This will appear on list cards</p>
         </fieldset>
+      </div>
 
+      <div class="authoring-preview">
+        <div class="markdown-preview" id="markdown-preview"></div>
+      </div>
+
+      <div class="page-width" style="clear: both;">
         <fieldset>
           <legend>Images</legend>
 
@@ -158,32 +164,22 @@
         <fieldset>
           <legend>Related</legend>
 
-          <div class="grid grid--compact">
-            <div class="grid__unit grid__unit--1-2-m">
-              <label for="related_reviews">Related Reviews</label>
-              <select name="related_reviews" id="related_reviews" multiple="multiple">
-                {% for review in reviews %}
-                  <option value="{{ review.id }}">{{ review.title }} {{ review.subtitle }}</option>
-                {% endfor %}
-              </select>
-            </div>
+          <label for="related_reviews">Related Reviews</label>
+          <select name="related_reviews" id="related_reviews" multiple="multiple">
+            {% for review in reviews %}
+              <option value="{{ review.id }}">{{ review.title }} {{ review.subtitle }}</option>
+            {% endfor %}
+          </select>
 
-            <div class="grid__unit grid__unit--1-2-m">
-              <label for="related_posts">Related Articles</label>
-              <select name="related_posts" id="related_posts" multiple="multiple">
-                {% for post in posts %}
-                  <option value="{{ post.id }}">{{ post.title }} {{ post.subtitle }}</option>
-                {% endfor %}
-              </select>
-            </div>
-          </div>
+          <label for="related_posts">Related Articles</label>
+          <select name="related_posts" id="related_posts" multiple="multiple">
+            {% for post in posts %}
+              <option value="{{ post.id }}">{{ post.title }} {{ post.subtitle }}</option>
+            {% endfor %}
+          </select>
 
         </fieldset>
 
-      </div>
-
-      <div class="authoring-preview">
-        <div class="markdown-preview" id="markdown-preview"></div>
       </div>
 
       <div class="align-center" style="clear: both;">

@@ -57,10 +57,11 @@ input.slug-input {
 @media #{$min-l} {
   .authoring-screen {
     width: 50%;
-    float: right;
+    width: calc(50% - #{$line});
+    float: left;
   }
   .authoring-preview {
-    padding-right: $line*2;
+    padding-left: $line*2;
     overflow: hidden;
   }
 }
